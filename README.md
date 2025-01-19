@@ -1,25 +1,25 @@
-# Deploily-backend
-Backend for deploily platform
 
-## Installation 
+## Run  flask
 
 ```bash
-# Get the code
-git clone git@github.com:deploily/deploily-backend.git
-
-# Go to the docker folder
-cd deploily-backend/docker
-
-# Copy the fake env vars
-cp .env.example .env
-
-# Pull the latest images
-docker compose pull
-
-# Start the services (in detached mode)
-docker compose up -d
+cd src
+flask run 
 ```
+## Migration steps 
+First time
+```bash
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+flask db revision --rev-id a3bf43e917a8
+```
+After updates 
+```bash
+flask db migrate
+flask db upgrade
+```
+## Create admin user
 
-
-## Useful links
-- [https://supabase.com/docs/guides/self-hosting/docker](https://supabase.com/docs/guides/self-hosting/docker)
+```bash
+flask fab create-admin
+```
