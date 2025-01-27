@@ -1,7 +1,3 @@
-from . import test_views
-
-
-
 
 from app import appbuilder, db
 
