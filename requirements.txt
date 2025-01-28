@@ -12,3 +12,16 @@ Flask-SocketIO==5.3.6
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.2.1
 PyJWT==2.9.0
+# TODO add dependdency for A6Client
+pytest-flask==1.3.0
+pytest-mock==3.14.0
+Werkzeug==3.0.4
+
+
+
+
+
+
+
+
+
