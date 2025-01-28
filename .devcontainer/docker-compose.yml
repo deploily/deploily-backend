@@ -9,6 +9,7 @@ x-001: &merged-conf
 
 services:
   app:
+    container_name: deploily-backend-app 
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
@@ -26,6 +27,7 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   db:
+    container_name: deploily-backend-db
     image: postgres:latest
     restart: unless-stopped
     volumes:
@@ -39,6 +41,7 @@ services:
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
   apisix-dashboard:
+    container_name: deploily-backend-apisix-dashboard
     image: apache/apisix-dashboard:3.0.0-centos # centos or alpine
     restart: always
     # ports:
@@ -48,6 +51,7 @@ services:
     network_mode: service:db
 
   apisix:
+    container_name: deploily-backend-apisix
     image: apache/apisix:3.1.0-debian
     restart: always
     volumes:
@@ -60,12 +64,13 @@ services:
     network_mode: service:db
 
   etcd:
+    container_name: deploily-backend-etcd
     image: bitnami/etcd:3.5.11
     restart: always
     environment:
       ETCD_ENABLE_V2: 'true'
       ALLOW_NONE_AUTHENTICATION: 'yes'
-      ETCD_ADVERTISE_CLIENT_URLS: 'http://etcd:2379'
+      ETCD_ADVERTISE_CLIENT_URLS: 'http://localhost:2379'
       ETCD_LISTEN_CLIENT_URLS: 'http://0.0.0.0:2379'
     network_mode: service:db
     volumes:
@@ -73,6 +78,7 @@ services:
     <<: *merged-conf
 
   # prometheus:
+  #   container_name: deploily-backend-prometheus
   #   image: prom/prometheus:v2.25.0
   #   restart: always
   #   volumes:
@@ -80,6 +86,7 @@ services:
   #   <<: *merged-conf
 
   # grafana:
+  #   container_name: deploily-backend-grafana
   #   image: grafana/grafana:7.3.7
   #   restart: always
   #   ports:
