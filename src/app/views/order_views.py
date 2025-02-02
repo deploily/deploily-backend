@@ -21,5 +21,5 @@ appbuilder.add_view(
     OrderModelView,
     "order",
     icon="fa-solid fa-sliders",
-    category="order",
+    category="Order",
 )

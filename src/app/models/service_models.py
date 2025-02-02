@@ -17,7 +17,7 @@ class Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     order_id = Column(Integer, ForeignKey("order.id"))
-    order = relationship("Order",overlaps="order")
+    order = relationship("Order")
 
     def __repr__(self):
             return self.name

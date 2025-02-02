@@ -15,8 +15,9 @@ from sqlalchemy.orm import relationship
 
 class Order(Model):
     id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
     status = Column(Enum("draft", "done", name="status"))
-    service = relationship("service",back_populates="order")
+    service = relationship("Service")
     
     def __repr__(self):
-            return self.id
+            return self.name
