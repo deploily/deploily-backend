@@ -1,5 +1,7 @@
 
 from app import appbuilder, db
+from . import cart_views
+from . import a6service_views
 
 appbuilder.add_link(
     name="Swagger documentation",

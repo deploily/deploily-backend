@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# TODO 4
+# TODO 3
 
 # TODO Add model
-# TODO Add Field upstream_id, ....
-
+# TODO Add Field Status = [DRAFT, DONE] + 
+# TODO Add Field service Many2One  to Services 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
 from sqlalchemy import Column
@@ -13,11 +13,11 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
-class Service(Model):
+class Cart(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    order_id = Column(Integer, ForeignKey("order.id"))
-    order = relationship("Order")
-
+    status = Column(Enum("draft", "done", name="status"))
+    service = relationship("A6Service")
+    
     def __repr__(self):
             return self.name

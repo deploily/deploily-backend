@@ -6,20 +6,20 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
 from app import db
-from app.models.order_models import Order
+from app.models.cart_models import Cart
 
 
-class OrderModelView(ModelView):
-    route_base = "/admin/order"
-    datamodel = SQLAInterface(Order)
+class CartModelView(ModelView):
+    route_base = "/admin/cart"
+    datamodel = SQLAInterface(Cart)
     list_columns = ["id", "status"]
-    base_order = ("id", "desc")
+    base_cart = ("id", "desc")
 
 
 db.create_all()
 appbuilder.add_view(
-    OrderModelView,
-    "order",
+    CartModelView,
+    "cart",
     icon="fa-solid fa-sliders",
-    category="Order",
+    category="cart",
 )
