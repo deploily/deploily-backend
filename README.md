@@ -23,3 +23,12 @@ flask db upgrade
 ```bash
 flask fab create-admin
 ```
+
+## Run Test
+```bash
+cd src/tests  
+```
+Test All
+```bash
+pytest --disable-warnings -s
+```
