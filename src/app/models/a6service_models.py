@@ -16,7 +16,8 @@ from sqlalchemy.orm import relationship
 class A6Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    upstream_id =Column(Integer)
+    upstream_type = Column(String(255))  
+    upstream_nodes = Column(String(255))
     cart_id = Column(Integer, ForeignKey("cart.id"))
     cart = relationship("Cart",cascade="all,delete",)
 
