@@ -1,21 +1,31 @@
-# apisix_service.py
-import requests
-import json
-
-# https://github.com/api7/python-sdk
-
+import logging
+from app import appbuilder
+from .A6Client import A6Client
 # TODO  6
-
+# TODO move URLS to .env -> config -> get from config[]
 # TODO Replace requets with A6Client 
+_logger = logging.getLogger(__name__)
 
 class ApiSixService:
     def __init__(self):
-        # TODO move URLS to .env -> config -> get from config[]
-        self.admin_url ="http://127.0.0.1:9180/apisix/admin"
+        self.admin_url = appbuilder.get_app.config.get("APISIX_ADMIN_URL")
+        self.api_key = appbuilder.get_app.config.get("APISIX_API_KEY")
 
-        # self.client = A6Client()
-    
+        if not self.admin_url or not isinstance(self.admin_url, str):
+            raise ValueError("APISIX URL is missing or invalid.")
+        
+        if not self.api_key or not isinstance(self.api_key, str):
+            raise ValueError("APISIX API key is missing or invalid.")
+        
+        try:
+            self.client = A6Client(self.admin_url, self.api_key)
+            _logger.info("APISIX client initialized successfully.")
+        except Exception as e:
+            _logger.error(f"Error initializing APISIX client: {e}")
+            raise
+
     def create_service(self, service_name, upstream_nodes):
+        """Create an APISIX service."""
         service_data = {
             "name": service_name,
             "upstream": {
@@ -23,44 +33,52 @@ class ApiSixService:
                 "nodes": upstream_nodes
             }
         }
-        
-        headers = {
-            "Content-Type": "application/json",
-            "X-API-KEY": "edd1c9f034335f136f87ad84b625c8f1" 
-        }
-        
+
         try:
-            response = requests.post(f"{self.admin_url}/services", 
-                                     data=json.dumps(service_data), 
-                                     headers=headers)
-            
-            if response.status_code == 201:
-                return response.json()
-            else:
-                print(f"Échec de la création du service: {response.status_code}, {response.text}")
-                return None
-        
-        except requests.exceptions.RequestException as e:
-            print(f"Erreur lors de la requête: {e}")
+            response = self.client.new_service(service_data)
+            _logger.info(f"Service '{service_name}' successfully created: {response}")
+            return response
+        except Exception as e:
+            _logger.error(f"Error creating service '{service_name}': {e}")
             return None
-        
-    def create_route(self, route_data):
-        headers = {
-            "Content-Type": "application/json",
-            "X-API-KEY": "edd1c9f034335f136f87ad84b625c8f1" 
+
+    def create_route(self, route_id, uri, upstream_id, methods=None, plugins=None):
+        """Create an APISIX route."""
+        if methods is None:
+            methods = ["GET", "POST"]
+        if plugins is None:
+            plugins = {}
+
+        route_data = {
+            "uri": uri,
+            "methods": methods,
+            "upstream_id": upstream_id,
+            "plugins": plugins
         }
-        
+
         try:
-            response = requests.post(f"{self.admin_url}/routes", 
-                                     data=json.dumps(route_data), 
-                                     headers=headers)
-            
-            if response.status_code == 201:
-                return response.json()
-            else:
-                print(f"Échec de la création de la route: {response.status_code}, {response.text}")
-                return None
-        
-        except requests.exceptions.RequestException as e:
-            print(f"Erreur lors de la requête: {e}")
+            response = self.client.new_route(route_data)
+            _logger.info(f"Route '{route_id}' successfully created: {response}")
+            return response
+        except Exception as e:
+            _logger.error(f"Error creating route '{route_id}': {e}")
+            return None
+
+    def create_consumer(self, username, api_key):
+        """Creates an APISIX consumer."""
+        consumer_data = {
+            "username": username,
+            "plugins": {
+                "key-auth": {
+                    "key": api_key
+                }
+            }
+        }
+
+        try:
+            response = self.client.new_consumer(consumer_data)
+            _logger.info(f"Consumer '{username}' created successfully: {response}")
+            return response
+        except Exception as e:
+            _logger.error(f"Error creating consumer '{username}': {e}")
             return None

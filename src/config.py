@@ -81,3 +81,6 @@ LANGUAGES = {
     "en": {"flag": "gb", "name": "English"},
     "fr": {"flag": "fr", "name": "French"},
 }
+
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
+APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")  

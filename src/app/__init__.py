@@ -28,7 +28,7 @@ appbuilder = AppBuilder(app, db.session)
 if __name__ == "__main__":
     app.run(debug=True)
 
-# from . import models
+from . import models
 from . import views
 from . import controllers
 from . import services
