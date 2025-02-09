@@ -5,6 +5,7 @@ from typing import Optional
 from flask_jwt_extended import create_access_token
 from pydantic import ConfigDict, ValidationError
 from pydantic import BaseModel
+from datetime import timedelta
 import pytest
 
 cart_data = {"name": "Test Cart", "status": "draft"}
@@ -129,3 +130,48 @@ def test_delete_cart(client, test_user, app, appbuilder):
         )
 
         assert response.status_code == 200
+
+def test_authenticated_access(client, test_user, app, appbuilder):
+    """Test access with valid authentication token"""
+   
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
+    
+    with app.app_context():
+        from app.controllers.cart_controllers import CartModelApi
+        appbuilder.add_api(CartModelApi)
+
+        response = client.get(
+            "/api/v1/cart/",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+       
+        assert response.status_code == 200
+
+def test_unauthenticated_access(client, app, appbuilder):
+    """Test access without authentication token"""
+    with app.app_context():
+        from app.controllers.cart_controllers import CartModelApi
+        appbuilder.add_api(CartModelApi)
+
+     
+        response = client.get(
+            "/api/v1/cart/",
+            headers={}, 
+        )
+
+        assert response.status_code == 401
+
+def test_token_expired(client, app, test_user,appbuilder):
+    """Test access with expired token"""
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
+    with app.app_context():
+        from app.controllers.cart_controllers import CartModelApi
+        appbuilder.add_api(CartModelApi)
+        response = client.get(
+            "/api/v1/cart/",
+            headers={"Authorization": f"Bearer {expired_access_token}"},
+        )
+        assert response.status_code == 401
+
+
