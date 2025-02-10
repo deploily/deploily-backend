@@ -60,6 +60,21 @@ AUTH_ROLE_PUBLIC = "Public"
 # The default user self registration role
 # AUTH_USER_REGISTRATION_ROLE = "Public"
 
+# The default user self registration role
+AUTH_USER_REGISTRATION_ROLE = "User"
+
+FAB_ROLES = {
+    "User": [
+ 
+        ["CartModelApi", "can_get"],
+        ["CartModelApi", "can_put"],
+        ["CartModelApi", "can_post"],
+        ["CartModelApi", "can_delete"],
+    ]
+    
+}
+
+
 # When using LDAP Auth, setup the ldap server
 # AUTH_LDAP_SERVER = "ldap://ldapserver.new"
 
