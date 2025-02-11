@@ -73,6 +73,9 @@ FAB_ROLES = {
     ]
     
 }
+IMG_UPLOAD_URL = "/static/uploads/"
+IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
+
 
 
 # When using LDAP Auth, setup the ldap server

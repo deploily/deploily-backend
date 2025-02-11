@@ -1,2 +1,3 @@
 from .cart_models import Cart
-from .a6service_models import A6Service
+from .service_models import Service
+from .service_parameters_models import ServiceParameters

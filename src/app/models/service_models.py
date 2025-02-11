@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
-# TODO 4
-
-# TODO Add model
-# TODO Add Field upstream_id, ....
-
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
 from sqlalchemy import Column
-from sqlalchemy import Enum
-from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import Float
 from sqlalchemy.orm import relationship
 
-class A6Service(Model):
+class Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    upstream_type = Column(String(255))  
-    upstream_nodes = Column(String(255))
-    cart_id = Column(Integer, ForeignKey("cart.id"))
-    cart = relationship("Cart",cascade="all,delete",)
-
+    description = Column(String(255), nullable=False)
+    documentation_url = Column(String(255), nullable=False)
+    unit_price = Column(Float)
+    service_url=Column(String(255), nullable=False)
+    image_service = Column(ImageColumn)
+    parameters = relationship("ServiceParameters")
+    
     def __repr__(self):
             return self.name
