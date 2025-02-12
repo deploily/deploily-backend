@@ -76,7 +76,8 @@ class ApiSixService:
         }
 
         try:
-            response = self.client.new_consumer(consumer_data)
+            response = self.client.new_consumer(username=username, plugins={"key-auth": {"key": api_key}})
+
             _logger.info(f"Consumer '{username}' created successfully: {response}")
             return response
         except Exception as e:
