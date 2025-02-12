@@ -98,3 +98,15 @@ curl -X POST "http://127.0.0.1:9180/apisix/admin/routes" \
   }
 }'
 ```
+
+## Get consumers list 
+
+```bash
+curl -X GET http://127.0.0.1:9180/apisix/admin/consumers -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```
+
+## Get consumer details 
+
+```bash
+curl -X GET http://127.0.0.1:9180/apisix/admin/consumers/cart_2_user -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```

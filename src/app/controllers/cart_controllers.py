@@ -24,19 +24,21 @@ class CartModelApi(ModelRestApi):
     edit_exclude_columns = _exclude_columns
 
     def post_update(self, cart: Cart) -> None:
+
+        _logger.info(f"post_update appelé pour le cart ID {cart.id} avec status {cart.status}")
+
         """
         Called after updating a cart to change its status and create a consumer
         """
-        if cart.status == "done":
+        if cart.status == "confirm":
             
             consumer_username = f"cart_{cart.id}_user"
-            
-       
             api_key = secrets.token_hex(16)  
             
-            
             apisix_service = ApiSixService()  
-            response = apisix_service.create_consumer(consumer_username, api_key)
+            response = apisix_service.create_consumer(username=consumer_username, api_key=api_key)
+
+
             
             if response:
                 _logger.info(f"Consumer créé avec succès : {consumer_username}")

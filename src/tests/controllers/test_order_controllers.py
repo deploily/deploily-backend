@@ -1,40 +1,51 @@
-# -*- coding: utf-8 -*-
-
 import json
-from typing import Optional
-from flask_jwt_extended import create_access_token
-from pydantic import ConfigDict, ValidationError
-from pydantic import BaseModel
+from typing import Optional, Union
 from datetime import timedelta
+from flask_jwt_extended import create_access_token
+from pydantic import ConfigDict, ValidationError, BaseModel
 import pytest
+import logging
 
-cart_data = {"name": "Test Cart", "status": "draft"}
-updated_data = {"name": "Updated Cart"}
-cart_data_response = {"id": "1", "result": cart_data}
+logging.basicConfig(level=logging.DEBUG) 
 
+cart_data = {
+    "status": "draft",
+    "user": 1,
+    "total_amount": 85.32
+}
+
+updated_data = {"total_amount": 85.32}
+
+class UserResponse(BaseModel):
+    id: int
+    username: Optional[str] = None
+    email: Optional[str] = None
 
 class Cart(BaseModel):
     model_config = ConfigDict(strict=True)
-    name: str
     status: Optional[str] = None
-    service: list
-
+    total_amount: Optional[float] = None  
+    user: Union[int, UserResponse]
+    
 class CartListResponse(BaseModel):
     count: int
     result: list[Cart]
 
-class CartReponse(BaseModel):
+class CartResponse(BaseModel):
     model_config = ConfigDict(strict=True)
     id: Optional[int] = None
     result: Cart
 
-
 def test_create_cart(client, test_user, app, appbuilder):
     """Test POST cart"""
-
     access_token = create_access_token(
         test_user.id, expires_delta=False, fresh=True
     )
+
+    cart_data["user"] = test_user.id  
+
+    print("Cart Data Sent:", json.dumps(cart_data, indent=2)) 
+
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
 
@@ -42,50 +53,50 @@ def test_create_cart(client, test_user, app, appbuilder):
 
         response = client.post(
             "/api/v1/cart/",
-            data=json.dumps(cart_data),
-            content_type="application/json",
+            json=cart_data,
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        assert response.status_code == 201
-        try:
-            # Auto validation & deserialization by pyndatic
-            CartReponse.model_validate_json(response.text)
-        except ValidationError as e:
-            pytest.fail(f"ValidationError occurred on POST Cart : {e}")
 
+        assert response.status_code == 201, f"Unexpected status code: {response.status_code}"
+
+        try:
+            CartResponse.model_validate_json(response.text)
+        except ValidationError as e:
+            pytest.fail(f"ValidationError occurred on POST Cart: {e}")
 
 def test_update_cart(client, test_user, app, appbuilder):
     """Test PUT cart"""
-
     access_token = create_access_token(
         test_user.id, expires_delta=False, fresh=True
     )
+
+    cart_id = 1  
+
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
 
         appbuilder.add_api(CartModelApi)
 
         response = client.put(
-            f"/api/v1/cart/{1}",
-            data=json.dumps(updated_data),
-            content_type="application/json",
+            f"/api/v1/cart/{cart_id}",
+            json=updated_data,
             headers={"Authorization": f"Bearer {access_token}"},
         )
 
-        assert response.status_code == 200
-        try:
-            # Auto validation & deserialization by pyndatic
-            updated_cart = CartReponse.model_validate_json(response.text)
-        except ValidationError as e:
-            pytest.fail(f"ValidationError occurred on PUT Cart : {e}")
+        print("Response Status Code:", response.status_code)
+        print("Response Body:", response.text)
 
-      
-        assert updated_cart.result.name == updated_data["name"]
-       
+        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+        try:
+            updated_cart = CartResponse.model_validate_json(response.text)
+        except ValidationError as e:
+            pytest.fail(f"ValidationError occurred on PUT Cart: {e}")
+
+        assert updated_cart.result.total_amount == updated_data["total_amount"]
 
 def test_get_cart(client, test_user, app, appbuilder):
     """Test GET cart"""
-
     access_token = create_access_token(
         test_user.id, expires_delta=False, fresh=True
     )
@@ -101,14 +112,13 @@ def test_get_cart(client, test_user, app, appbuilder):
                 "Authorization": f"Bearer {access_token}",
             },
         )
-       
 
         assert response.status_code == 200
         try:
-            # Auto validation & deserialization by pyndatic
             CartListResponse.model_validate_json(response.text)
         except ValidationError as e:
-            pytest.fail(f"ValidationError occurred on POST Cart : {e}")
+            pytest.fail(f"ValidationError occurred on GET Cart: {e}")
+
 
 
 
@@ -173,5 +183,8 @@ def test_token_expired(client, app, test_user,appbuilder):
             headers={"Authorization": f"Bearer {expired_access_token}"},
         )
         assert response.status_code == 401
+
+
+
 
 
