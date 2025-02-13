@@ -11,14 +11,14 @@ from app.models.cart_models import Cart
 class CartModelView(ModelView):
     route_base = "/admin/cart"
     datamodel = SQLAInterface(Cart)
-    list_columns = ["id", "status","total_amount"]
-    base_cart = ("id", "desc")
+    list_columns = ["id", "status","total_amount","cart_lines"]
+    base_order = ("id", "desc")
 
 
 db.create_all()
 appbuilder.add_view(
     CartModelView,
-    "cart",
+    "Cart",
     icon="fa-solid fa-sliders",
     category="Cart",
 )

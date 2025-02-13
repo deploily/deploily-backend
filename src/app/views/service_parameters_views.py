@@ -4,22 +4,20 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from app import appbuilder
 from app import db
-from app.models.service_parameters_models import ServiceParameters
+from app.models.parameters_models import Parameter
 
-class ServiceParametersModelView(ModelView):
-    route_base = "/admin/ServiceParameters"
-    datamodel = SQLAInterface(ServiceParameters)
-    list_columns = ["id", "name", "service"]
+
+class ParametersModelView(ModelView):
+    route_base = "/admin/parameters"
+    datamodel = SQLAInterface(Parameter)
+    list_columns = ["id", "name","type", "service"]
     base_order = ("id", "desc")
 
-    add_columns = ["name", "service"]
-    edit_columns = ["name", "service"]
-    show_columns = ["id", "name", "service"]
 
 db.create_all()
 appbuilder.add_view(
-    ServiceParametersModelView,
-    "ServiceParameters",
+    ParametersModelView,
+    "Parameters",
     icon="fa-solid fa-cogs",
     category="Service",
 )
