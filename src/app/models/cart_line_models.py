@@ -27,4 +27,4 @@ class CartLine(Model, AuditMixin):
     parameters_values = relationship("ParameterValue")
 
     def __repr__(self):
-        return self.amount
+        return str(self.id)
