@@ -15,7 +15,9 @@ _service_value_display_columns = [
     "documentation_url",
     "unit_price",
     "service_url",
-    "image_service"
+    "image_service",
+    "short_description",
+    "specifications"
 ]
 
 

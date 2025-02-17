@@ -9,13 +9,8 @@ from app.models.service_models import Service
 class ServiceModelView(ModelView):
     route_base = "/admin/Service"
     datamodel = SQLAInterface(Service)
-    list_columns = ["id", "name","parameters","description","documentation_url","unit_price","service_url","image_service"]
-    base_order = ("id", "desc")
-    
-    add_columns = ["name","parameters","description","documentation_url","unit_price","service_url","image_service"]
-    edit_columns = ["name","parameters","description","documentation_url","unit_price","service_url","image_service"]
-    show_columns = ["id","parameters","name","description","documentation_url","unit_price","service_url","image_service"]
-    
+    list_columns = ["id", "name", "parameters", "description", "short_description", "specifications",
+                    "documentation_url", "unit_price", "service_url", "image_service"]
 
 db.create_all()
 appbuilder.add_view(
