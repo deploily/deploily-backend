@@ -17,4 +17,4 @@ class ParameterValue(Model, AuditMixin):
     cart_line = relationship("CartLine", cascade="all,delete")
 
     def __repr__(self):
-        return self.amount
+        return str(self.id)
