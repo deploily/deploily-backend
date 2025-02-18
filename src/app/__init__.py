@@ -1,11 +1,19 @@
 from flask import Flask
 from flask_appbuilder import AppBuilder, SQLA
+from flask_cors import CORS
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
 
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+
+
+
+
 
 convention = {
     "ix": "ix_%(column_0_label)s",
