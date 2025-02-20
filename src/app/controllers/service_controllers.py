@@ -17,7 +17,8 @@ _service_value_display_columns = [
     "service_url",
     "image_service",
     "short_description",
-    "specifications"
+    "specifications",
+    "cart_lines"
 ]
 
 

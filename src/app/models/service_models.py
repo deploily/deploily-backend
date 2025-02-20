@@ -13,12 +13,13 @@ class Service(Model):
     name = Column(String(255), nullable=False)
     short_description = Column(String(255))
     description = Column(String(255), nullable=False)
-    specifications=Column(String(255))
+    specifications = Column(String(255))
     documentation_url = Column(String(255), nullable=False)
     unit_price = Column(Float)
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
+    cart_lines = relationship("CartLine")
 
     def __repr__(self):
         return self.name

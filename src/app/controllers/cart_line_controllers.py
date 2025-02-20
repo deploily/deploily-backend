@@ -16,7 +16,9 @@ _cart_line_display_columns = [
     "service_id",
     "amount",
     "duration_month",
-    "start_date"
+    "start_date",
+    "service",
+    "cart"
 
 ]
 
