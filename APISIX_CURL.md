@@ -111,76 +111,76 @@ curl -X GET http://127.0.0.1:9180/apisix/admin/consumers -H "X-API-KEY: edd1c9f0
 curl -X GET http://127.0.0.1:9180/apisix/admin/consumers/cart_2_user -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
 ```
 
-## Create Photon API
+## Define Upstream
 
 ```bash
-curl -X POST "http://127.0.0.1:9180/apisix/admin/services" \
+curl -X PUT http://127.0.0.1:9180/apisix/admin/upstreams/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "photon-service",
-  "upstream": {
-    "type": "roundrobin",
     "nodes": {
-      "photon.ttk-test.xyz:443": 1
+        "photon.ttk-test.xyz:443": 1
     },
-    "scheme": "https"
-  }
+    "type": "roundrobin",
+    "scheme": "https",
+    "pass_host": "rewrite",
+    "upstream_host": "photon.ttk-test.xyz"
 }'
 ```
 
-## Create ORS API
-
+## Define Upstream 
 ```bash
-curl -X POST "http://127.0.0.1:9180/apisix/admin/services" \
+curl -X PUT http://127.0.0.1:9180/apisix/admin/services/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "nominatim-service",
-  "upstream": {
-    "type": "roundrobin",
-    "nodes": {
-      "nominatim.ttk-test.xyz:443": 1
-    },
-    "scheme": "https"
-  }
+    "name": "photon-service",
+    "upstream_id": "1",
+    "plugins": {
+        "proxy-rewrite": {
+            "uri": "/api"
+        },
+        "key-auth": {}
+    }
 }'
-
 ```
-
-## Create Nominatim API
-
+##  Define Route
 ```bash
-curl -X POST "http://127.0.0.1:9180/apisix/admin/services" \
+curl -X PUT http://127.0.0.1:9180/apisix/admin/routes/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "nominatim-service",
-  "upstream": {
-    "type": "roundrobin",
-    "nodes": {
-      "nominatim.ttk-test.xyz:443": 1
-    },
-    "scheme": "https"
-  }
+    "name": "photon-route",
+    "uri": "/photon*",
+    "methods": ["GET"],
+    "service_id": "1",
+    "status": 1
 }'
 ```
-
-## Create Wilaya API
+## Define Consumer
 
 ```bash
-curl -X POST "http://127.0.0.1:9180/apisix/admin/services" \
+curl -X PUT http://127.0.0.1:9180/apisix/admin/consumers/photon-consumer \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
-  "name": "wilaya-service",
-  "upstream": {
-    "type": "roundrobin",
-    "nodes": {
-      "api-wilaya.ttk-test.xyz:443": 1
-    },
-    "scheme": "https"
-  }
+    "username": "photon-consumer",
+    "plugins": {
+        "key-auth": {
+            "key": "20852ff7ea7ff2540af01944f4fb26ee"
+        }
+    }
 }'
+```
+
+## Configuration Test
+
+```bash
+curl -H "apikey: 1ab4b95efcd1d0f70b7cc22a22a4bbbe" "http://127.0.0.1:9080/photon?q=berlin"
 
 ```
+## Missing API key found in request
+curl "http://127.0.0.1:9080/photon?q=berlin"
+
+## Invalid API key in request
+curl -H "apikey: wrongkey123" "http://127.0.0.1:9080/photon?q=berlin"
