@@ -32,3 +32,13 @@ Test All
 ```bash
 pytest --disable-warnings -s
 ```
+## Get Keycloack login token 
+
+Realm settings -> Token -> Default Signature Algorithm = HS256
+
+```bash
+curl -d 'client_id=deploily' -d 'username=admin' -d 'password=admin' -d 'grant_type=password' -d 'scope=email profile roles'  -d 'client_secret=ZqSIfjStWP3Ztzq5cmcaP6lLGg9kUyMs' 'https://auth.deploily.cloud/realms/myrealm/protocol/openid-connect/token'
+```
+
+
+To decode the JWT Token use [https://jwt.io/](https://jwt.io/)

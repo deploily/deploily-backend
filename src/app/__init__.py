@@ -3,16 +3,14 @@ from flask_appbuilder import AppBuilder, SQLA
 from flask_cors import CORS
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
+from app.CustomSsoSecurityManager import CustomSsoSecurityManager
 
 
 app = Flask(__name__)
 app.config.from_object('config')
 
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-
-
-
-
+CORS(app, resources={r"/*": {"origins": "http://localhost:3001"}})
 
 
 convention = {
@@ -28,7 +26,9 @@ db = SQLA(app, metadata=metadata)
 
 migrate = Migrate(app, db, render_as_batch=True)
 
-appbuilder = AppBuilder(app, db.session)
+# appbuilder = AppBuilder(app, db.session)
+appbuilder = AppBuilder(
+    app, db.session, security_manager_class=CustomSsoSecurityManager)
 
 
 # Register views
@@ -36,8 +36,7 @@ appbuilder = AppBuilder(app, db.session)
 if __name__ == "__main__":
     app.run(debug=True)
 
-from . import models
-from . import views
-from . import controllers
 from . import services
-
+from . import controllers
+from . import views
+from . import models

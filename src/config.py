@@ -8,8 +8,57 @@ from flask_appbuilder.security.manager import (
     AUTH_OAUTH,
 )
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+import json
+import urllib.request
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
+REALM_NAME = os.getenv("REALM_NAME", "myrealm")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET", "ZqSIfjStWP3Ztzq5cmcaP6lLGg9kUyMs")
+CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
+LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+)
+OAUTH_PROVIDERS = [
+    {
+        "name": "keycloak",
+        "token_key": "access_token",
+        "icon": "fa-address-card",
+        "remote_app": {
+            "jwks_uri": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/certs",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "api_base_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect",
+            "access_token_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token",
+            "authorize_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/auth",
+            "client_kwargs": {"scope": "openid email profile roles"},
+        },
+    }
+]
+
+
+public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
+
+JWT_ALGORITHM = "RS256"
+
+def fetch_keycloak_rs256_public_cert():
+    with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
+        public_key_url_response = json.load(response)
+    public_key = public_key_url_response["public_key"]
+    if public_key:
+        pem_lines = [
+            "-----BEGIN PUBLIC KEY-----",
+            public_key,
+            "-----END PUBLIC KEY-----",
+        ]
+        cert_pem = "\n".join(pem_lines)
+    else:
+        cert_pem = "No cert found"
+    return cert_pem
+
+
+JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 
 # Your App secret key
 SECRET_KEY = "abcdefghijklmnopqrtu"
@@ -46,7 +95,7 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
 # AUTH_DB : Is for database (username/password()
 # AUTH_LDAP : Is for LDAP
 # AUTH_REMOTE_USER : Is for using REMOTE_USER from web server
-AUTH_TYPE = AUTH_DB
+AUTH_TYPE = AUTH_OAUTH
 
 # Uncomment to setup Full admin role name
 # AUTH_ROLE_ADMIN = 'Admin'
@@ -61,21 +110,20 @@ AUTH_ROLE_PUBLIC = "Public"
 # AUTH_USER_REGISTRATION_ROLE = "Public"
 
 # The default user self registration role
-AUTH_USER_REGISTRATION_ROLE = "User"
+AUTH_USER_REGISTRATION_ROLE = "Admin"
 
 FAB_ROLES = {
     "User": [
- 
+
         ["CartModelApi", "can_get"],
         ["CartModelApi", "can_put"],
         ["CartModelApi", "can_post"],
         ["CartModelApi", "can_delete"],
     ]
-    
+
 }
 IMG_UPLOAD_URL = "/static/uploads/"
 IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
-
 
 
 # When using LDAP Auth, setup the ldap server
@@ -98,7 +146,15 @@ BABEL_DEFAULT_FOLDER = "translations"
 LANGUAGES = {
     "en": {"flag": "gb", "name": "English"},
     "fr": {"flag": "fr", "name": "French"},
+    "pt": {"flag": "pt", "name": "Portuguese"},
+    "pt_BR": {"flag": "br", "name": "Pt Brazil"},
+    "es": {"flag": "es", "name": "Spanish"},
+    "de": {"flag": "de", "name": "German"},
+    "zh": {"flag": "cn", "name": "Chinese"},
+    "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
-APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")  
+APISIX_ADMIN_URL = os.getenv(
+    "APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
+APISIX_API_KEY = os.getenv(
+    "APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
