@@ -125,6 +125,7 @@ celerybeat.pid
 .env
 .venv
 env/
+app.db
 venv/
 ENV/
 env.bak/
@@ -161,4 +162,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-supa/
+test_deploily.db
