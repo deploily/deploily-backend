@@ -1,9 +1,7 @@
 import logging
 from app import appbuilder
 from .A6Client import A6Client
-# TODO  6
-# TODO move URLS to .env -> config -> get from config[]
-# TODO Replace requets with A6Client 
+
 _logger = logging.getLogger(__name__)
 
 class ApiSixService:

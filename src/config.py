@@ -61,7 +61,7 @@ def fetch_keycloak_rs256_public_cert():
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 
 # Your App secret key
-SECRET_KEY = "abcdefghijklmnopqrtu"
+SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
@@ -110,17 +110,16 @@ AUTH_ROLE_PUBLIC = "Public"
 # AUTH_USER_REGISTRATION_ROLE = "Public"
 
 # The default user self registration role
-AUTH_USER_REGISTRATION_ROLE = "Admin"
+AUTH_USER_REGISTRATION_ROLE = "User"
 
+# TODO add more all the needed access rights 
 FAB_ROLES = {
     "User": [
-
         ["CartModelApi", "can_get"],
         ["CartModelApi", "can_put"],
         ["CartModelApi", "can_post"],
         ["CartModelApi", "can_delete"],
     ]
-
 }
 IMG_UPLOAD_URL = "/static/uploads/"
 IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
