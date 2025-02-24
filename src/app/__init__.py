@@ -7,10 +7,17 @@ from app.custom_sso_security_manager import CustomSsoSecurityManager
 
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object("config")
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
-CORS(app, resources={r"/*": {"origins": "http://localhost:3001"}})
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "[“http://localhost:3000”, “https://console.deploily.cloud“]"
+        }
+    },
+    origins=["http://localhost:3000", "https://console.deploily.cloud"],
+)
 
 
 convention = {
@@ -28,7 +35,8 @@ migrate = Migrate(app, db, render_as_batch=True)
 
 # appbuilder = AppBuilder(app, db.session)
 appbuilder = AppBuilder(
-    app, db.session, security_manager_class=CustomSsoSecurityManager)
+    app, db.session, security_manager_class=CustomSsoSecurityManager
+)
 
 
 # Register views
