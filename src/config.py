@@ -114,22 +114,48 @@ AUTH_USER_REGISTRATION = True
 AUTH_USER_REGISTRATION_ROLE = "User"
 
 FAB_ROLES = {
-    "Admin": [[".*", "can_list"],
-             [".*", "can_show"],
-             [".*", "menu_access"],
-             [".*", "can_get"],
-             [".*", "can_info"],
-             [".*", "can_put"],
-             [".*", "can_patch"],
-             [".*", "can_post"],
-             [".*", "can_delete"],
+    "User": [["CartLineModelApi", "can_get"],
+             ["CartLineModelApi", "can_put"],
+             ["CartLineModelApi", "can_post"],
+             ["CartLineModelApi", "can_delete"],
+             ["ParametersModelApi", "can_get"],
+             ["ParametersModelApi", "can_put"],
+             ["ParametersModelApi", "can_post"],
+             ["ParametersModelApi", "can_delete"], [
+                 "ServiceModelApi", "can_get"],
+             ["ServiceModelApi", "can_put"],
+             ["ServiceModelApi", "can_post"],
+             ["ServiceModelApi", "can_delete"],
+             ["ConsumerApi", "can_post"],
+             ["CartApi", "can_post"],
              ],
-    "User": [
-        ["CartModelApi", "can_get"],
-        ["CartModelApi", "can_put"],
-        ["CartModelApi", "can_post"],
-        ["CartModelApi", "can_delete"],
-    ]
+
+    # "User": [
+    #     [".*", "can_list"],
+    #     [".*", "can_show"],
+    #     [".*", "menu_access"],
+    #     [".*", "can_get"],
+    #     [".*", "can_info"],
+    #     [".*", "can_put"],
+    #     [".*", "can_patch"],
+    #     [".*", "can_post"],
+    #     [".*", "can_delete"],
+
+    # ["CartLineModelApi", "can_get"],
+    # ["CartLineModelApi", "can_put"],
+    # ["CartLineModelApi", "can_post"],
+    # ["CartLineModelApi", "can_delete"],
+    # ["ParametersModelApi", "can_get"],
+    # ["ParametersModelApi", "can_put"],
+    # ["ParametersModelApi", "can_post"],
+    # ["ParametersModelApi", "can_delete"], ["ServiceModelApi", "can_get"],
+    # ["ServiceModelApi", "can_put"],
+    # ["ServiceModelApi", "can_post"],
+    # ["ServiceModelApi", "can_delete"],
+    # ["ConsumerApi", "can_post"],
+    # ["CartApi", "can_post"],
+
+    # ]
 
 }
 
