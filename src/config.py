@@ -15,7 +15,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "ZqSIfjStWP3Ztzq5cmcaP6lLGg9kUyMs")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET", "FAeWEWMYITflz5QwuWwFsW5hsgZNbQxn")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
 LOGOUT_REDIRECT_URL = (
     f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
