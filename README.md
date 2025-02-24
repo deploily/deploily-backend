@@ -9,7 +9,7 @@ cd .devcontainer
 cp .env.example .env
 ```
 
-Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `CLIENT_SECRET`
+Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `CLIENT_SECRET` and the `APISIX_API_KEY`.
 
 ## Database Migration steps 
 
