@@ -75,10 +75,6 @@ class ConsumerApi(BaseApi):
 
             if not api_key_data:
                 raise Exception("Unexpected API response format")
-            param_value = db.session.query(ParameterValue).filter(
-                ParameterValue.cart_line_id == cart_line.id,
-                ParameterValue.created_by == user
-            ).first()
 
             if param_value:
                 param_value.value = api_key_data  

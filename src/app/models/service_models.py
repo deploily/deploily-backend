@@ -19,7 +19,7 @@ class Service(Model):
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
-    cart_lines = relationship("CartLine")
+    cart_lines = relationship("CartLine",overlaps="service")
 
     def __repr__(self):
         return self.name

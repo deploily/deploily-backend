@@ -1,25 +1,21 @@
-from datetime import timedelta
-import os
-from flask_appbuilder.security.manager import (
-    AUTH_OID,
-    AUTH_REMOTE_USER,
-    AUTH_DB,
-    AUTH_LDAP,
-    AUTH_OAUTH,
-)
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-import json
 import urllib.request
+import json
+from flask_appbuilder.security.manager import AUTH_OAUTH
+import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
+
+# TODO  add KEYCLOAK_... prefix to the variables 
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "ZqSIfjStWP3Ztzq5cmcaP6lLGg9kUyMs")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
 LOGOUT_REDIRECT_URL = (
     f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 )
+
 OAUTH_PROVIDERS = [
     {
         "name": "keycloak",
@@ -36,7 +32,6 @@ OAUTH_PROVIDERS = [
         },
     }
 ]
-
 
 public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
 
@@ -59,15 +54,14 @@ def fetch_keycloak_rs256_public_cert():
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+FAB_ADD_SECURITY_API = False
 
 # Your App secret key
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
-SQLALCHEMY_DATABASE_URI = os.getenv(
-    "SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI
-)
+SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-WTF flag for CSRF
@@ -104,7 +98,7 @@ AUTH_TYPE = AUTH_OAUTH
 AUTH_ROLE_PUBLIC = "Public"
 
 # Will allow user self registration
-# AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
 # AUTH_USER_REGISTRATION_ROLE = "Public"
@@ -112,15 +106,25 @@ AUTH_ROLE_PUBLIC = "Public"
 # The default user self registration role
 AUTH_USER_REGISTRATION_ROLE = "User"
 
-# TODO add more all the needed access rights 
 FAB_ROLES = {
     "User": [
-        ["CartModelApi", "can_get"],
-        ["CartModelApi", "can_put"],
-        ["CartModelApi", "can_post"],
-        ["CartModelApi", "can_delete"],
+        ["CartLineModelApi", "can_get"],
+        ["CartLineModelApi", "can_put"],
+        ["CartLineModelApi", "can_post"],
+        ["CartLineModelApi", "can_delete"],
+        ["ParametersModelApi", "can_get"],
+        ["ParametersModelApi", "can_put"],
+        ["ParametersModelApi", "can_post"],
+        ["ParametersModelApi", "can_delete"],
+        ["ServiceModelApi", "can_get"],
+        ["ServiceModelApi", "can_put"],
+        ["ServiceModelApi", "can_post"],
+        ["ServiceModelApi", "can_delete"],
+        ["ConsumerApi", "can_post"],
+        ["CartApi", "can_post"],
     ]
 }
+
 IMG_UPLOAD_URL = "/static/uploads/"
 IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
 
@@ -153,7 +157,5 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv(
-    "APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
-APISIX_API_KEY = os.getenv(
-    "APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
+APISIX_API_KEY = os.getenv("APISIX_API_KEY")
