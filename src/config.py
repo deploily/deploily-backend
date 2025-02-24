@@ -1,5 +1,6 @@
-from datetime import timedelta
-import os
+import urllib.request
+import json
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from flask_appbuilder.security.manager import (
     AUTH_OID,
     AUTH_REMOTE_USER,
@@ -7,24 +8,18 @@ from flask_appbuilder.security.manager import (
     AUTH_LDAP,
     AUTH_OAUTH,
 )
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-import json
-import urllib.request
+import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
-KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "https://auth.deploily.cloud/")
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "FAeWEWMYITflz5QwuWwFsW5hsgZNbQxn")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-
-AUTH_TYPE = AUTH_OAUTH
-
 LOGOUT_REDIRECT_URL = (
     f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 )
-
 OAUTH_PROVIDERS = [
     {
         "name": "keycloak",
@@ -47,6 +42,7 @@ public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
 
 JWT_ALGORITHM = "RS256"
 
+
 def fetch_keycloak_rs256_public_cert():
     with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
         public_key_url_response = json.load(response)
@@ -64,9 +60,9 @@ def fetch_keycloak_rs256_public_cert():
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
-
+FAB_ADD_SECURITY_API = False
 # Your App secret key
-SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
+SECRET_KEY = "abcdefghijklmnopqrtu"
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
@@ -109,7 +105,7 @@ AUTH_TYPE = AUTH_OAUTH
 AUTH_ROLE_PUBLIC = "Public"
 
 # Will allow user self registration
-# AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION = True
 
 # The default user self registration role
 # AUTH_USER_REGISTRATION_ROLE = "Public"
@@ -117,15 +113,26 @@ AUTH_ROLE_PUBLIC = "Public"
 # The default user self registration role
 AUTH_USER_REGISTRATION_ROLE = "User"
 
-# TODO add more all the needed access rights 
 FAB_ROLES = {
+    "Admin": [[".*", "can_list"],
+             [".*", "can_show"],
+             [".*", "menu_access"],
+             [".*", "can_get"],
+             [".*", "can_info"],
+             [".*", "can_put"],
+             [".*", "can_patch"],
+             [".*", "can_post"],
+             [".*", "can_delete"],
+             ],
     "User": [
         ["CartModelApi", "can_get"],
         ["CartModelApi", "can_put"],
         ["CartModelApi", "can_post"],
         ["CartModelApi", "can_delete"],
     ]
+
 }
+
 IMG_UPLOAD_URL = "/static/uploads/"
 IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
 
