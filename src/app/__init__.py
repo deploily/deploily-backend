@@ -3,7 +3,7 @@ from flask_appbuilder import AppBuilder, SQLA
 from flask_cors import CORS
 from sqlalchemy import MetaData
 from flask_migrate import Migrate
-from app.CustomSsoSecurityManager import CustomSsoSecurityManager
+from app.custom_sso_security_manager import CustomSsoSecurityManager
 
 
 app = Flask(__name__)
