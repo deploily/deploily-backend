@@ -2,14 +2,15 @@
 
 import logging
 import secrets
-from datetime import datetime
-from flask import request, jsonify, Response
-from flask_jwt_extended import jwt_required
+
+from flask import Response, jsonify
 from flask_appbuilder.api import BaseApi, expose, protect
-from app import db, appbuilder
-from app.utils.utils import get_user
-from app.models import CartLine, ParameterValue, Parameter, Service
+from flask_jwt_extended import jwt_required
+
+from app import appbuilder, db
+from app.models import CartLine, Parameter, ParameterValue, Service
 from app.services.apisix_service import ApiSixService
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
@@ -49,14 +50,17 @@ class ConsumerApi(BaseApi):
               description: Internal server error
         """
         user = get_user()
-        cart_line = db.session.query(CartLine).filter(
-            CartLine.id == cart_line_id and CartLine.created_by == user).first()
+        cart_line = (
+            db.session.query(CartLine)
+            .filter(CartLine.id == cart_line_id and CartLine.created_by == user)
+            .first()
+        )
         service = db.session.query(Service).filter(Service.cart_lines.any(id=cart_line_id)).first()
-        param_value = db.session.query(ParameterValue).filter(
-            ParameterValue.cart_line_id == cart_line_id,
-            ParameterValue.created_by == user
-        ).first()
-
+        param_value = (
+            db.session.query(ParameterValue)
+            .filter(ParameterValue.cart_line_id == cart_line_id, ParameterValue.created_by == user)
+            .first()
+        )
 
         if not cart_line:
             return Response("CartLine not found", status=400)
@@ -66,28 +70,30 @@ class ConsumerApi(BaseApi):
             api_key = secrets.token_hex(16)
             apisix_service = ApiSixService()
 
-            response = apisix_service.create_consumer(
-                username=consumer_username, api_key=api_key
-            )
+            response = apisix_service.create_consumer(username=consumer_username, api_key=api_key)
 
-            api_key_data = response.get("value", {}).get(
-                "plugins", {}).get("key-auth", {}).get("key")
+            api_key_data = (
+                response.get("value", {}).get("plugins", {}).get("key-auth", {}).get("key")
+            )
 
             if not api_key_data:
                 raise Exception("Unexpected API response format")
 
             if param_value:
-                param_value.value = api_key_data  
+                param_value.value = api_key_data
             else:
-                parameter = db.session.query(Parameter).filter(
-                    Parameter.type == "token" and Parameter.service_id==service.id).first()
+                parameter = (
+                    db.session.query(Parameter)
+                    .filter(Parameter.type == "token" and Parameter.service_id == service.id)
+                    .first()
+                )
                 if not parameter:
                     return Response("No valid Parameter of type 'token' found", status=400)
                 param_value = ParameterValue(
                     value=api_key_data,
                     cart_line_id=cart_line.id,
                     created_by=user,
-                    parameter_id=parameter.id
+                    parameter_id=parameter.id,
                 )
                 db.session.add(param_value)
 

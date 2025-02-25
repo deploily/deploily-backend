@@ -66,3 +66,11 @@ curl -d 'client_id=deploily' -d 'username=admin' -d 'password=admin' -d 'grant_t
 To decode the JWT Token use [https://jwt.io/](https://jwt.io/)
 
 ## Useful links
+
+
+## steps to Run pre-commit
+pre-commit install
+
+```bash
+pre-commit run --all-files
+```

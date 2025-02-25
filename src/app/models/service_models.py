@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import Float
+from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -19,7 +16,7 @@ class Service(Model):
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
-    cart_lines = relationship("CartLine",overlaps="service")
+    cart_lines = relationship("CartLine", overlaps="service")
 
     def __repr__(self):
         return self.name

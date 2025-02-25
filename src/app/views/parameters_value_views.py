@@ -3,8 +3,8 @@
 
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from app import appbuilder
-from app import db
+
+from app import appbuilder, db
 from app.models.parameters_value_models import ParameterValue
 
 

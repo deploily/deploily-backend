@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
-import pytest
-from typing import Optional
 from datetime import timedelta
-from pydantic import BaseModel, ValidationError
-from flask_jwt_extended import create_access_token
+from typing import Optional
 
+import pytest
+from flask_jwt_extended import create_access_token
+from pydantic import BaseModel, ValidationError
 
 service_data = {
     "name": "Test Service",
@@ -13,7 +13,7 @@ service_data = {
     "documentation_url": "https://example.com/docs",
     "unit_price": 99.99,
     "service_url": "https://example.com/service",
-    "parameters": [{"name": "Param1"}, {"name": "Param2"}]
+    "parameters": [{"name": "Param1"}, {"name": "Param2"}],
 }
 
 updated_service_data = {"name": "Updated Service"}
@@ -40,11 +40,11 @@ class ServiceListResponse(BaseModel):
 
 
 def test_create_service(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.post(
@@ -61,11 +61,11 @@ def test_create_service(client, test_user, app, appbuilder):
 
 
 def test_update_service(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.put(
@@ -77,8 +77,7 @@ def test_update_service(client, test_user, app, appbuilder):
 
         assert response.status_code == 200
         try:
-            updated_service = ServiceResponse.model_validate_json(
-                response.text)
+            updated_service = ServiceResponse.model_validate_json(response.text)
         except ValidationError as e:
             pytest.fail(f"ValidationError occurred on PUT Service : {e}")
 
@@ -86,11 +85,11 @@ def test_update_service(client, test_user, app, appbuilder):
 
 
 def test_get_service(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.get(
@@ -105,11 +104,11 @@ def test_get_service(client, test_user, app, appbuilder):
 
 
 def test_delete_service(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.delete(
@@ -121,11 +120,11 @@ def test_delete_service(client, test_user, app, appbuilder):
 
 
 def test_authenticated_access(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.get(
@@ -139,6 +138,7 @@ def test_authenticated_access(client, test_user, app, appbuilder):
 def test_unauthenticated_access(client, app, appbuilder):
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.get(
@@ -150,11 +150,11 @@ def test_unauthenticated_access(client, app, appbuilder):
 
 
 def test_token_expired(client, app, test_user, appbuilder):
-    expired_access_token = create_access_token(
-        test_user.id, expires_delta=timedelta(seconds=-1))
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
 
     with app.app_context():
         from app.controllers.service_controllers import ServiceModelApi
+
         appbuilder.add_api(ServiceModelApi)
 
         response = client.get(

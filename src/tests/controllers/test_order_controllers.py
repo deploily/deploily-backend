@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import json
-from typing import Optional, Union
-from datetime import timedelta
-from flask_jwt_extended import create_access_token
-from pydantic import ConfigDict, ValidationError, BaseModel
-import pytest
 import logging
+from datetime import timedelta
+from typing import Optional, Union
+
+import pytest
+from flask_jwt_extended import create_access_token
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 logging.basicConfig(level=logging.DEBUG)
 
-cart_data = {
-    "status": "draft",
-    "user": 1,
-    "total_amount": 85.32
-}
+cart_data = {"status": "draft", "user": 1, "total_amount": 85.32}
 
 updated_data = {"total_amount": 85.32}
 
@@ -45,9 +42,7 @@ class CartResponse(BaseModel):
 
 def test_create_cart(client, test_user, app, appbuilder):
     """Test POST cart"""
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     cart_data["user"] = test_user.id
 
@@ -74,9 +69,7 @@ def test_create_cart(client, test_user, app, appbuilder):
 
 def test_update_cart(client, test_user, app, appbuilder):
     """Test PUT cart"""
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     cart_id = 1
 
@@ -106,9 +99,7 @@ def test_update_cart(client, test_user, app, appbuilder):
 
 def test_get_cart(client, test_user, app, appbuilder):
     """Test GET cart"""
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
 
@@ -132,9 +123,7 @@ def test_get_cart(client, test_user, app, appbuilder):
 def test_delete_cart(client, test_user, app, appbuilder):
     """Test DELETE cart"""
 
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
 
@@ -152,11 +141,11 @@ def test_delete_cart(client, test_user, app, appbuilder):
 def test_authenticated_access(client, test_user, app, appbuilder):
     """Test access with valid authentication token"""
 
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
+
         appbuilder.add_api(CartModelApi)
 
         response = client.get(
@@ -171,6 +160,7 @@ def test_unauthenticated_access(client, app, appbuilder):
     """Test access without authentication token"""
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
+
         appbuilder.add_api(CartModelApi)
 
         response = client.get(
@@ -183,10 +173,10 @@ def test_unauthenticated_access(client, app, appbuilder):
 
 def test_token_expired(client, app, test_user, appbuilder):
     """Test access with expired token"""
-    expired_access_token = create_access_token(
-        test_user.id, expires_delta=timedelta(seconds=-1))
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
     with app.app_context():
         from app.controllers.cart_controllers import CartModelApi
+
         appbuilder.add_api(CartModelApi)
         response = client.get(
             "/api/v1/cart/",

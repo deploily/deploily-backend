@@ -1,4 +1,6 @@
-from . import test_cart_controllers
-from . import test_service_controllers
-from . import test_cart_line_controllers
-from . import test_parameter_controller
+from . import (
+    test_cart_controllers,
+    test_cart_line_controllers,
+    test_parameter_controller,
+    test_service_controllers,
+)

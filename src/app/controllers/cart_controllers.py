@@ -2,12 +2,13 @@
 
 import logging
 from datetime import datetime
-from flask import request, jsonify, Response
-from flask_jwt_extended import jwt_required
-from flask_appbuilder.api import BaseApi, expose, protect
-from app import db, appbuilder
-from app.models import Cart, CartLine, Service
 
+from flask import Response, jsonify, request
+from flask_appbuilder.api import BaseApi, expose, protect
+from flask_jwt_extended import jwt_required
+
+from app import appbuilder, db
+from app.models import Cart, CartLine, Service
 
 _logger = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ class CartApi(BaseApi):
                 amount=service.unit_price,
                 duration_month=duration_month,
                 start_date=datetime.now().replace(microsecond=0),
-                cart_id=cart.id
+                cart_id=cart.id,
             )
             db.session.add(cart_line)
 

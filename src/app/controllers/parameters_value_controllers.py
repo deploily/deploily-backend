@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 from flask_appbuilder.api import ModelRestApi
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-from app import appbuilder, db
-from app.models.parameters_value_models import ParameterValue
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+
+from app import appbuilder
+from app.models.parameters_value_models import ParameterValue
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
-_parameters_value_display_columns = [
-    "id",
-    "value",
-    "parameter_id",
-    "cart_line_id"
-]
+_parameters_value_display_columns = ["id", "value", "parameter_id", "cart_line_id"]
 
 
 class ParameterValueModelApi(ModelRestApi):

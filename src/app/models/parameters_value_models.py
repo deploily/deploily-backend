@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy import Integer
 from flask_appbuilder.models.mixins import AuditMixin
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class ParameterValue(Model, AuditMixin):

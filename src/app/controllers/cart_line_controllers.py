@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 from flask_appbuilder.api import ModelRestApi
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-from app import appbuilder, db
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
-from app.utils.utils import get_user
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+
+from app import appbuilder
 from app.models.cart_line_models import CartLine
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
@@ -18,8 +20,7 @@ _cart_line_display_columns = [
     "duration_month",
     "start_date",
     "service",
-    "cart"
-
+    "cart",
 ]
 
 

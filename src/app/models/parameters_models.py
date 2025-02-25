@@ -1,9 +1,5 @@
 from flask_appbuilder import Model
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Enum
-from sqlalchemy import Integer
-from sqlalchemy import String
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-import pytest
+from datetime import datetime, timedelta
 from typing import Optional
-from datetime import timedelta, datetime
-from pydantic import BaseModel, ValidationError
-from flask_jwt_extended import create_access_token
 
+import pytest
+from flask_jwt_extended import create_access_token
+from pydantic import BaseModel, ValidationError
 
 cart_line_data = {
     "amount": 150.0,
@@ -37,11 +37,11 @@ class CartLineListResponse(BaseModel):
 
 
 def test_create_cart_line(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.post(
@@ -59,11 +59,11 @@ def test_create_cart_line(client, test_user, app, appbuilder):
 
 
 def test_update_cart_line(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.put(
@@ -75,8 +75,7 @@ def test_update_cart_line(client, test_user, app, appbuilder):
 
         assert response.status_code == 200
         try:
-            updated_cart_line = CartLineResponse.model_validate_json(
-                response.text)
+            updated_cart_line = CartLineResponse.model_validate_json(response.text)
         except ValidationError as e:
             pytest.fail(f"ValidationError occurred on PUT CartLine: {e}")
 
@@ -84,11 +83,11 @@ def test_update_cart_line(client, test_user, app, appbuilder):
 
 
 def test_get_cart_line(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.get(
@@ -103,11 +102,11 @@ def test_get_cart_line(client, test_user, app, appbuilder):
 
 
 def test_delete_cart_line(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.delete(
@@ -119,11 +118,11 @@ def test_delete_cart_line(client, test_user, app, appbuilder):
 
 
 def test_authenticated_access(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.get(
@@ -137,6 +136,7 @@ def test_authenticated_access(client, test_user, app, appbuilder):
 def test_unauthenticated_access(client, app, appbuilder):
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.get(
@@ -148,11 +148,11 @@ def test_unauthenticated_access(client, app, appbuilder):
 
 
 def test_token_expired(client, app, test_user, appbuilder):
-    expired_access_token = create_access_token(
-        test_user.id, expires_delta=timedelta(seconds=-1))
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
 
     with app.app_context():
         from app.controllers.cart_line_controllers import CartLineModelApi
+
         appbuilder.add_api(CartLineModelApi)
 
         response = client.get(
