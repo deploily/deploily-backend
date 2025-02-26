@@ -12,7 +12,14 @@ from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
-_parameters_value_display_columns = ["id", "value", "parameter_id", "cart_line_id"]
+_parameters_value_display_columns = [
+    "id",
+    "name",
+    "value",
+    "parameter_id",
+    "parameter",
+    "cart_line_id",
+]
 
 
 class ParameterValueModelApi(ModelRestApi):
