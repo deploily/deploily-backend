@@ -6,6 +6,7 @@ from . import (
     parameters_value_views,
     service_parameters_views,
     service_views,
+    support_ticket_views,
 )
 
 appbuilder.add_link(

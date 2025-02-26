@@ -3,3 +3,4 @@ from .cart_models import Cart
 from .parameters_models import Parameter
 from .parameters_value_models import ParameterValue
 from .service_models import Service
+from .support_ticket_models import SupportTicket
