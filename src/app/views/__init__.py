@@ -7,6 +7,10 @@ from . import (
     service_parameters_views,
     service_views,
     support_ticket_views,
+    support_ticket_response_views,
+    user_views,
+    my_favorites_views,
+    contact_us
 )
 
 appbuilder.add_link(
