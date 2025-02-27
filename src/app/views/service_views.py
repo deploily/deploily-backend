@@ -21,6 +21,7 @@ class ServiceModelView(ModelView):
         "service_url",
         "image_service",
         "cart_lines",
+        "is_favorite",
     ]
 
 
