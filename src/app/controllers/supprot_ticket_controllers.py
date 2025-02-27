@@ -18,8 +18,10 @@ _support_ticket_display_columns = [
     "status",
     "description",
     "image",
+    "cart_line_id",
     "cart_line",
     "created_on",
+    "support_ticket_responses"
 ]
 
 

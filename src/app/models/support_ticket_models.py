@@ -14,6 +14,7 @@ class SupportTicket(Model, AuditMixin):
     status = Column(Enum("open", "closed", name="status"))
     cart_line_id = Column(Integer, ForeignKey("cart_line.id"))
     cart_line = relationship("CartLine", cascade="all,delete")
+    support_ticket_responses=relationship("SupportTicketResponse")
 
     def __repr__(self):
-        return str(self.id)
+        return f"{self.title}"
