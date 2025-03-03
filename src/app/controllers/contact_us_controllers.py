@@ -16,7 +16,7 @@ class ContactUSModelApi(ModelRestApi):
     resource_name = "ContactUS"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ContactUs)
-    add_columns = _contact_us_display_columns
+    add_columns = ["id", "name", "email", "message"]
     list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
     _exclude_columns = [
