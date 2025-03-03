@@ -1,8 +1,11 @@
 import logging
+
 from app import appbuilder
+
 from .A6Client import A6Client
 
 _logger = logging.getLogger(__name__)
+
 
 class ApiSixService:
     def __init__(self):
@@ -11,10 +14,10 @@ class ApiSixService:
 
         if not self.admin_url or not isinstance(self.admin_url, str):
             raise ValueError("APISIX URL is missing or invalid.")
-        
+
         if not self.api_key or not isinstance(self.api_key, str):
             raise ValueError("APISIX API key is missing or invalid.")
-        
+
         try:
             self.client = A6Client(self.admin_url, self.api_key)
             _logger.info("APISIX client initialized successfully.")
@@ -26,10 +29,7 @@ class ApiSixService:
         """Create an APISIX service."""
         service_data = {
             "name": service_name,
-            "upstream": {
-                "type": "roundrobin",
-                "nodes": upstream_nodes
-            }
+            "upstream": {"type": "roundrobin", "nodes": upstream_nodes},
         }
 
         try:
@@ -51,7 +51,7 @@ class ApiSixService:
             "uri": uri,
             "methods": methods,
             "upstream_id": upstream_id,
-            "plugins": plugins
+            "plugins": plugins,
         }
 
         try:
@@ -64,17 +64,12 @@ class ApiSixService:
 
     def create_consumer(self, username, api_key):
         """Creates an APISIX consumer."""
-        consumer_data = {
-            "username": username,
-            "plugins": {
-                "key-auth": {
-                    "key": api_key
-                }
-            }
-        }
+        consumer_data = {"username": username, "plugins": {"key-auth": {"key": api_key}}}
 
         try:
-            response = self.client.new_consumer(username=username, plugins={"key-auth": {"key": api_key}})
+            response = self.client.new_consumer(
+                username=username, plugins={"key-auth": {"key": api_key}}
+            )
 
             _logger.info(f"Consumer '{username}' created successfully: {response}")
             return response

@@ -7,35 +7,37 @@ from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
-from app.models.parameters_value_models import ParameterValue
+from app.models.support_ticket_models import SupportTicket
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
-_parameters_value_display_columns = [
+_support_ticket_display_columns = [
     "id",
-    "name",
-    "value",
-    "parameter_id",
-    "parameter",
+    "title",
+    "status",
+    "description",
+    "image",
     "cart_line_id",
+    "cart_line",
+    "created_on",
+    "support_ticket_responses"
 ]
 
 
-class ParameterValueModelApi(ModelRestApi):
-    resource_name = "ParameterValue"
+class SupportTicketModelApi(ModelRestApi):
+    resource_name = "SupportTicket"
     base_order = ("id", "desc")
-    datamodel = SQLAInterface(ParameterValue)
+    datamodel = SQLAInterface(SupportTicket)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    add_columns = _parameters_value_display_columns
-    list_columns = _parameters_value_display_columns
-    edit_columns = _parameters_value_display_columns
+    add_columns = _support_ticket_display_columns
+    list_columns = _support_ticket_display_columns
+    edit_columns = _support_ticket_display_columns
     _exclude_columns = [
-        "created_on",
         "changed_on",
         "created_by",
         "changed_by",
     ]
 
 
-appbuilder.add_api(ParameterValueModelApi)
+appbuilder.add_api(SupportTicketModelApi)

@@ -17,7 +17,7 @@ curl -X POST "http://127.0.0.1:9180/apisix/admin/services" \
 ```
 ## Create route
 ```bash
-curl -X POST "http://127.0.0.1:9180/apisix/admin/routes/1" \
+curl -X POST "admin-api.deploily.cloud/routes/1" \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
@@ -114,7 +114,7 @@ curl -X GET http://127.0.0.1:9180/apisix/admin/consumers/cart_2_user -H "X-API-K
 ## Define Upstream
 
 ```bash
-curl -X PUT http://127.0.0.1:9180/apisix/admin/upstreams/1 \
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
@@ -126,11 +126,12 @@ curl -X PUT http://127.0.0.1:9180/apisix/admin/upstreams/1 \
     "pass_host": "rewrite",
     "upstream_host": "photon.ttk-test.xyz"
 }'
+
 ```
 
 ## Define Upstream 
 ```bash
-curl -X PUT http://127.0.0.1:9180/apisix/admin/services/1 \
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
@@ -146,7 +147,7 @@ curl -X PUT http://127.0.0.1:9180/apisix/admin/services/1 \
 ```
 ##  Define Route
 ```bash
-curl -X PUT http://127.0.0.1:9180/apisix/admin/routes/1 \
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{

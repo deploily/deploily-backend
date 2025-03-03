@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
+from flask_login import current_user
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import Float
+from sqlalchemy.sql import exists
+from sqlalchemy import Column, Float, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
 
@@ -19,7 +18,14 @@ class Service(Model):
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
-    cart_lines = relationship("CartLine",overlaps="service")
+    cart_lines = relationship("CartLine", overlaps="service")
+    myfavorites = relationship("MyFavorites", overlaps="service")
+    is_favorite = Column(Boolean)
 
+    @property
+    def is_favorite(self):
+        return True if len(self.myfavorites)>0 else False
+
+    
     def __repr__(self):
         return self.name

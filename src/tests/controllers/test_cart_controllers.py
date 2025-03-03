@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
+
 import pytest
-from datetime import datetime
-from pydantic import BaseModel, ValidationError
 from flask_jwt_extended import create_access_token
-from app.models import Service, Cart, CartLine
+from pydantic import BaseModel, ValidationError
+
 from app import db
+from app.models import Service
 
 cart_data = {"service_id": 1, "duration_month": 3}
 
@@ -15,16 +16,21 @@ class CartResponse(BaseModel):
 
 
 def test_create_cart(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_controllers import CartApi
+
         appbuilder.add_api(CartApi)
 
-        service = Service(id=1, name="Test Service", documentation_url="This is a test service",
-                          service_url="https://example.com/service", description="This is a test service", unit_price=100.0)
+        service = Service(
+            id=1,
+            name="Test Service",
+            documentation_url="This is a test service",
+            service_url="https://example.com/service",
+            description="This is a test service",
+            unit_price=100.0,
+        )
         db.session.add(service)
         db.session.commit()
 
@@ -43,12 +49,11 @@ def test_create_cart(client, test_user, app, appbuilder):
 
 
 def test_create_cart_missing_service_id(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_controllers import CartApi
+
         appbuilder.add_api(CartApi)
 
         response = client.post(
@@ -63,12 +68,11 @@ def test_create_cart_missing_service_id(client, test_user, app, appbuilder):
 
 
 def test_create_cart_with_non_existent_service(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True
-    )
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app.controllers.cart_controllers import CartApi
+
         appbuilder.add_api(CartApi)
 
         response = client.post(
@@ -81,13 +85,13 @@ def test_create_cart_with_non_existent_service(client, test_user, app, appbuilde
         assert response.status_code == 400
         assert response.text == "Service not found"
 
-  
         db.session.rollback()
 
 
 def test_create_cart_unauthenticated(client, app, appbuilder):
     with app.app_context():
         from app.controllers.cart_controllers import CartApi
+
         appbuilder.add_api(CartApi)
 
         response = client.post(

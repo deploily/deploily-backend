@@ -3,8 +3,7 @@ import logging
 import os
 
 import pytest
-from flask_appbuilder import SQLA
-from flask_appbuilder import AppBuilder
+from flask_appbuilder import SQLA, AppBuilder
 from flask_appbuilder.security.sqla.models import Role
 from sqlalchemy import MetaData
 
@@ -17,7 +16,7 @@ def app():
     from flask import Flask
 
     flask_app = Flask(__name__)
-    basedir = os.path.abspath(os.path.dirname(__file__))
+    os.path.abspath(os.path.dirname(__file__))
     flask_app.config["AUTH_ROLE_ADMIN"] = "Admin"
     flask_app.config["TESTING"] = True
     flask_app.config["DEBUG"] = True

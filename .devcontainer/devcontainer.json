@@ -12,7 +12,7 @@
 	"forwardPorts": [5000, 5432, 9000, 9080, 9180],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install --user -r requirements.txt",
+	"postCreateCommand": "pip install --user -r requirements.txt && pre-commit install",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -20,7 +20,7 @@
 			]
 		}
 	}
-
+	
 	// Configure tool-specific properties.
 	// "customizations": {},
 

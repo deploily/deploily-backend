@@ -1,6 +1,12 @@
-from . import cart_controllers
-from . import service_controllers
-from . import cart_line_controllers
-from . import parameters_controllers
-from . import parameters_value_controllers
-from . import consumer_controllers
+from . import (
+    cart_controllers,
+    cart_line_controllers,
+    consumer_controllers,
+    parameters_controllers,
+    parameters_value_controllers,
+    service_controllers,
+    supprot_ticket_controllers,
+    support_ticket_response_controllers,
+    my_favorites_controller,
+    contact_us_controllers
+)
