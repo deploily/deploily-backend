@@ -13,7 +13,7 @@ class SupportTicket(Model, AuditMixin):
     image = Column(ImageColumn)
     status = Column(Enum("open", "closed", name="status"))
     cart_line_id = Column(Integer, ForeignKey("cart_line.id"))
-    cart_line = relationship("CartLine", cascade="all,delete")
+    cart_line = relationship("CartLine")
     support_ticket_responses=relationship("SupportTicketResponse")
 
     def __repr__(self):
