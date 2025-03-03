@@ -126,10 +126,9 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/1 \
     "pass_host": "rewrite",
     "upstream_host": "photon.ttk-test.xyz"
 }'
-
 ```
 
-## Define Upstream 
+## Define Service 
 ```bash
 curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
@@ -155,33 +154,52 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
     "uri": "/photon*",
     "methods": ["GET"],
     "service_id": "1",
-    "status": 1
-}'
-```
-## Define Consumer
-
-```bash
-curl -X PUT http://127.0.0.1:9180/apisix/admin/consumers/photon-consumer \
--H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
--H "Content-Type: application/json" \
--d '{
-    "username": "photon-consumer",
+    "status": 1,
     "plugins": {
-        "key-auth": {
-            "key": "20852ff7ea7ff2540af01944f4fb26ee"
+        "consumer-restriction": {
+            "type": "whitelist",
+            "whitelist": ["cart_line_1_user"]
         }
     }
 }'
+
 ```
 
 ## Configuration Test
 
 ```bash
-curl -H "apikey: 1ab4b95efcd1d0f70b7cc22a22a4bbbe" "http://127.0.0.1:9080/photon?q=berlin"
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
 
 ```
 ## Missing API key found in request
-curl "http://127.0.0.1:9080/photon?q=berlin"
+```bash
+curl "https://api.deploily.cloud/photon?q=berlin"
+```
 
 ## Invalid API key in request
-curl -H "apikey: wrongkey123" "http://127.0.0.1:9080/photon?q=berlin"
+```bash
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+```
+
+## Get upstreams
+```bash
+curl -X GET https://admin-api.deploily.cloud/apisix/admin/upstreams \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```
+## Get services
+```bash
+curl -X GET https://admin-api.deploily.cloud/apisix/admin/services \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```
+## Get routes
+```bash
+curl -X GET https://admin-api.deploily.cloud/apisix/admin/routes \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```
+## Get consumers
+```bash
+curl -X GET https://admin-api.deploily.cloud/apisix/admin/consumers \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
+```
+
+
