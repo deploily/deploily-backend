@@ -111,7 +111,7 @@ curl -X GET http://127.0.0.1:9180/apisix/admin/consumers -H "X-API-KEY: edd1c9f0
 curl -X GET http://127.0.0.1:9180/apisix/admin/consumers/cart_2_user -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1"
 ```
 
-## Define Upstream
+## Define Upstream Photon 
 
 ```bash
 curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/1 \
@@ -128,7 +128,7 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/1 \
 }'
 ```
 
-## Define Service 
+## Define Service Photon
 ```bash
 curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
@@ -144,7 +144,7 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/1 \
     }
 }'
 ```
-##  Define Route
+##  Define Route Photon
 ```bash
 curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
@@ -163,6 +163,67 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
     }
 }'
 
+```
+## Define ORS Upstream
+
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/2 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "nodes": {
+        "ors.ttk-test.xyz:443": 1
+    },
+    "type": "roundrobin",
+    "scheme": "https",
+    "pass_host": "rewrite",
+    "upstream_host": "ors.ttk-test.xyz"
+}'
+```
+
+## Define ORS Service 
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/2 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "ors-service",
+    "upstream_id": "2",
+    "plugins": {
+        "proxy-rewrite": {
+            "uri": "/ors/v2/matrix/driving-car"
+        },
+        "key-auth": {}
+    }
+}'
+```
+
+##  Define ORS Route
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/2 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "ors-route",
+    "uri": "/ors*",
+    "methods": ["POST"],
+    "service_id": "2",
+    "status": 1,
+    "plugins": {
+        "consumer-restriction": {
+            "type": "consumer_name",
+            "whitelist": ["cart_line_1_user"]
+        }
+    }
+}'
+```
+## Test ORS API
+
+```bash
+curl -d '{"locations":[[0.70093,35.477473],[3.207916,36.153868]], "sources":[0], "destinations":[1], "metrics":["distance", "duration"], "units":"km"}' \
+-H "Content-Type: application/json" \
+-H "apikey: b2376542c6adbe480dc1ce0ca4acc852" \
+-X POST "https://api.deploily.cloud/ors"
 ```
 
 ## Configuration Test
