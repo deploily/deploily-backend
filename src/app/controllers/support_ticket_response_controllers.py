@@ -26,7 +26,12 @@ class SupportTicketResponseModelApi(ModelRestApi):
     base_order = ("id", "desc")
     datamodel = SQLAInterface(SupportTicketResponse)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    add_columns = _support_ticket_display_columns
+    add_columns =  [
+    "id",
+    "message",
+    "support_ticket",
+    "support_ticket_id",
+]
     list_columns = _support_ticket_display_columns
     edit_columns = _support_ticket_display_columns
     _exclude_columns = [

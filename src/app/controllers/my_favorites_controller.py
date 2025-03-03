@@ -24,12 +24,13 @@ class MyFavoritesModelApi(ModelRestApi):
     base_order = ("id", "desc")
     datamodel = SQLAInterface(MyFavorites)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    add_columns = _support_ticket_display_columns
+    add_columns = ["id", "service_id"]
     list_columns = ["id", "service", "created_on", "created_by.id"]
-    edit_columns = _support_ticket_display_columns
+    edit_columns = ["id", "service_id"]
     _exclude_columns = [
         "changed_by",
         "changed_on",
+        "created_by"
     ]
 
 
