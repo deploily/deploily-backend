@@ -164,6 +164,21 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
 }'
 
 ```
+## Configuration Test
+
+```bash
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+
+```
+## Missing API key found in request
+```bash
+curl "https://api.deploily.cloud/photon?q=berlin"
+```
+
+## Invalid API key in request
+```bash
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+```
 ## Define ORS Upstream
 
 ```bash
@@ -226,21 +241,125 @@ curl -d '{"locations":[[0.70093,35.477473],[3.207916,36.153868]], "sources":[0],
 -X POST "https://api.deploily.cloud/ors"
 ```
 
-## Configuration Test
+## Define Nominatim Upstream  
 
 ```bash
-curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/3 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "nodes": {
+        "nominatim.ttk-test.xyz:443": 1
+    },
+    "type": "roundrobin",
+    "scheme": "https",
+    "pass_host": "rewrite",
+    "upstream_host": "nominatim.ttk-test.xyz"
+}'
+```
+
+## Define Nominatim Service 
+
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/3 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "nominatim-service",
+    "upstream_id": "3",
+    "plugins": {
+        "proxy-rewrite": {
+            "uri": "/reverse"
+        },
+        "key-auth": {}
+    }
+}'
+```
+
+##  Define Nominatim Route
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/3 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "nominatim-route",
+    "uris": ["/nominatim", "/nominatim/*"],
+    "methods": ["GET", "POST"],
+    "service_id": "3",
+    "status": 1,
+    "plugins": {
+        "consumer-restriction": {
+            "type": "consumer_name",
+            "whitelist": ["cart_line_1_user"]
+        }
+    }
+}'
 
 ```
-## Missing API key found in request
+## Test Nominatim API
+
 ```bash
-curl "https://api.deploily.cloud/photon?q=berlin"
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/nominatim?lat=35.30538822124727&lon=-1.1417971423748299&format=json&accept-language=fr"
 ```
 
-## Invalid API key in request
+## Define Wilaya Upstream
+
 ```bash
-curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/4 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "nodes": {
+        "api-wilaya.ttk-test.xyz:443": 1
+    },
+    "type": "roundrobin",
+    "scheme": "https",
+    "pass_host": "rewrite",
+    "upstream_host": "api-wilaya.ttk-test.xyz"
+}'
 ```
+## Define Wilaya Service 
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/services/4 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "wilaya-service",
+    "upstream_id": "4",
+    "plugins": {
+        "proxy-rewrite": {
+            "uri": "/api/v1/getWilaya"
+        },
+        "key-auth": {}
+    }
+}'
+
+```
+##  Define Nominatim Route
+```bash
+curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/4 \
+-H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "wilaya-route",
+    "uri": "/wilaya*",
+    "methods": ["GET", "POST"],
+    "service_id": "4",
+    "status": 1,
+    "plugins": {
+        "consumer-restriction": {
+            "type": "consumer_name",
+            "whitelist": ["cart_line_1_user"]
+        }
+    }
+}'
+```
+## Test Nominatim API
+
+```bash
+curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/nominatim?lat=35.30538822124727&lon=-1.1417971423748299&format=json&accept-language=fr"
+```
+
 
 ## Get upstreams
 ```bash
