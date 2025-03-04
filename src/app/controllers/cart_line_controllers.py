@@ -5,7 +5,6 @@ import logging
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-
 from app import appbuilder
 from app.models.cart_line_models import CartLine
 from app.utils.utils import get_user
@@ -25,7 +24,7 @@ _cart_line_display_columns = [
 
 
 class CartLineModelApi(ModelRestApi):
-    resource_name = "CartLine"
+    resource_name = "cart-line"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(CartLine)
     base_filters = [["created_by", FilterEqualFunction, get_user]]

@@ -23,7 +23,7 @@ _parameters_value_display_columns = [
 
 
 class ParameterValueModelApi(ModelRestApi):
-    resource_name = "ParameterValue"
+    resource_name = "parameter-value"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ParameterValue)
     base_filters = [["created_by", FilterEqualFunction, get_user]]

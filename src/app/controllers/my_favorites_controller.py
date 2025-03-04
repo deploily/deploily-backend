@@ -20,7 +20,7 @@ _support_ticket_display_columns = [
 
 
 class MyFavoritesModelApi(ModelRestApi):
-    resource_name = "MyFavorites"
+    resource_name = "my-favorites"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(MyFavorites)
     base_filters = [["created_by", FilterEqualFunction, get_user]]

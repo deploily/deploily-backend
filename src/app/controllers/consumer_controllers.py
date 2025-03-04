@@ -16,11 +16,11 @@ _logger = logging.getLogger(__name__)
 
 
 class ConsumerApi(BaseApi):
-    resource_name = "consumer"
+    resource_name = "cart-line"
 
     @protect()
     @jwt_required()
-    @expose("/cart-line/<int:cart_line_id>", methods=["POST"])
+    @expose("/<int:cart_line_id>/consumer", methods=["POST"])
     def create_cart_line_consumer(self, cart_line_id):
         """
         Creates an API consumer for a given CartLine ID and returns an API key.
@@ -55,7 +55,8 @@ class ConsumerApi(BaseApi):
             .filter(CartLine.id == cart_line_id and CartLine.created_by == user)
             .first()
         )
-        service = db.session.query(Service).filter(Service.cart_lines.any(id=cart_line_id)).first()
+        service = db.session.query(Service).filter(
+            Service.cart_lines.any(id=cart_line_id)).first()
         param_value = (
             db.session.query(ParameterValue)
             .filter(ParameterValue.cart_line_id == cart_line_id, ParameterValue.created_by == user)
@@ -70,10 +71,12 @@ class ConsumerApi(BaseApi):
             api_key = secrets.token_hex(16)
             apisix_service = ApiSixService()
 
-            response = apisix_service.create_consumer(username=consumer_username, api_key=api_key)
+            response = apisix_service.create_consumer(
+                username=consumer_username, api_key=api_key)
 
             api_key_data = (
-                response.get("value", {}).get("plugins", {}).get("key-auth", {}).get("key")
+                response.get("value", {}).get(
+                    "plugins", {}).get("key-auth", {}).get("key")
             )
 
             if not api_key_data:
