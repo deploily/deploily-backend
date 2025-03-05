@@ -22,6 +22,8 @@ class Service(Model, AuditMixin):
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
     cart_lines = relationship("CartLine", overlaps="service")
+    tags = relationship("ServiceTag", overlaps="service")
+
     myfavorites = relationship(
         "MyFavorites", back_populates="service", overlaps="service"
     )
