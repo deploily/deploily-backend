@@ -20,6 +20,7 @@ _cart_line_display_columns = [
     "start_date",
     "service",
     "cart",
+    "parameters_values"
 ]
 
 
@@ -30,6 +31,7 @@ class CartLineModelApi(ModelRestApi):
     base_filters = [["created_by", FilterEqualFunction, get_user]]
     add_columns = _cart_line_display_columns
     list_columns = _cart_line_display_columns
+    show_columns = _cart_line_display_columns
     edit_columns = _cart_line_display_columns
     _exclude_columns = [
         "created_on",

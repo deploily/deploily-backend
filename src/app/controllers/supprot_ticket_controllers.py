@@ -18,8 +18,8 @@ _support_ticket_display_columns = [
     "status",
     "description",
     "image",
-    "cart_line_id",
-    "cart_line",
+    "my_service_id",
+    "my_service",
     "created_on",
     "support_ticket_responses"
 ]
@@ -36,8 +36,8 @@ class SupportTicketModelApi(ModelRestApi):
     "status",
     "description",
     "image",
-    "cart_line_id",
-    "cart_line",
+    "my_service_id",
+    "my_service",
     "support_ticket_responses"
 ]
     list_columns = _support_ticket_display_columns 

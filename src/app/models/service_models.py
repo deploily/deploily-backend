@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from app import appbuilder, db
 from flask_appbuilder.models.mixins import ImageColumn
 from flask_login import current_user
+from app.utils.utils import get_user
 from app.models.my_favorites_models import MyFavorites
 from flask_appbuilder.security.sqla.models import User
 
@@ -31,7 +32,7 @@ class Service(Model, AuditMixin):
     @property
     def is_in_favorite(self):
 
-        user = current_user
+        user = get_user()
         if not user.is_authenticated:
             return False
         favori = (
@@ -39,6 +40,7 @@ class Service(Model, AuditMixin):
             .filter_by(service_id=self.id, created_by_fk=user.id)
             .first()
         )
+
         return favori is not None
 
     def __repr__(self):
