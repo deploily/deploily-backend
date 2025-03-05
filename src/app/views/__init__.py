@@ -11,7 +11,8 @@ from . import (
     user_views,
     my_favorites_views,
     contact_us,
-    service_tag_views
+    service_tag_views,
+    my_service_views
 )
 
 appbuilder.add_link(
