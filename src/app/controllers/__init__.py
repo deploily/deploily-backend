@@ -2,6 +2,7 @@ from . import (
     cart_controllers,
     cart_line_controllers,
     consumer_controllers,
+    favorite_service_controllers,
     parameters_controllers,
     parameters_value_controllers,
     service_controllers,
@@ -10,7 +11,6 @@ from . import (
     my_favorites_controller,
     contact_us_controllers,
     service_tag_controllers,
-    my_service_controllers,
-    create_delete_my_favorites_controllers
+    my_service_controllers
 
 )
