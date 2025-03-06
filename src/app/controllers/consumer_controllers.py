@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import secrets
-
+import uuid
 from flask import Response, jsonify
 from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
-
+import os
 from app import appbuilder, db
 from app.models import CartLine, Parameter, ParameterValue, Service
 from app.services.apisix_service import ApiSixService
@@ -67,24 +65,23 @@ class ConsumerApi(BaseApi):
             return Response("CartLine not found", status=400)
 
         try:
+      
+            api_key = uuid.uuid4().hex[:32]
             consumer_username = f"cart_line_{cart_line.id}_user"
-            api_key = secrets.token_hex(16)
             apisix_service = ApiSixService()
 
             response = apisix_service.create_consumer(
                 username=consumer_username, api_key=api_key)
 
-            api_key_data = (
-                response.get("value", {}).get(
-                    "plugins", {}).get("key-auth", {}).get("key")
-            )
+          
 
-            if not api_key_data:
+            if not api_key:
                 raise Exception("Unexpected API response format")
 
             if param_value:
-                param_value.value = api_key_data
+                param_value.value = api_key
             else:
+                # Trouver ou créer un paramètre de type 'token' s'il n'existe pas
                 parameter = (
                     db.session.query(Parameter)
                     .filter(Parameter.type == "token" and Parameter.service_id == service.id)
@@ -93,7 +90,7 @@ class ConsumerApi(BaseApi):
                 if not parameter:
                     return Response("No valid Parameter of type 'token' found", status=400)
                 param_value = ParameterValue(
-                    value=api_key_data,
+                    value=api_key,
                     cart_line_id=cart_line.id,
                     created_by=user,
                     parameter_id=parameter.id,
@@ -102,7 +99,7 @@ class ConsumerApi(BaseApi):
 
             db.session.commit()
 
-            return jsonify({"auth-key": api_key_data}), 200
+            return jsonify({"auth-key": api_key}), 200
 
         except Exception as e:
             _logger.error(f"Error creating API consumer: {e}", exc_info=True)
