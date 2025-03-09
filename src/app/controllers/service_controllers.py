@@ -22,14 +22,12 @@ _service_value_display_columns = [
     "short_description",
     "specifications",
     "cart_lines",
-    "is_in_favorite",
-    "myfavorites",
+    "is_in_favorite"
 ]
 
 
 class ServiceModelApi(ModelRestApi):
     resource_name = "service"
-    base_filters = [["created_by", FilterEqualFunction, get_user]]
     datamodel = SQLAInterface(Service)
     add_columns = _service_value_display_columns
     list_columns = _service_value_display_columns
