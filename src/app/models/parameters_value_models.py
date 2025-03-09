@@ -9,15 +9,10 @@ class ParameterValue(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     value = Column(String(255), nullable=False)
     parameter_id = Column(Integer, ForeignKey("parameter.id"))
-    parameter = relationship("Parameter", cascade="all,delete")
-    name = Column(String(255))
+    parameter = relationship("Parameter")
     cart_line_id = Column(Integer, ForeignKey("cart_line.id"))
-    cart_line = relationship("CartLine", cascade="all,delete")
+    cart_line = relationship("CartLine")
 
-
-    @property
-    def name(self):
-        return self.parameter.name if self.parameter else None
 
     def __repr__(self):
         return str(self.id)

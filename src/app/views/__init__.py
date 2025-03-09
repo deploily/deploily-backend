@@ -10,7 +10,9 @@ from . import (
     support_ticket_response_views,
     user_views,
     my_favorites_views,
-    contact_us
+    contact_us,
+    service_tag_views,
+    my_service_views
 )
 
 appbuilder.add_link(

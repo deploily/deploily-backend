@@ -11,7 +11,7 @@ from app.models.parameters_value_models import ParameterValue
 class ParametersValueModelView(ModelView):
     route_base = "/admin/parametersValue"
     datamodel = SQLAInterface(ParameterValue)
-    list_columns = ["id","name", "value", "parameter", "cartLine"]
+    list_columns = ["id", "value", "parameter", "cartLine"]
     base_order = ("id", "desc")
 
 

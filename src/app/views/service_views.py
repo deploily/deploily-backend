@@ -21,8 +21,8 @@ class ServiceModelView(ModelView):
         "service_url",
         "image_service",
         "cart_lines",
-        "is_favorite",
-    ]
+        "is_in_favorite",
+        "curl_command"]
 
 
 db.create_all()

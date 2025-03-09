@@ -8,9 +8,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 
-# TODO  add KEYCLOAK_... prefix to the variables 
+# TODO  add KEYCLOAK_... prefix to the variables
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
 LOGOUT_REDIRECT_URL = (
     f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
@@ -37,6 +37,7 @@ public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
 
 JWT_ALGORITHM = "RS256"
 
+
 def fetch_keycloak_rs256_public_cert():
     with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
         public_key_url_response = json.load(response)
@@ -61,7 +62,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
-SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
+SQLALCHEMY_DATABASE_URI = os.getenv(
+    "SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-WTF flag for CSRF
@@ -157,5 +159,7 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://127.0.0.1:9180/apisix/admin")
-APISIX_API_KEY = os.getenv("APISIX_API_KEY")
+APISIX_ADMIN_URL = os.getenv(
+    "APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
+APISIX_API_KEY = os.getenv(
+    "APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")

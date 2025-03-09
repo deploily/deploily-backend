@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 
 from app import appbuilder
@@ -34,7 +36,8 @@ class ApiSixService:
 
         try:
             response = self.client.new_service(service_data)
-            _logger.info(f"Service '{service_name}' successfully created: {response}")
+            _logger.info(
+                f"Service '{service_name}' successfully created: {response}")
             return response
         except Exception as e:
             _logger.error(f"Error creating service '{service_name}': {e}")
@@ -56,22 +59,27 @@ class ApiSixService:
 
         try:
             response = self.client.new_route(route_data)
-            _logger.info(f"Route '{route_id}' successfully created: {response}")
+            _logger.info(
+                f"Route '{route_id}' successfully created: {response}")
             return response
         except Exception as e:
             _logger.error(f"Error creating route '{route_id}': {e}")
             return None
 
-    def create_consumer(self, username, api_key):
-        """Creates an APISIX consumer."""
-        consumer_data = {"username": username, "plugins": {"key-auth": {"key": api_key}}}
+    def create_consumer(self, username, api_key, labels=None):
+        """Creates an APISIX consumer with optional labels."""
+        consumer_data = {
+            "username": username,
+            "plugins": {"key-auth": {"key": api_key}},
+        }
+        if labels:
+            consumer_data["labels"] = labels
 
         try:
-            response = self.client.new_consumer(
-                username=username, plugins={"key-auth": {"key": api_key}}
-            )
+            response = self.client.new_consumer(**consumer_data)
 
-            _logger.info(f"Consumer '{username}' created successfully: {response}")
+            _logger.info(
+                f"Consumer '{username}' created successfully: {response}")
             return response
         except Exception as e:
             _logger.error(f"Error creating consumer '{username}': {e}")

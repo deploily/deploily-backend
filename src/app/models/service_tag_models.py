@@ -5,13 +5,12 @@ from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class Parameter(Model):
+class ServiceTag(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
-    type = Column(Enum("token", "password", "port", name="type"))
+    color = Column(String(255))
     service_id = Column(Integer, ForeignKey("service.id"))
-    service = relationship("Service",overlaps="parameters")
-    parameters_values = relationship("ParameterValue")
+    service = relationship("Service")
 
     def __repr__(self):
         return self.name

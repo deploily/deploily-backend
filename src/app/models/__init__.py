@@ -8,3 +8,5 @@ from .support_ticket_response_models import SupportTicketResponse
 from .user_models import MyUser
 from .my_favorites_models import MyFavorites
 from .contact_us_models import ContactUs
+from .service_tag_models import ServiceTag
+from .my_service_models import MyService

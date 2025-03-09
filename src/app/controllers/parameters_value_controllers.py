@@ -14,7 +14,6 @@ _logger = logging.getLogger(__name__)
 
 _parameters_value_display_columns = [
     "id",
-    "name",
     "value",
     "parameter_id",
     "parameter",
@@ -23,13 +22,14 @@ _parameters_value_display_columns = [
 
 
 class ParameterValueModelApi(ModelRestApi):
-    resource_name = "ParameterValue"
+    resource_name = "parameter-value"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ParameterValue)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
     add_columns = _parameters_value_display_columns
     list_columns = _parameters_value_display_columns
     edit_columns = _parameters_value_display_columns
+    show_columns = _parameters_value_display_columns
     _exclude_columns = [
         "created_on",
         "changed_on",

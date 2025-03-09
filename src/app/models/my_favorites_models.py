@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 class MyFavorites(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     service_id = Column(Integer, ForeignKey("service.id"))
-    service = relationship("Service", cascade="all,delete", overlaps="myfavorites")
+    service = relationship("Service",overlaps="myfavorites")
     
     
     def __repr__(self):

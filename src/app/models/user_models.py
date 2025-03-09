@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_appbuilder.security.sqla.models import User
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
@@ -8,6 +10,5 @@ from flask import Markup, url_for
 
 class MyUser(User):
     __tablename__ = "ab_user"
-    
-    
+
     phone = Column(String)

@@ -13,7 +13,7 @@ _parameter_display_columns = ["id", "name", "type", "service_id"]
 
 
 class ParametersModelApi(ModelRestApi):
-    resource_name = "Parameter"
+    resource_name = "parameter"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(Parameter)
     add_columns = _parameter_display_columns

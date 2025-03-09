@@ -22,16 +22,16 @@ _support_ticket_display_columns = [
 
 
 class SupportTicketResponseModelApi(ModelRestApi):
-    resource_name = "SupportTicketResponse"
+    resource_name = "support-ticket-response"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(SupportTicketResponse)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    add_columns =  [
-    "id",
-    "message",
-    "support_ticket",
-    "support_ticket_id",
-]
+    add_columns = [
+        "id",
+        "message",
+        "support_ticket",
+        "support_ticket_id",
+    ]
     list_columns = _support_ticket_display_columns
     edit_columns = _support_ticket_display_columns
     _exclude_columns = [

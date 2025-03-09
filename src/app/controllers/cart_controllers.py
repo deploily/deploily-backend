@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import logging
 from datetime import datetime
 
@@ -73,7 +72,6 @@ class CartApi(BaseApi):
                 cart_id=cart.id,
             )
             db.session.add(cart_line)
-
             db.session.commit()
 
             return jsonify({"message": "Cart and CartLine created", "cart_id": cart.id}), 200

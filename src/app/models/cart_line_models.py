@@ -17,9 +17,9 @@ class CartLine(Model, AuditMixin):
     amount = Column(Float)
     duration_month = Column(Integer)
     service_id = Column(Integer, ForeignKey("service.id"))
-    service = relationship("Service", cascade="all,delete", overlaps="cart_lines")
+    service = relationship("Service", overlaps="cart_lines")
     cart_id = Column(Integer, ForeignKey("cart.id"))
-    cart = relationship("Cart", back_populates="cart_lines", cascade="all,delete")
+    cart = relationship("Cart", back_populates="cart_lines")
     parameters_values = relationship("ParameterValue")
 
     def __repr__(self):

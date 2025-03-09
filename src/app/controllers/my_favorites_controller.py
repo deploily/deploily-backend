@@ -11,16 +11,8 @@ from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
-_support_ticket_display_columns = [
-    "id",
-    "service_id",
-    "created_on",
-    "created_by.id",
-]
-
-
 class MyFavoritesModelApi(ModelRestApi):
-    resource_name = "MyFavorites"
+    resource_name = "my-favorites"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(MyFavorites)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
