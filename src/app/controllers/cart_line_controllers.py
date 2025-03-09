@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
 import logging
-
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface

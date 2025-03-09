@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from flask import request, jsonify, Response
 from app import appbuilder, db
 
 from app.models.my_favorites_models import MyFavorites
-from app.models.user_models import User
 from app.models.service_models import Service
 from flask_appbuilder.api import BaseApi, expose, protect
 from app.utils.utils import get_user
@@ -11,12 +12,13 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class MyFavoritesApi(BaseApi):
-    resource_name = "my-favorites"
+    resource_name = "my-favorites-service"
 
     @protect()
     @jwt_required()
-    @expose("/{service-id}", methods=["POST"])
+    @expose("/", methods=["POST"])
     def add_remove_favorite(self):
         """
         If service_id and created_by_fk exist, delete the record.
@@ -45,9 +47,7 @@ class MyFavoritesApi(BaseApi):
         """
 
         data = request.get_json()
-
         service_id = data.get("service_id")
-
         user = get_user()
         user_id = user.id
 
@@ -77,5 +77,6 @@ class MyFavoritesApi(BaseApi):
             db.session.rollback()
             _logger.error(f"Error while managing the favorite: {e}")
             return Response("Internal server error", status=500)
+
 
 appbuilder.add_api(MyFavoritesApi)
