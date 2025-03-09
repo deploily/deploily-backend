@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 
 from app import appbuilder
@@ -70,15 +72,14 @@ class ApiSixService:
             "username": username,
             "plugins": {"key-auth": {"key": api_key}},
         }
-
-        # Ajouter les labels s'ils existent
         if labels:
             consumer_data["labels"] = labels
 
         try:
             response = self.client.new_consumer(**consumer_data)
 
-            _logger.info(f"Consumer '{username}' created successfully: {response}")
+            _logger.info(
+                f"Consumer '{username}' created successfully: {response}")
             return response
         except Exception as e:
             _logger.error(f"Error creating consumer '{username}': {e}")

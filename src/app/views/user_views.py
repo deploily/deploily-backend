@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_appbuilder import ModelView
 from app.models.user_models import MyUser
 from flask_appbuilder import ModelView
@@ -18,11 +20,9 @@ class MyUserView(ModelView):
         "roles",
         "phone"
     ]
-    show_columns = ["username", "email", "active", "roles","phone"]
-    edit_columns = ["username", "email", "active", "roles","phone"]
-    add_columns = ["username", "email", "active", "roles","phone"]
-
-
+    show_columns = ["username", "email", "active", "roles", "phone"]
+    edit_columns = ["username", "email", "active", "roles", "phone"]
+    add_columns = ["username", "email", "active", "roles", "phone"]
 
 
 appbuilder.add_view(
