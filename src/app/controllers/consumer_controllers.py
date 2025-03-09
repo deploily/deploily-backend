@@ -69,9 +69,19 @@ class ConsumerApi(BaseApi):
             api_key = uuid.uuid4().hex[:32]
             consumer_username = f"cart_line_{cart_line.id}_user"
             apisix_service = ApiSixService()
+            services = (
+                        db.session.query(Service)
+                        .join(Service.cart_lines)  
+                        .filter(CartLine.id == cart_line_id)
+                        .all()
+                    )
+
+            service_labels = [service.name for service in services] if services else []
 
             response = apisix_service.create_consumer(
-                username=consumer_username, api_key=api_key)
+                                        username=consumer_username, api_key=api_key, labels={"services": ",".join(service_labels)}
+                                    )
+
 
           
 
