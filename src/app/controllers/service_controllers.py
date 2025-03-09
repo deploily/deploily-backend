@@ -22,8 +22,7 @@ _service_value_display_columns = [
     "short_description",
     "specifications",
     "cart_lines",
-    "is_in_favorite",
-    "myfavorites",
+    "is_in_favorite"
 ]
 
 
