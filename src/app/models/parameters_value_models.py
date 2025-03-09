@@ -9,9 +9,9 @@ class ParameterValue(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     value = Column(String(255), nullable=False)
     parameter_id = Column(Integer, ForeignKey("parameter.id"))
-    parameter = relationship("Parameter", cascade="all,delete")
+    parameter = relationship("Parameter")
     cart_line_id = Column(Integer, ForeignKey("cart_line.id"))
-    cart_line = relationship("CartLine", cascade="all,delete")
+    cart_line = relationship("CartLine")
 
 
     def __repr__(self):

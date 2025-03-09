@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_appbuilder import Model
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
