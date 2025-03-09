@@ -11,7 +11,7 @@ from app.models.my_favorites_models import MyFavorites
 from flask_appbuilder.security.sqla.models import User
 
 
-class Service(Model, AuditMixin):
+class Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     short_description = Column(String(255))
