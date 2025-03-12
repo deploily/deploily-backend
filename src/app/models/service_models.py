@@ -25,6 +25,7 @@ class Service(Model):
     parameters = relationship("Parameter")
     cart_lines = relationship("CartLine", overlaps="service")
     tags = relationship("ServiceTag", overlaps="service")
+    service_plans = relationship("ServicePlan")
 
     myfavorites = relationship(
         "MyFavorites", back_populates="service", overlaps="service"

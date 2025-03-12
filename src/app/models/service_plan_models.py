@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
-from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Float, Integer, DateTime, String, Boolean, ForeignKey, Enum
+from sqlalchemy import Column, Float, Integer,ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from app import appbuilder, db
 from datetime import datetime

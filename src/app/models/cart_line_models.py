@@ -20,7 +20,7 @@ class CartLine(Model, AuditMixin):
     service = relationship("Service", overlaps="cart_lines")
     cart_id = Column(Integer, ForeignKey("cart.id"))
     cart = relationship("Cart", back_populates="cart_lines")
-    parameters_values = relationship("ParameterValue")
+    
 
     def __repr__(self):
         return str(self.id)
