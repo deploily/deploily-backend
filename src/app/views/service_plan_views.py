@@ -9,8 +9,8 @@ from app.models.service_plan_models import ServicePlan
 class ServicePlanModelView(ModelView):
     route_base = "/admin/service-plan"
     datamodel = SQLAInterface(ServicePlan)
-    list_columns = ["id", "price", "limit","service_id"
-                    "subscription_category"]
+    list_columns = ["id", "price", "limit", "service_id"
+                    "subscription_category", "name"]
     base_order = ("id", "desc")
 
 

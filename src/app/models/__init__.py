@@ -11,3 +11,4 @@ from .contact_us_models import ContactUs
 from .service_tag_models import ServiceTag
 from .my_service_models import MyService
 from .service_plan_models import ServicePlan
+from .plan_models import Plan

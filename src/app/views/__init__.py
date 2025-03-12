@@ -13,7 +13,8 @@ from . import (
     contact_us,
     service_tag_views,
     my_service_views,
-    service_plan_views
+    service_plan_views,
+    plan_views
 )
 
 appbuilder.add_link(

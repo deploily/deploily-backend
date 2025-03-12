@@ -17,7 +17,8 @@ _service_plan_value_display_columns = [
     "limit",
     "service_id",
     "service",
-    "ubscription_category"
+    "ubscription_category",
+    "plan"
 ]
 
 
@@ -28,5 +29,6 @@ class ServicePlanModelApi(ModelRestApi):
     list_columns = _service_plan_value_display_columns
     show_columns = _service_plan_value_display_columns
     edit_columns = _service_plan_value_display_columns
+
 
 appbuilder.add_api(ServicePlanModelApi)
