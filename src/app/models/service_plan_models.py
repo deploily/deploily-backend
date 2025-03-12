@@ -9,7 +9,7 @@ from datetime import datetime
 class ServicePlan(Model):
     id = Column(Integer, primary_key=True)
     price = Column(Float)
-    limit = Column(Integer)
+    limit = Column(String)
     service_id = Column(Integer, ForeignKey("service.id"))
     service = relationship("Service")
     plan_id = Column(Integer, ForeignKey("plan.id"))
