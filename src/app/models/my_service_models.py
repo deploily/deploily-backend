@@ -29,20 +29,21 @@ class MyService(Model, AuditMixin):
 
     @property
     def service_details(self):
-        name = self.service_plan.service.name
-        image_service = self.service_plan.service.image_service
-        service = self.service_plan.service
+   
+        if self.service_plan and self.service_plan.service:
+            service = self.service_plan.service
+            
+            service_json = {}
+            for key, value in service.__dict__.items():
+         
+                if not key.startswith('_'):
+                    service_json[key] = value
+      
 
-        # service_json = {key: getattr(service, key)
-        #                 for key in list(service.__dict__.keys())}
-        service_json = {"name": name, "image_service": image_service}
-        return service_json
-
-        # _logger.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~é")
-        # _logger.info(ddd)
-
-        # return ddd
-        # return jsonify(self.service_plan.service)
+            return service_json
+        else:
+            _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
+            return {}  
 
     def __repr__(self):
         return str(self.id)
