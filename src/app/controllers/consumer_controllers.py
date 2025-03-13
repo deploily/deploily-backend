@@ -18,7 +18,7 @@ class ConsumerApi(BaseApi):
     @protect()
     @jwt_required()
     @expose("/<int:my_service_id>/consumer", methods=["POST"])
-    def create_cart_line_consumer(self, my_service_id):
+    def create_my_service_consumer(self, my_service_id):
         """
         Creates an API consumer for a given MyService ID and returns an API key.
         ---
