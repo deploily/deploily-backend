@@ -11,7 +11,7 @@ from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
-_cart_line_display_columns = [
+_my_service_display_columns = [
     "id",
     "start_date",
     "amount",
@@ -27,10 +27,10 @@ class MyServiceModelApi(ModelRestApi):
     base_order = ("id", "desc")
     datamodel = SQLAInterface(MyService)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    add_columns = _cart_line_display_columns
-    list_columns = _cart_line_display_columns
-    show_columns = _cart_line_display_columns
-    edit_columns = _cart_line_display_columns
+    add_columns = _my_service_display_columns
+    list_columns = _my_service_display_columns
+    show_columns = _my_service_display_columns
+    edit_columns = _my_service_display_columns
     _exclude_columns = [
         "created_on",
         "changed_on",
