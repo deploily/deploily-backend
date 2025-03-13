@@ -14,7 +14,6 @@ _logger = logging.getLogger(__name__)
 _service_plan_value_display_columns = [
     "id",
     "price",
-    "limit",
     "service_id",
     "service",
     "subscription_category",
