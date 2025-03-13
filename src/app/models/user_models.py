@@ -16,9 +16,6 @@ class MyUser(User):
 
     credits = Column(Float, default=0)
     phone = Column(String)
-    subscriptions = relationship(
-        "MyService", backref="user", foreign_keys="MyService.user_id")
-
     @property
     def existing_subscription(self):
         """Retourne True si l'utilisateur a un abonnement actif"""
