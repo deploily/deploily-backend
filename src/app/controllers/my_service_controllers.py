@@ -5,6 +5,7 @@ import logging
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+
 from app import appbuilder
 from app.models.my_service_models import MyService
 from app.utils.utils import get_user
@@ -16,7 +17,9 @@ _cart_line_display_columns = [
     "start_date",
     "amount",
     "duration_month",
-    "name"
+    "name",
+    "encrypted_password",
+    "is_encrypted",
 ]
 
 
