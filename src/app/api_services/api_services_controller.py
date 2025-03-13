@@ -1,10 +1,9 @@
 
 
+from app.models.service_models import Service
 
-from app.models.cart_line_models import CartLine
 
-
-class TestInherit(CartLine):
+class TestInherit(Service):
     # TODO add field
-    
+
     pass

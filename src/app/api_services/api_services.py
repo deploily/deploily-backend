@@ -1,10 +1,10 @@
 
 
-from app.models.cart_line_models import CartLine
+from app.models.service_models import Service
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
 
 
-class TestInherit(CartLine):
+class TestInherit(Service):
     name = Column(Integer)
     # TODO add field
     pass
