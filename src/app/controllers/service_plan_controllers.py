@@ -17,7 +17,7 @@ _service_plan_value_display_columns = [
     "limit",
     "service_id",
     "service",
-    "ubscription_category",
+    "subscription_category",
     "plan",
     "options"
 ]

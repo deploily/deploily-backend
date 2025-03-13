@@ -15,11 +15,10 @@ class ServicePlan(Model):
     service = relationship("Service")
     plan_id = Column(Integer, ForeignKey("plan.id"))
     plan = relationship("Plan")
-    ubscription_category = Column(
+    subscription_category = Column(
         Enum("monthly", "yearly", name="subscription_category"))
     options = relationship(
         "ServicePlanOption", back_populates="service_plan")
 
-   
     def __repr__(self):
         return str(self.id)

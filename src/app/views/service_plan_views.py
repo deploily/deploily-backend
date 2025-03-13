@@ -10,7 +10,7 @@ class ServicePlanModelView(ModelView):
     route_base = "/admin/service-plan"
     datamodel = SQLAInterface(ServicePlan)
     list_columns = ["id", "price", "limit", "service_id"
-                    "subscription_category", "name", "options"]
+                    "subscription_category", "options"]
     base_order = ("id", "desc")
 
 
