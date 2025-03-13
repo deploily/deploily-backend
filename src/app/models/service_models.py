@@ -23,7 +23,6 @@ class Service(Model):
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
-    cart_lines = relationship("CartLine", overlaps="service")
     tags = relationship("ServiceTag", overlaps="service")
     service_plans = relationship("ServicePlan")
 

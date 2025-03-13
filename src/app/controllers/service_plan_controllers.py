@@ -18,7 +18,8 @@ _service_plan_value_display_columns = [
     "service_id",
     "service",
     "ubscription_category",
-    "plan"
+    "plan",
+    "options"
 ]
 
 

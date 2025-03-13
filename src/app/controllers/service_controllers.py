@@ -21,7 +21,6 @@ _service_value_display_columns = [
     "image_service",
     "short_description",
     "specifications",
-    "cart_lines",
     "is_in_favorite"
 ]
 

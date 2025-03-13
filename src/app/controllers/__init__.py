@@ -1,6 +1,4 @@
 from . import (
-    cart_controllers,
-    cart_line_controllers,
     consumer_controllers,
     favorite_service_controllers,
     parameters_controllers,
@@ -12,6 +10,6 @@ from . import (
     contact_us_controllers,
     service_tag_controllers,
     my_service_controllers,
-    service_plan_controllers
-
+    service_plan_controllers,
+    subscription_controllers,
 )

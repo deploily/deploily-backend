@@ -20,7 +20,6 @@ class ServiceModelView(ModelView):
         "unit_price",
         "service_url",
         "image_service",
-        "cart_lines",
         "is_in_favorite",
         "curl_command"]
 

@@ -14,7 +14,8 @@ from . import (
     service_tag_views,
     my_service_views,
     service_plan_views,
-    plan_views
+    plan_views,
+    service_plan_option_views
 )
 
 appbuilder.add_link(
