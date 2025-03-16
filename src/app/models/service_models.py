@@ -25,10 +25,15 @@ class Service(Model):
     parameters = relationship("Parameter")
     tags = relationship("ServiceTag", overlaps="service")
     service_plans = relationship("ServicePlan")
-
     myfavorites = relationship(
-        "MyFavorites", back_populates="service", overlaps="service"
-    )
+        "MyFavorites", back_populates="service", overlaps="service")
+    type = Column(String(50), default="service", nullable=False)
+    api_key = Column(String(255), nullable=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'service',
+        'polymorphic_on': type
+    }
 
     @property
     def is_in_favorite(self):
@@ -46,3 +51,20 @@ class Service(Model):
 
     def __repr__(self):
         return self.name
+
+
+class ExtendedService(Service):
+    __tablename__ = None 
+    __mapper_args__ = {
+        'polymorphic_identity': 'extended_service'
+    }
+
+    _additional_field = Column("additional_field", String(255), nullable=True)
+
+    @property
+    def additional_field(self):
+        """Affiche additional_field uniquement pour ExtendedService"""
+        return self._additional_field if self.type == "extended_service" else None
+
+    def __repr__(self):
+        return f"ExtendedService: {self.name} - {self.additional_field or 'N/A'}"
