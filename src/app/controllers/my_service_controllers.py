@@ -18,8 +18,7 @@ _cart_line_display_columns = [
     "amount",
     "duration_month",
     "name",
-    "encrypted_password",
-    "is_encrypted",
+    "api_key",
 ]
 
 
