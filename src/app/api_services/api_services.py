@@ -1,10 +1,19 @@
+from sqlalchemy import Column, String
+from app.models import Service
 
 
-from app.models.service_models import Service
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
+class ExtendedService(Service):
+    __tablename__ = None
+    __mapper_args__ = {
+        'polymorphic_identity': 'extended_service'
+    }
 
+    _additional = Column("additional", String(255), nullable=True)
 
-class TestInherit(Service):
-    name = Column(Integer)
-    # TODO add field
-    pass
+    @property
+    def additional_field(self):
+        """Affiche additional_field uniquement pour ExtendedService"""
+        return self._additional if self.type == "extended_service" else None
+
+    def __repr__(self):
+        return f"ExtendedService: {self.name} - {self.additional_field or 'N/A'}"

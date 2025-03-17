@@ -11,3 +11,5 @@ from .my_service_models import MyService
 from .service_plan_models import ServicePlan
 from .plan_models import Plan
 from .service_plan_option_models import ServicePlanOption
+from app.api_services.api_services import ExtendedService
+
