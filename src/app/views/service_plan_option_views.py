@@ -1,6 +1,5 @@
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_ckeditor import CKEditorField
 from app import appbuilder, db
 from app.models.service_plan_option_models import ServicePlanOption
 

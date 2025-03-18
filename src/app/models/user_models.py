@@ -14,23 +14,5 @@ from app import appbuilder, db
 class MyUser(User):
     __tablename__ = "ab_user"
 
-    credits = Column(Float, default=0)
+    profiles = relationship("Profile")
     phone = Column(String)
-    @property
-    def existing_subscription(self):
-        """Retourne True si l'utilisateur a un abonnement actif"""
-        latest_subscription = (
-            db.session.query(MyService)
-            .filter_by(user_id=self.id)
-            .order_by(MyService.start_date.desc())
-            .first()
-        )
-
-        if not latest_subscription:
-            return False
-
-        expiration_date = latest_subscription.start_date.replace(day=1) + timedelta(
-            days=latest_subscription.duration_month * 30
-        )
-
-        return expiration_date > datetime.now().date()

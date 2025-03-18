@@ -13,7 +13,10 @@ from . import (
     my_service_views,
     service_plan_views,
     plan_views,
-    service_plan_option_views
+    service_plan_option_views,
+    profile_views,
+    promo_code_views,
+    promo_code_usage_views,
 )
 
 appbuilder.add_link(

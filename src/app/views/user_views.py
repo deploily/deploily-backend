@@ -19,11 +19,14 @@ class MyUserView(ModelView):
         "active",
         "credits",
         "roles",
-        "phone"
+        "phone",
+        "profiles"
     ]
-    show_columns = ["username", "email", "active", "roles", "phone"]
-    edit_columns = ["username", "email", "active", "roles", "phone"]
-    add_columns = ["username", "email", "active", "roles", "phone"]
+    show_columns = ["username", "email",
+                    "active", "roles", "phone", "profiles"]
+    edit_columns = ["username", "email",
+                    "active", "roles", "phone", "profiles"]
+    add_columns = ["username", "email", "active", "roles", "phone", "profiles"]
 
 
 appbuilder.add_view(
