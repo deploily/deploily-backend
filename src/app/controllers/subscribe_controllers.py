@@ -24,7 +24,7 @@ _subscribe_display_columns = [
 
 
 class SubscribeModelApi(ModelRestApi):
-    resource_name = "my-service"
+    resource_name = "subscribe"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(Subscribe)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
