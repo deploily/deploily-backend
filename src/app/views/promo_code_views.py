@@ -11,7 +11,8 @@ from app.models.promo_code_models import PromoCode
 class PromoCodeModelView(ModelView):
     route_base = "/admin/promo-code"
     datamodel = SQLAInterface(PromoCode)
-    list_columns = ["id", "rate", "expiration_date", "active", "usage_type"]
+    list_columns = ["id", "code", "rate",
+                    "expiration_date", "active", "usage_type"]
     base_order = ("id", "desc")
 
 

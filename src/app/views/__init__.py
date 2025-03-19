@@ -16,7 +16,6 @@ from . import (
     service_plan_option_views,
     profile_views,
     promo_code_views,
-    promo_code_usage_views,
 )
 
 appbuilder.add_link(
