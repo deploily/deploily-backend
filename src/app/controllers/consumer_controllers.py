@@ -15,8 +15,8 @@ _logger = logging.getLogger(__name__)
 class ConsumerApi(BaseApi):
     resource_name = "my-service"
 
-    # @protect()
-    # @jwt_required()
+    @protect()
+    @jwt_required()
     @expose("/<int:subscribe_id>/consumer", methods=["POST"])
     def create_my_service_consumer(self, subscribe_id):
         """
