@@ -13,4 +13,5 @@ from .plan_models import Plan
 from .service_plan_option_models import ServicePlanOption
 from .profile_models import Profile
 from .promo_code_models import PromoCode
+from .payment_models import Payment
 from app.api_services.api_services import ExtendedService
