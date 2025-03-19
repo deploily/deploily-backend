@@ -18,8 +18,8 @@ _support_ticket_display_columns = [
     "status",
     "description",
     "image",
-    "my_service_id",
-    "my_service",
+    "subscribe_id",
+    "subscribe",
     "created_on",
     "support_ticket_responses"
 ]
@@ -31,16 +31,16 @@ class SupportTicketModelApi(ModelRestApi):
     datamodel = SQLAInterface(SupportTicket)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
     add_columns = [
-    "id",
-    "title",
-    "status",
-    "description",
-    "image",
-    "my_service_id",
-    "my_service",
-    "support_ticket_responses"
-]
-    list_columns = _support_ticket_display_columns 
+        "id",
+        "title",
+        "status",
+        "description",
+        "image",
+        "subscribe_id",
+        "subscribe",
+        "support_ticket_responses"
+    ]
+    list_columns = _support_ticket_display_columns
     edit_columns = _support_ticket_display_columns
     _exclude_columns = [
         "changed_on",

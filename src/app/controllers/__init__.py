@@ -10,6 +10,7 @@ from . import (
     contact_us_controllers,
     service_tag_controllers,
     my_service_controllers,
-    service_plan_controllers
+    service_plan_controllers,
+    profile_controllers
 )
 from app.api_services import api_services_controller

@@ -17,7 +17,7 @@ _parameters_value_display_columns = [
     "value",
     "parameter_id",
     "parameter",
-    "my_service_id"
+    "subscribe_id"
 ]
 
 

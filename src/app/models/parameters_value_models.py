@@ -10,9 +10,8 @@ class ParameterValue(Model, AuditMixin):
     value = Column(String(255), nullable=False)
     parameter_id = Column(Integer, ForeignKey("parameter.id"))
     parameter = relationship("Parameter")
-    my_service_id = Column(Integer, ForeignKey("my_service.id"))
-    my_service = relationship("MyService")
-
+    subscribe_id = Column(Integer, ForeignKey("subscribe.id"))
+    subscribe = relationship("Subscribe")
 
     def __repr__(self):
         return str(self.id)

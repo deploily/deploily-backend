@@ -11,7 +11,7 @@ class SupportTicketModelView(ModelView):
     route_base = "/admin/supportticket"
     datamodel = SQLAInterface(SupportTicket)
     list_columns = ["id", "title", "description",
-                    "status", "image", "my_service_id"]
+                    "status", "image", "subscribe_id"]
     base_order = ("id", "desc")
 
 
