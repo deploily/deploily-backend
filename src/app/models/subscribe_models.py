@@ -27,6 +27,8 @@ class Subscribe(Model, AuditMixin):
     duration_month = Column(Integer)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")
+    promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)  
+    promo_code = relationship("PromoCode", back_populates="subscriptions")
     parameters_values = relationship("ParameterValue")
 
     @property

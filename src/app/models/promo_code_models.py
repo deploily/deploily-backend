@@ -13,6 +13,7 @@ class PromoCode(Model):
     active = Column(Boolean, default=True)
     usage_type = Column(Enum("single_use", "multiple_use",
                         name="promo_usage_type"), default="single_use")
+    subscriptions = relationship("Subscribe", back_populates="promo_code")
 
     @property
     def is_valid(self):
