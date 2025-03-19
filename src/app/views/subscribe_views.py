@@ -8,9 +8,10 @@ from app.models.subscribe_models import Subscribe
 
 
 class SubscribeModelView(ModelView):
-    route_base = "/admin/my-service"
+    route_base = "/admin/subscribe"
     datamodel = SQLAInterface(Subscribe)
-    list_columns = ["id", "start_date", "total_amount","price", "duration_month"]
+    list_columns = ["id", "start_date", "status",
+                    "total_amount", "price", "duration_month"]
     base_order = ("id", "desc")
 
 

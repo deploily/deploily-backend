@@ -2,7 +2,7 @@
 import json
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Float, Integer, DateTime, String, Boolean, ForeignKey
+from sqlalchemy import Column, Float, Integer, DateTime, String, Boolean, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from app import appbuilder, db
 from datetime import datetime
@@ -22,6 +22,8 @@ class Subscribe(Model, AuditMixin):
     )
     total_amount = Column(Float)
     price = Column(Float)
+    status = Column(
+        Enum("unpaid", "paid", name="subscribe_status"), default="unpaid")
     duration_month = Column(Integer)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")

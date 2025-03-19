@@ -17,6 +17,7 @@ _subscribe_display_columns = [
     "price",
     "duration_month",
     "name",
+    "status",
     "service_plan",
     "service_details"
 ]
