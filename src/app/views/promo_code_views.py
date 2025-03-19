@@ -12,7 +12,7 @@ class PromoCodeModelView(ModelView):
     route_base = "/admin/promo-code"
     datamodel = SQLAInterface(PromoCode)
     list_columns = ["id", "code", "rate",
-                    "expiration_date", "active", "usage_type"]
+                    "expiration_date", "active", "usage_type", "is_valid"]
     base_order = ("id", "desc")
 
 
