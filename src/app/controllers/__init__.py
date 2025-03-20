@@ -12,6 +12,7 @@ from . import (
     service_tag_controllers,
     service_plan_controllers,
     profile_controllers,
-    promo_code_controllers
+    promo_code_controllers,
+    subscribe_service_plan_controllers
 )
 from app.api_services import api_services_controller
