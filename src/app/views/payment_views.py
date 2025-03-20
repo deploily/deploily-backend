@@ -16,7 +16,7 @@ class PaymentModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     PaymentModelView,
-    "Parameters Value",
+    "Payment",
     icon="fa-solid fa-sliders",
     category="Payment",
 )
