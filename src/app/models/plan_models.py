@@ -5,7 +5,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class Plan(Model, AuditMixin):
+class Plan(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     description = Column(String(255), nullable=False)
