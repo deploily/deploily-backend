@@ -1,13 +1,28 @@
 # -*- coding: utf-8 -*-
-import json
+import logging
+import os
+from datetime import datetime
+
+from cryptography.fernet import Fernet
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Float, Integer, DateTime, String, Boolean, ForeignKey, Enum
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    event,
+)
 from sqlalchemy.orm import relationship
-from app import appbuilder, db
-from datetime import datetime
-from flask import jsonify
-import logging
+
+FERNET_KEY = os.getenv("FERNET_KEY", "")
+
+encryptor = Fernet(FERNET_KEY)  # Create a single Fernet instance
+
 
 _logger = logging.getLogger(__name__)
 
@@ -22,14 +37,16 @@ class Subscribe(Model, AuditMixin):
     )
     total_amount = Column(Float)
     price = Column(Float)
-    status = Column(
-        Enum("unpaid", "paid", name="subscribe_status"), default="unpaid")
+    status = Column(Enum("unpaid", "paid", name="subscribe_status"))
     duration_month = Column(Integer)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")
-    promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)  
+    promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)
     promo_code = relationship("PromoCode", back_populates="subscriptions")
     parameters_values = relationship("ParameterValue")
+    payments = relationship("Payment")
+    api_key = Column("api_key", String(255))
+    is_encrypted = Column(Boolean, default=False)
 
     @property
     def service_details(self):
@@ -40,14 +57,50 @@ class Subscribe(Model, AuditMixin):
             service_json = {}
             for key, value in service.__dict__.items():
 
-                if not key.startswith('_'):
+                if not key.startswith("_"):
                     service_json[key] = value
 
             return service_json
         else:
-            _logger.warning(
-                "Service or service_plan is None for MyService ID %d", self.id)
+            _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
             return {}
 
     def __repr__(self):
         return str(self.id)
+
+
+def encrypt_api_key(api_key):
+    """Encrypt the given API key."""
+    if api_key and not api_key.startswith("gAAAAA"):  # Assuming 'gAAAAA' is an encryption marker
+        return encryptor.encrypt(api_key.encode()).decode()
+    return api_key
+
+
+def decrypt_api_key(api_key):
+    """Decrypt the given API key."""
+    try:
+        return encryptor.decrypt(api_key.encode()).decode()
+    except Exception as e:
+        print(f"Decryption error: {e}")
+        return None  # Return None if decryption fails
+
+
+@event.listens_for(Subscribe, "before_insert")
+@event.listens_for(Subscribe, "before_update")
+def encrypt_data_before_save(mapper, connection, target):
+    """Ensure api_key is encrypted before saving."""
+    target.is_encrypted = False
+
+    if target.api_key and not target.is_encrypted:
+        print("Encrypting api_key in event listener...")
+        target.api_key = encrypt_api_key(target.api_key)
+        target.is_encrypted = True
+
+
+@event.listens_for(Subscribe, "load")
+def decrypt_data_on_load(target, context):
+    """Decrypt api_key when loading the object from the database."""
+    if target.api_key and target.is_encrypted:
+        target.api_key = decrypt_api_key(target.api_key)
+        if target.api_key:
+            print(f"Decrypted api_key on load: {target.api_key}")  # Debugging
