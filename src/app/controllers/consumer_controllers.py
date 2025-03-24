@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
 import uuid
+
 from flask import Response, jsonify
 from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
+
 from app import appbuilder, db
 from app.models import CartLine, Parameter, ParameterValue, Service
 from app.services.apisix_service import ApiSixService
@@ -52,8 +54,7 @@ class ConsumerApi(BaseApi):
             .filter(CartLine.id == cart_line_id and CartLine.created_by == user)
             .first()
         )
-        service = db.session.query(Service).filter(
-            Service.cart_lines.any(id=cart_line_id)).first()
+        service = db.session.query(Service).filter(Service.cart_lines.any(id=cart_line_id)).first()
         if not service:
             return Response("service not found", status=400)
         param_value = (
@@ -75,13 +76,14 @@ class ConsumerApi(BaseApi):
                 .filter(CartLine.id == cart_line_id)
                 .all()
             )
-            service_labels = [
-                service.name for service in services] if services else []
+            [service.name for service in services] if services else []
 
             response = apisix_service.create_consumer(
-                username=consumer_username, api_key=api_key, labels={
-                    "services": ",".join(service_labels)}
+                username=consumer_username,
+                api_key=api_key,
+                labels={"service": service.name.strip()},
             )
+
             if param_value:
                 param_value.value = api_key
             else:
