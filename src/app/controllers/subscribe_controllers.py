@@ -5,6 +5,7 @@ import logging
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+
 from app import appbuilder
 from app.models.subscribe_models import Subscribe
 from app.utils.utils import get_user
@@ -19,7 +20,9 @@ _subscribe_display_columns = [
     "name",
     "status",
     "service_plan",
-    "service_details"
+    "service_details",
+    "api_key",
+    "service_plan_id",
 ]
 
 
