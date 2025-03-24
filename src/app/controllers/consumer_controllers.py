@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
 import uuid
+
 from flask import Response, jsonify
 from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
+
 from app import appbuilder, db
-from app.models import Subscribe, Parameter, ParameterValue, Service
+from app.models import Parameter, ParameterValue, Subscribe
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
@@ -48,10 +50,7 @@ class ConsumerApi(BaseApi):
         """
         user = get_user()
 
-        subscribe = (
-            db.session.query(Subscribe).filter(
-                Subscribe.id == subscribe_id).first()
-        )
+        subscribe = db.session.query(Subscribe).filter(Subscribe.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
             return Response("Subscribe or ServicePlan not found", status=400)
@@ -89,8 +88,7 @@ class ConsumerApi(BaseApi):
                 parameter_id=parameter.id,
                 subscribe_id=subscribe.id,
             )
-            print(
-                f"Inserting new ParameterValue with subscribe_id={subscribe.id}")
+            print(f"Inserting new ParameterValue with subscribe_id={subscribe.id}")
 
             db.session.add(new_param_value)
             db.session.commit()
@@ -101,7 +99,7 @@ class ConsumerApi(BaseApi):
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
-                labels={"service": service.name},
+                labels={"service": service.name.strip()},
             )
 
             return jsonify({"auth-key": api_key}), 200
