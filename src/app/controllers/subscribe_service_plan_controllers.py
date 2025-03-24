@@ -177,7 +177,7 @@ class SubscriptionApi(BaseApi):
                 return self.response_400(message="Payment ID not found in database")
 
             payment_service = PaymentService()
-            payment_response = payment_service.post_payement(payment.id)[0]
+            payment_response = payment_service.post_payement(payment.id, total_amount)[0]
 
             _logger.error(f"Payment service response: {payment_response}")
 

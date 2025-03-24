@@ -1,8 +1,9 @@
-import urllib.request
 import json
-from flask_appbuilder.security.manager import AUTH_OAUTH
 import os
+import urllib.request
 from datetime import timedelta
+
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -12,9 +13,7 @@ KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = (
-    f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
-)
+LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -62,8 +61,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
-SQLALCHEMY_DATABASE_URI = os.getenv(
-    "SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
+SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-WTF flag for CSRF
@@ -159,7 +157,5 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv(
-    "APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
-APISIX_API_KEY = os.getenv(
-    "APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
+APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")

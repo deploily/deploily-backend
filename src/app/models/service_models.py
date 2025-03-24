@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
-from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Float, Integer, String, Boolean
-from sqlalchemy.orm import relationship
-from app import appbuilder, db
 from flask_appbuilder.models.mixins import ImageColumn
-from flask_login import current_user
-from app.utils.utils import get_user
+from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.orm import relationship
+
+from app import db
 from app.models.my_favorites_models import MyFavorites
-from flask_appbuilder.security.sqla.models import User
+from app.utils.utils import get_user
 
 
 class Service(Model):
@@ -25,15 +23,14 @@ class Service(Model):
     parameters = relationship("Parameter")
     tags = relationship("ServiceTag", overlaps="service")
     service_plans = relationship("ServicePlan")
-    myfavorites = relationship(
-        "MyFavorites", back_populates="service", overlaps="service")
-    type = Column(String(50), default="service", nullable=False)
-    api_key = Column(String(255), nullable=True)
+    myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
+    # type = Column(String(50), default="service", nullable=False)
+    # api_key = Column(String(255), nullable=True)
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'service',
-        'polymorphic_on': type
-    }
+    # __mapper_args__ = {
+    #     'polymorphic_identity': 'service',
+    #     'polymorphic_on': type
+    # }
 
     @property
     def is_in_favorite(self):
@@ -51,5 +48,3 @@ class Service(Model):
 
     def __repr__(self):
         return self.name
-
-

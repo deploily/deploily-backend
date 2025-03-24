@@ -70,16 +70,11 @@ curl -X POST "http://127.0.0.1:9180/apisix/admin/routes/1" \
 
 ## Create consumer
 ```bash
-curl -X PUT "http://127.0.0.1:9180/apisix/admin/consumers/flask_consumer" \
+curl -X PUT "https://admin-api.deploily.cloud/apisix/admin/consumers/flask111111_consumer" \
 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
 -H "Content-Type: application/json" \
 -d '{
-  "username": "flask_consumer",
-  "plugins": {
-    "key-auth": {
-      "key": "my-api-key"
-    }
-  }
+  "username": "flask111111_consumer"
 }'
 ```
 ## create a route with key-auth for a specific consumer
@@ -158,7 +153,7 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
     "plugins": {
         "consumer-restriction": {
             "type": "whitelist",
-            "whitelist": ["cart_line_1_user"]
+            "whitelist": ["cart_line_2_user"]
         }
     }
 }'
@@ -167,9 +162,12 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/1 \
 ## Configuration Test
 
 ```bash
-curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/photon?q=berlin"
+curl -H "apikey:  	 	0fdf370a2938b6dbb7defe0d5fd45e2" "https://api.deploily.cloud/photon?q=berlin"
 
 ```
+curl -H "apikey:  	 	505cef9e08744559966a2028ab04bffd" "https://api.deploily.cloud/photon?q=berlin"
+
+curl -H "apikey: KhIW+rKyEMFjT9Y6liNDOR6Ym9N9ycMwQw89JoJiq1QcRPO77W86dgpI2ReILi" "https://api.deploily.cloud/photon?q=berlin"
 ## Missing API key found in request
 ```bash
 curl "https://api.deploily.cloud/photon?q=berlin"
@@ -299,7 +297,7 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/3 \
 ## Test Nominatim API
 
 ```bash
-curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/nominatim?lat=35.30538822124727&lon=-1.1417971423748299&format=json&accept-language=fr"
+curl -H "apikey: f456dd821ca840819fe44d5db9d14506" "https://api.deploily.cloud/nominatim?lat=35.30538822124727&lon=-1.1417971423748299&format=json&accept-language=fr"
 ```
 
 ## Define Wilaya Upstream
@@ -357,7 +355,7 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/4 \
 ## Test Nominatim API
 
 ```bash
-curl -H "apikey: b2376542c6adbe480dc1ce0ca4acc852" "https://api.deploily.cloud/nominatim?lat=35.30538822124727&lon=-1.1417971423748299&format=json&accept-language=fr"
+curl -H "apikey: 1b1bad9aefbe4002ba881a2113ab9cb" "https://api.deploily.cloud/wilaya?lat=35&long=0"
 ```
 
 
