@@ -1,2 +1,1 @@
-from . import apisix_service
-from . import payment_service
+from . import apisix_service, payment_service
