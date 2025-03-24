@@ -21,7 +21,7 @@ from sqlalchemy.orm import relationship
 
 FERNET_KEY = os.getenv("FERNET_KEY", "")
 
-encryptor = Fernet(FERNET_KEY)  # Create a single Fernet instance
+encryptor = Fernet(FERNET_KEY)
 
 
 _logger = logging.getLogger(__name__)
@@ -44,9 +44,9 @@ class Subscribe(Model, AuditMixin):
     promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)
     promo_code = relationship("PromoCode", back_populates="subscriptions")
     parameters_values = relationship("ParameterValue")
-    payments = relationship("Payment")
     api_key = Column("api_key", String(255))
     is_encrypted = Column(Boolean, default=False)
+    payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
 
     @property
     def service_details(self):
@@ -71,7 +71,7 @@ class Subscribe(Model, AuditMixin):
 
 def encrypt_api_key(api_key):
     """Encrypt the given API key."""
-    if api_key and not api_key.startswith("gAAAAA"):  # Assuming 'gAAAAA' is an encryption marker
+    if api_key and not api_key.startswith("gAAAAA"):
         return encryptor.encrypt(api_key.encode()).decode()
     return api_key
 
@@ -82,7 +82,7 @@ def decrypt_api_key(api_key):
         return encryptor.decrypt(api_key.encode()).decode()
     except Exception as e:
         print(f"Decryption error: {e}")
-        return None  # Return None if decryption fails
+        return None
 
 
 @event.listens_for(Subscribe, "before_insert")
@@ -103,4 +103,4 @@ def decrypt_data_on_load(target, context):
     if target.api_key and target.is_encrypted:
         target.api_key = decrypt_api_key(target.api_key)
         if target.api_key:
-            print(f"Decrypted api_key on load: {target.api_key}")  # Debugging
+            print(f"Decrypted api_key on load: {target.api_key}")
