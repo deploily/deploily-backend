@@ -33,6 +33,9 @@ class SubscriptionApi(BaseApi):
                         schema:
                             type: object
                             properties:
+                                profile_id:
+                                    type: integer
+                                    description: ID of the user's profile
                                 service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected service plan
@@ -40,8 +43,9 @@ class SubscriptionApi(BaseApi):
                                     type: number
                                     format: float
                                     description: Total amount before applying promo codes
-                                promo_code_profile_selected_id:
+                                promo_code:
                                     type: string
+                                    nullable: true
                                     description: Promo code (if applicable)
                                 duration:
                                     type: integer
@@ -136,7 +140,7 @@ class SubscriptionApi(BaseApi):
                 return self.response_400(message="Service Plan not found")
 
             total_amount = data.get("total_amount")
-            promo_code_str = data.get("promo_code_profile_selected_id")
+            promo_code_str = data.get("promo_code")
             duration = data.get("duration")
 
             promo_code_amount = 0
@@ -144,7 +148,7 @@ class SubscriptionApi(BaseApi):
             if promo_code_str:
                 promo_code = db.session.query(PromoCode).filter_by(code=promo_code_str).first()
                 if promo_code:
-                    promo_code_amount = promo_code.amount
+                    promo_code_amount = (total_amount * promo_code.rate) / 100
 
             price = total_amount - promo_code_amount
 
@@ -161,7 +165,7 @@ class SubscriptionApi(BaseApi):
             db.session.add(subscription)
             db.session.flush()
 
-            payment = payment = Payment(
+            payment = Payment(
                 amount=price,
                 payment_method=data.get("payment_method", "card"),
                 subscription_id=subscription.id,

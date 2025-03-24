@@ -11,7 +11,21 @@ from app.models.contact_us_models import ContactUs, FeedbackContact, SupportCont
 class ContactUsModelView(ModelView):
     route_base = "/admin/contact-us"
     datamodel = SQLAInterface(ContactUs)
-    list_columns = ["id", "name", "email", "message", "type"]  # Ajout du champ type
+    list_columns = ["id", "name", "email", "message", "type"]
+    base_order = ("id", "desc")
+
+
+class SupportContactModelView(ModelView):
+    route_base = "/admin/support-contact"
+    datamodel = SQLAInterface(SupportContact)
+    list_columns = ["id", "name", "email", "message", "issue_type"]
+    base_order = ("id", "desc")
+
+
+class FeedbackContactModelView(ModelView):
+    route_base = "/admin/feedback-contact"
+    datamodel = SQLAInterface(FeedbackContact)
+    list_columns = ["id", "name", "email", "message", "rating"]
     base_order = ("id", "desc")
 
 

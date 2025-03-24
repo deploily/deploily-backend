@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 from flask_appbuilder.api import ModelRestApi
-from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+
 from app import appbuilder
 from app.models.profile_models import Profile
-from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
@@ -17,7 +17,8 @@ _profile_display_columns = [
     "user",
     "phone",
     "company_name",
-    "company_registration_number"
+    "company_registration_number",
+    "balance",
 ]
 
 

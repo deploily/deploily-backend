@@ -16,10 +16,8 @@ class ContactUSModelApi(ModelRestApi):
     resource_name = "contact-us"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ContactUs)
-
-    # Ajouter les champs spécifiques aux sous-classes
-    add_columns = ["name", "email", "message", "type"]
-    list_columns = _contact_us_display_columns + ["type"]
+    add_columns = ["id", "name", "email", "message"]
+    list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
 
     _exclude_columns = ["changed_by", "changed_on", "created_by.id"]

@@ -9,12 +9,12 @@ _logger = logging.getLogger(__name__)
 class PaymentService:
 
     def __init__(self):
-        self.URL = os.getenv("PAYMENT_URL", "https://pay.deploily.cloud/api/v1/epayment")
-        self.API_KEY = os.getenv("PAYMENT_API_KEY", "rurpetCuGrotdirjIdpo")
+        self.URL = os.getenv("PAYMENT_URL", "http://192.168.1.14:5265/api/v1/epayment")
 
-    def post_payement(self, payment_id, net_amount):
-        payload = {"ORDER_ID": str(payment_id), "NET_AMOUNT": net_amount}
-        headers = {"Content-Type": "application/json", "X-Api-Key": self.API_KEY}
+    def post_payement(self, payment_id, total_amount):
+        payload = {"ORDER_ID": str(payment_id), "NET_AMOUNT": total_amount}
+
+        headers = {"Content-Type": "application/json"}
 
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")
 
