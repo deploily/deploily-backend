@@ -1,14 +1,15 @@
 from flask import jsonify
 from flask_appbuilder.api import expose
-from flask_jwt_extended import jwt_required
+
 from app import appbuilder
 from app.controllers.consumer_controllers import ConsumerApi
 
 
 class CustomConsumerApi(ConsumerApi):
     resource_name = "custom-my-service"
-    @expose("/<int:my_service_id>/custom-consumer", methods=["POST"])
-    def create_custom_consumer(self, my_service_id):
+
+    @expose("/<int:subscribe_id>/custom-consumer", methods=["POST"])
+    def create_custom_consumer(self, subscribe_id):
         """
         Crée un consommateur personnalisé pour un service donné.
 
@@ -17,7 +18,7 @@ class CustomConsumerApi(ConsumerApi):
           description: Crée un consommateur personnalisé et génère une clé API.
           parameters:
             - in: path
-              name: my_service_id
+              name: subscribe_id
               required: true
               schema:
                 type: integer
@@ -41,10 +42,7 @@ class CustomConsumerApi(ConsumerApi):
             500:
               description: Erreur interne du serveur.
         """
-        response, status_code = self.create_my_service_consumer(my_service_id)  
-
-        print(f"DEBUG: Response = {response}, Status = {status_code}")
-
+        response, status_code = super().create_my_service_consumer(subscribe_id)
 
         if isinstance(response, dict):
             data = response
@@ -52,10 +50,9 @@ class CustomConsumerApi(ConsumerApi):
             try:
                 data = response.get_json()
             except AttributeError:
-                return jsonify({"error": "Invalid response format"}), 500  
+                return jsonify({"error": "Invalid response format"}), 500
 
-        data["message"] = "Custom consumer created successfully"
-
+        data["auth-key"] = "Hello World"
         return jsonify(data), status_code
 
 
