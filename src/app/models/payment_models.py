@@ -9,7 +9,9 @@ from sqlalchemy.orm import relationship
 class Payment(Model):
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
-    status = Column(Enum("pending", "completed", "failed"), default="pending")
+    status = Column(
+        Enum("pending", "completed", "failed", name="status_payment"), default="pending"
+    )
     start_date = Column(DateTime, default=lambda: datetime.now().replace(microsecond=0))
     payment_method = Column(
         Enum("card", "bank_transfer", name="payment_method_enum"), nullable=False
