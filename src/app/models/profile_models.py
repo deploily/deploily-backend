@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
-from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum, Float
-
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class Profile(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     balance = Column(Float, default=0.0)
-    type = Column(Enum("default", "personal", "company", name="type"))
+    profile_type = Column(Enum("default", "personal", "company", name="profile_type"))
     phone = Column(String, nullable=True)
     company_name = Column(String(255), nullable=True)
     company_registration_number = Column(String(255), nullable=True)
