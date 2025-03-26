@@ -7,9 +7,11 @@ _logger = logging.getLogger(__name__)
 
 
 class PaymentService:
-
     def __init__(self):
         self.URL = os.getenv("PAYMENT_URL", "http://192.168.1.14:5265/api/v1/epayment")
+        self.STATUS_URL = os.getenv(
+            "PAYMENT_STATUS_URL", "http://192.168.1.14:5265/epayment/status"
+        )
 
     def post_payement(self, payment_id, total_amount):
         payload = {"ORDER_ID": str(payment_id), "NET_AMOUNT": total_amount}
@@ -42,3 +44,14 @@ class PaymentService:
         except requests.RequestException as e:
             _logger.error(f"[PAYMENT SERVICE] Failed to send payment data: {str(e)}")
             return {"message": "Payment processing error"}, 500
+
+    def get_payment_status(self, satim_order_id):
+        params = {"SatimOrderId": satim_order_id}
+        try:
+            response = requests.get(self.STATUS_URL, params=params)
+            _logger.info(f"[PAYMENT SERVICE] Status check response status: {response.status_code}")
+            _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
+            return response
+        except requests.RequestException as e:
+            _logger.error(f"[PAYMENT SERVICE] Failed to check payment status: {str(e)}")
+            return None
