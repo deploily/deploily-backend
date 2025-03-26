@@ -3,9 +3,8 @@
 import logging
 
 from flask_appbuilder.api import ModelRestApi
-from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from app.utils.utils import get_user
+
 from app import appbuilder
 from app.models.service_models import Service
 
@@ -21,7 +20,7 @@ _service_value_display_columns = [
     "image_service",
     "short_description",
     "specifications",
-    "is_in_favorite"
+    "is_in_favorite",
 ]
 
 

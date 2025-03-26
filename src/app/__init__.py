@@ -40,4 +40,4 @@ appbuilder = AppBuilder(app, db.session, security_manager_class=CustomSsoSecurit
 if __name__ == "__main__":
     app.run(debug=True)
 
-from . import controllers, models, services, views
+from . import api_services, controllers, models, services, views

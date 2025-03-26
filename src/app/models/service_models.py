@@ -24,13 +24,9 @@ class Service(Model):
     tags = relationship("ServiceTag", overlaps="service")
     service_plans = relationship("ServicePlan")
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
-    # type = Column(String(50), default="service", nullable=False)
-    # api_key = Column(String(255), nullable=True)
+    type = Column(String(50), default="service", nullable=False)
 
-    # __mapper_args__ = {
-    #     'polymorphic_identity': 'service',
-    #     'polymorphic_on': type
-    # }
+    __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
 
     @property
     def is_in_favorite(self):
