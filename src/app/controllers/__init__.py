@@ -8,6 +8,7 @@ from . import (
     parameters_controllers,
     parameters_value_controllers,
     payment_controller,
+    payment_status_controllers,
     profile_controllers,
     promo_code_controllers,
     service_controllers,
