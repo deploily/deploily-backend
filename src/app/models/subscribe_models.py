@@ -19,7 +19,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-FERNET_KEY = os.getenv("FERNET_KEY", "")
+FERNET_KEY = os.getenv("FERNET_KEY", "QkqrpIbcUuQ_5Ho25VEv5oPFN4IVuOYojOMwneVbZNQ=")
 
 encryptor = Fernet(FERNET_KEY)
 
