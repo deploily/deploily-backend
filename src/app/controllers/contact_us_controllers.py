@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
@@ -18,11 +19,7 @@ class ContactUSModelApi(ModelRestApi):
     add_columns = ["id", "name", "email", "message"]
     list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
-    _exclude_columns = [
-        "changed_by",
-        "changed_on",
-        "created_by.id"
-    ]
+    _exclude_columns = ["changed_by", "changed_on", "created_by.id"]
 
 
 appbuilder.add_api(ContactUSModelApi)

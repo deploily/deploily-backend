@@ -1,18 +1,22 @@
 from app import appbuilder, db
 
 from . import (
-    cart_line_views,
-    cart_views,
-    parameters_value_views,
-    service_parameters_views,
-    service_views,
-    support_ticket_views,
-    support_ticket_response_views,
-    user_views,
-    my_favorites_views,
     contact_us,
+    my_favorites_views,
+    parameters_value_views,
+    payment_views,
+    plan_views,
+    profile_views,
+    promo_code_views,
+    service_parameters_views,
+    service_plan_option_views,
+    service_plan_views,
     service_tag_views,
-    my_service_views
+    service_views,
+    subscribe_views,
+    support_ticket_response_views,
+    support_ticket_views,
+    user_views,
 )
 
 appbuilder.add_link(

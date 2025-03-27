@@ -2,6 +2,7 @@
 
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+
 from app import appbuilder, db
 from app.models.contact_us_models import ContactUs
 

@@ -17,7 +17,7 @@ _parameters_value_display_columns = [
     "value",
     "parameter_id",
     "parameter",
-    "cart_line_id",
+    "subscribe_id"
 ]
 
 

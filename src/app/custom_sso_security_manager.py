@@ -11,8 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class CustomSsoSecurityManager(SecurityManager):
     def oauth_user_info(self, provider, response=None):
-        me = self.appbuilder.sm.oauth_remotes[provider].get(
-            "openid-connect/userinfo")
+        me = self.appbuilder.sm.oauth_remotes[provider].get("openid-connect/userinfo")
         me.raise_for_status()
         data = me.json()
         return {

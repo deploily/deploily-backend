@@ -7,7 +7,7 @@ from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.models import CartLine, Parameter, ParameterValue, Service
+from app.models import Parameter, ParameterValue, Subscribe
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
@@ -15,23 +15,23 @@ _logger = logging.getLogger(__name__)
 
 
 class ConsumerApi(BaseApi):
-    resource_name = "cart-line"
+    resource_name = "my-service"
 
     @protect()
     @jwt_required()
-    @expose("/<int:cart_line_id>/consumer", methods=["POST"])
-    def create_cart_line_consumer(self, cart_line_id):
+    @expose("/<int:subscribe_id>/consumer", methods=["POST"])
+    def create_my_service_consumer(self, subscribe_id):
         """
-        Creates an API consumer for a given CartLine ID and returns an API key.
+        Creates an API consumer for a given Subscribe ID and returns an API key.
         ---
         post:
           parameters:
             - in: path
-              name: cart_line_id
+              name: subscribe_id
               required: true
               schema:
                 type: integer
-              description: ID of the CartLine to associate with the API consumer
+              description: ID of the Subscribe to associate with the API consumer
           responses:
             200:
               description: API consumer created successfully
@@ -44,64 +44,64 @@ class ConsumerApi(BaseApi):
                         type: string
                         description: Generated API key
             400:
-              description: CartLine not found
+              description: Subscribe not found
             500:
               description: Internal server error
         """
         user = get_user()
-        cart_line = (
-            db.session.query(CartLine)
-            .filter(CartLine.id == cart_line_id and CartLine.created_by == user)
-            .first()
-        )
-        service = db.session.query(Service).filter(Service.cart_lines.any(id=cart_line_id)).first()
+
+        subscribe = db.session.query(Subscribe).filter(Subscribe.id == subscribe_id).first()
+
+        if not subscribe or not subscribe.service_plan:
+            return Response("Subscribe or ServicePlan not found", status=400)
+
+        service = subscribe.service_plan.service
+
         if not service:
-            return Response("service not found", status=400)
+            return Response("Service not found", status=400)
+
         param_value = (
             db.session.query(ParameterValue)
-            .filter(ParameterValue.cart_line_id == cart_line_id, ParameterValue.created_by == user)
+            .join(Parameter)
+            .filter(ParameterValue.created_by == user)
+            .filter(ParameterValue.subscribe_id == subscribe.id)
+            .filter(Parameter.service_id == service.id, Parameter.type == "token")
             .first()
         )
-        if not cart_line:
-            return Response("CartLine not found", status=400)
-        try:
-            api_key = uuid.uuid4().hex[:32]
-            if not api_key:
-                raise Exception("Unexpected API response format")
-            consumer_username = f"cart_line_{cart_line.id}_user"
-            apisix_service = ApiSixService()
-            services = (
-                db.session.query(Service)
-                .join(Service.cart_lines)
-                .filter(CartLine.id == cart_line_id)
-                .all()
-            )
-            [service.name for service in services] if services else []
 
+        if param_value:
+            api_key = param_value.value
+        else:
+            api_key = uuid.uuid4().hex[:32]
+
+            parameter = (
+                db.session.query(Parameter)
+                .filter(Parameter.type == "token", Parameter.service_id == service.id)
+                .first()
+            )
+            if not parameter:
+                return Response("No valid Parameter of type 'token' found", status=400)
+
+            new_param_value = ParameterValue(
+                value=api_key,
+                created_by=user,
+                parameter_id=parameter.id,
+                subscribe_id=subscribe.id,
+            )
+            print(f"Inserting new ParameterValue with subscribe_id={subscribe.id}")
+
+            db.session.add(new_param_value)
+            db.session.commit()
+
+        try:
+            consumer_username = f"subscribe_{subscribe_id}_user"
+            apisix_service = ApiSixService()
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
                 labels={"service": service.name.strip()},
             )
 
-            if param_value:
-                param_value.value = api_key
-            else:
-                parameter = (
-                    db.session.query(Parameter)
-                    .filter(Parameter.type == "token" and Parameter.service_id == service.id)
-                    .first()
-                )
-                if not parameter:
-                    return Response("No valid Parameter of type 'token' found", status=400)
-                new_param_value = ParameterValue(
-                    value=api_key,
-                    cart_line_id=cart_line.id,
-                    created_by=user,
-                    parameter_id=parameter.id,
-                )
-                db.session.add(new_param_value)
-            db.session.commit()
             return jsonify({"auth-key": api_key}), 200
 
         except Exception as e:

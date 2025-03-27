@@ -3,21 +3,22 @@
 
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+
 from app import appbuilder, db
-from app.models.my_service_models import MyService
+from app.models.plan_models import Plan
 
 
-class MyServiceModelView(ModelView):
-    route_base = "/admin/my-service"
-    datamodel = SQLAInterface(MyService)
-    list_columns = ["id", "start_date", "amount", "duration_month"]
+class PlanModelView(ModelView):
+    route_base = "/admin/plan"
+    datamodel = SQLAInterface(Plan)
+    list_columns = ["id", "name", "description", "service_plan_id"]
     base_order = ("id", "desc")
 
 
 db.create_all()
 appbuilder.add_view(
-    MyServiceModelView,
-    "My Service",
+    PlanModelView,
+    "Plan",
     icon="fa-solid fa-sliders",
     category="Service",
 )

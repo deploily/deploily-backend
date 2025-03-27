@@ -25,7 +25,7 @@ In case you don't have the same migrations history
 ```bash
 flask db migrate -m "<message>"
 # copy the revision id in the error message
-flask db revision --rev-id <revision-id>
+flask db revision --rev-id 16f6241d9d69
 flask db upgrade
 ```
 
