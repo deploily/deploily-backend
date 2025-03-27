@@ -20,10 +20,12 @@ class Service(Model):
     unit_price = Column(Float)
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
-    parameters = relationship("Parameter")
-    tags = relationship("ServiceTag", overlaps="service")
-    service_plans = relationship("ServicePlan")
-    myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
+    parameters = relationship("Parameter", cascade="all, delete")
+    tags = relationship("ServiceTag", overlaps="service", cascade="all, delete")
+    service_plans = relationship("ServicePlan", cascade="all, delete")
+    myfavorites = relationship(
+        "MyFavorites", back_populates="service", overlaps="service", cascade="all, delete"
+    )
     type = Column(String(50), default="service", nullable=False)
 
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}

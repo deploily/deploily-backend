@@ -16,9 +16,11 @@ class Payment(Model):
     payment_method = Column(
         Enum("card", "bank_transfer", name="payment_method_enum"), nullable=False
     )
-    profile_id = Column(Integer, ForeignKey("profile.id"), nullable=False)
+    profile_id = Column(Integer, ForeignKey("profile.id", ondelete="CASCADE"), nullable=False)
     profile = relationship("Profile")
-    subscription_id = Column(Integer, ForeignKey("subscribe.id"), nullable=False)
+    subscription_id = Column(
+        Integer, ForeignKey("subscribe.id", ondelete="CASCADE"), nullable=False
+    )
     subscription = relationship("Subscribe", back_populates="payments", overlaps="payments")
 
     def __repr__(self):

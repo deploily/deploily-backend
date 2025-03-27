@@ -39,14 +39,16 @@ class Subscribe(Model, AuditMixin):
     price = Column(Float)
     status = Column(Enum("unpaid", "paid", name="subscribe_status"))
     duration_month = Column(Integer)
-    service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
+    service_plan_id = Column(Integer, ForeignKey("service_plan.id", ondelete="CASCADE"))
     service_plan = relationship("ServicePlan")
-    promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)
+    promo_code_id = Column(Integer, ForeignKey("promo_code.id", ondelete="CASCADE"), nullable=True)
     promo_code = relationship("PromoCode", back_populates="subscriptions")
-    parameters_values = relationship("ParameterValue")
+    parameters_values = relationship("ParameterValue", cascade="all, delete")
     api_key = Column("api_key", String(255))
     is_encrypted = Column(Boolean, default=False)
-    payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
+    payments = relationship(
+        "Payment", back_populates="subscription", overlaps="subscription", cascade="all, delete"
+    )
 
     @property
     def service_details(self):

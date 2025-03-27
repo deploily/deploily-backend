@@ -9,8 +9,8 @@ class Parameter(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     type = Column(Enum("token", "password", "port", name="type"))
-    service_id = Column(Integer, ForeignKey("service.id"))
-    service = relationship("Service",overlaps="parameters")
+    service_id = Column(Integer, ForeignKey("service.id", ondelete="CASCADE"))
+    service = relationship("Service", overlaps="parameters")
     parameters_values = relationship("ParameterValue")
 
     def __repr__(self):
