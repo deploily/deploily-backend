@@ -10,7 +10,7 @@ from app.models.my_favorites_models import MyFavorites
 class MyFavoritesModelView(ModelView):
     route_base = "/admin/my-favorites"
     datamodel = SQLAInterface(MyFavorites)
-    list_columns = ["id",  "service"]
+    list_columns = ["id", "service"]
     base_order = ("id", "desc")
 
 
@@ -19,5 +19,5 @@ appbuilder.add_view(
     MyFavoritesModelView,
     "MyFavorites",
     icon="fa-solid fa-cogs",
-    category="My Favorites",
+    category="Service",
 )

@@ -9,7 +9,7 @@ from app.models.subscription_models import Subscription
 
 
 class SubscriptionModelView(ModelView):
-    route_base = "/admin/subscribe"
+    route_base = "/admin/Subscription"
     datamodel = SQLAInterface(Subscription)
     list_columns = ["id", "start_date", "status", "total_amount", "price", "duration_month"]
     base_order = ("id", "desc")
