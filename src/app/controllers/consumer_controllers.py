@@ -19,7 +19,7 @@ class ConsumerApi(BaseApi):
 
     @protect()
     @jwt_required()
-    @expose("/<int:subscribe_id>/consumer", methods=["POST"])
+    @expose("/<int:subscribe_id>/token", methods=["POST"])
     def create_my_service_consumer(self, subscribe_id):
         """
         Creates an API consumer for a given Subscription ID and returns an API key.
