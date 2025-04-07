@@ -7,7 +7,7 @@ from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.models import Parameter, ParameterValue, Subscribe
+from app.models import Parameter, ParameterValue, Subscription
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
@@ -22,7 +22,7 @@ class ConsumerApi(BaseApi):
     @expose("/<int:subscribe_id>/consumer", methods=["POST"])
     def create_my_service_consumer(self, subscribe_id):
         """
-        Creates an API consumer for a given Subscribe ID and returns an API key.
+        Creates an API consumer for a given Subscription ID and returns an API key.
         ---
         post:
           parameters:
@@ -31,7 +31,7 @@ class ConsumerApi(BaseApi):
               required: true
               schema:
                 type: integer
-              description: ID of the Subscribe to associate with the API consumer
+              description: ID of the Subscription to associate with the API consumer
           responses:
             200:
               description: API consumer created successfully
@@ -44,16 +44,16 @@ class ConsumerApi(BaseApi):
                         type: string
                         description: Generated API key
             400:
-              description: Subscribe not found
+              description: Subscription not found
             500:
               description: Internal server error
         """
         user = get_user()
 
-        subscribe = db.session.query(Subscribe).filter(Subscribe.id == subscribe_id).first()
+        subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
-            return Response("Subscribe or ServicePlan not found", status=400)
+            return Response("Subscription or ServicePlan not found", status=400)
 
         service = subscribe.service_plan.service
 

@@ -6,7 +6,7 @@ from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.models import Payment, Profile, PromoCode, ServicePlan, Subscribe
+from app.models import Payment, Profile, PromoCode, ServicePlan, Subscription
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -21,10 +21,10 @@ class SubscriptionApi(BaseApi):
     @rison()
     @jwt_required()
     def subscribe_to_plan(self, **kwargs):
-        """Subscribe a user to a service plan.
+        """Subscription a user to a service plan.
         ---
         post:
-            summary: Subscribe a user to a service plan
+            summary: Subscription a user to a service plan
             description: Creates a new subscription for the authenticated user.
             requestBody:
                 required: true
@@ -152,7 +152,7 @@ class SubscriptionApi(BaseApi):
 
             price = total_amount - promo_code_amount
 
-            subscription = Subscribe(
+            subscription = Subscription(
                 name=plan.plan.name,
                 start_date=datetime.now(),
                 total_amount=total_amount,

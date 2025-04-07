@@ -10,7 +10,7 @@ from .service_models import Service
 from .service_plan_models import ServicePlan
 from .service_plan_option_models import ServicePlanOption
 from .service_tag_models import ServiceTag
-from .subscribe_models import Subscribe
+from .subscription_models import Subscription
 from .support_ticket_models import SupportTicket
 from .support_ticket_response_models import SupportTicketResponse
 from .user_models import MyUser

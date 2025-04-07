@@ -18,8 +18,8 @@ class Payment(Model):
     )
     profile_id = Column(Integer, ForeignKey("profile.id"), nullable=False)
     profile = relationship("Profile")
-    subscription_id = Column(Integer, ForeignKey("subscribe.id"), nullable=False)
-    subscription = relationship("Subscribe", back_populates="payments", overlaps="payments")
+    subscription_id = Column(Integer, ForeignKey("subscription.id"), nullable=False)
+    subscription = relationship("Subscription", back_populates="payments", overlaps="payments")
 
     def __repr__(self):
         return str(self.id)
