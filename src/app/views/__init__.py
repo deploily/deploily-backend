@@ -1,8 +1,6 @@
 from app import appbuilder, db
 
 from . import (
-    contact_us,
-    my_favorites_views,
     parameters_value_views,
     payment_views,
     plan_views,
@@ -17,6 +15,8 @@ from . import (
     support_ticket_response_views,
     support_ticket_views,
     user_views,
+    contact_us,
+    my_favorites_views,
 )
 
 appbuilder.add_link(
