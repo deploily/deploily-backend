@@ -4,7 +4,7 @@ from .parameters_models import Parameter
 from .parameters_value_models import ParameterValue
 from .payment_models import Payment
 from .plan_models import Plan
-from .profile_models import Profile
+from .payment_profile_models import PaymentProfile
 from .promo_code_models import PromoCode
 from .service_models import Service
 from .service_plan_models import ServicePlan

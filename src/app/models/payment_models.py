@@ -16,8 +16,8 @@ class Payment(Model):
     payment_method = Column(
         Enum("card", "bank_transfer", name="payment_method_enum"), nullable=False
     )
-    profile_id = Column(Integer, ForeignKey("profile.id"), nullable=False)
-    profile = relationship("Profile")
+    profile_id = Column(Integer, ForeignKey("payment_profile.id"), nullable=False)
+    profile = relationship("PaymentProfile")
     subscription_id = Column(Integer, ForeignKey("subscription.id"), nullable=False)
     subscription = relationship("Subscription", back_populates="payments", overlaps="payments")
 

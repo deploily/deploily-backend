@@ -12,7 +12,7 @@ from . import (
     subscription_views,
     support_ticket_views,
     payment_views,
-    profile_views,
+    payment_profile_views,
     support_ticket_response_views,
     user_views,
     contact_us,

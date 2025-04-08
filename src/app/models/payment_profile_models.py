@@ -4,7 +4,7 @@ from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class Profile(Model):
+class PaymentProfile(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     balance = Column(Float, default=0.0)

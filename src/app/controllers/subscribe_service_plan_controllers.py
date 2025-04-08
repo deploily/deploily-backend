@@ -6,7 +6,7 @@ from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.models import Payment, Profile, PromoCode, ServicePlan, Subscription
+from app.models import Payment, PaymentProfile, PromoCode, ServicePlan, Subscription
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -123,9 +123,9 @@ class SubscriptionApi(BaseApi):
             if not user:
                 return self.response_400(message="User not found")
 
-            profile = db.session.query(Profile).filter_by(user_id=user.id).first()
+            profile = db.session.query(PaymentProfile).filter_by(user_id=user.id).first()
             if not profile:
-                return self.response_400(message="Profile not found")
+                return self.response_400(message="PaymentProfile not found")
 
             if profile.balance is None:
                 return self.response_404(message="Insufficient balance")
