@@ -3,7 +3,6 @@ from app.api_services import api_services_controller
 from . import (
     consumer_controllers,
     contact_us_controllers,
-    favorite_service_controllers,
     my_favorites_controller,
     parameters_controllers,
     parameters_value_controllers,
