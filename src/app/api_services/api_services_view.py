@@ -66,5 +66,5 @@ appbuilder.add_view(
     ExtendedServiceView,
     "Extended Services",
     icon="fa-cogs",
-    category="Services",
+    category="Security",
 )

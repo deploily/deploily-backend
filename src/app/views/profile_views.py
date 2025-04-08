@@ -26,7 +26,7 @@ class ProfileModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     ProfileModelView,
-    "profile",
+    "Payment profile",
     icon="fa-solid fa-sliders",
-    category="Security",
+    category="Billing",
 )

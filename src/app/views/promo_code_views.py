@@ -11,8 +11,7 @@ from app.models.promo_code_models import PromoCode
 class PromoCodeModelView(ModelView):
     route_base = "/admin/promo-code"
     datamodel = SQLAInterface(PromoCode)
-    list_columns = ["id", "code", "rate",
-                    "expiration_date", "active", "usage_type", "is_valid"]
+    list_columns = ["id", "code", "rate", "expiration_date", "active", "usage_type", "is_valid"]
     base_order = ("id", "desc")
 
 
@@ -21,5 +20,5 @@ appbuilder.add_view(
     PromoCodeModelView,
     "Promo Code",
     icon="fa-solid fa-sliders",
-    category="Promo Code",
+    category="Service",
 )

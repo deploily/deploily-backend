@@ -27,5 +27,5 @@ appbuilder.add_view(
     PaymentModelView,
     "Payment",
     icon="fa-solid fa-sliders",
-    category="Payment",
+    category="Billing",
 )

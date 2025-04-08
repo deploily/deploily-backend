@@ -17,7 +17,7 @@ class SupportTicketResponseModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     SupportTicketResponseModelView,
-    "SupportTicketResponse",
+    "SupportTicketMessage",
     icon="fa-solid fa-cogs",
     category="Support Ticket",
 )

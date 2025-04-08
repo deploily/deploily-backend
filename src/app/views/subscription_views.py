@@ -20,5 +20,5 @@ appbuilder.add_view(
     SubscriptionModelView,
     "Subscription",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Subscription",
 )
