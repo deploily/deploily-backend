@@ -74,8 +74,7 @@ FAB_OPENAPI_SERVERS = [
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 if BACKEND_ADMIN_URL:
-    FAB_OPENAPI_SERVERS.append(BACKEND_ADMIN_URL)
-
+    FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
 
 # ------------------------------
 # GLOBALS FOR APP Builder
