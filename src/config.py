@@ -67,6 +67,11 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # Flask-WTF flag for CSRF
 CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
+FAB_OPENAPI_SERVERS = [
+    {"url": "https://admin.deploily.cloud/"},
+    {"url": "http://localhost:5000/"},
+    {"url": "http://192.168.1.14:5000"},
+]
 # FAB_OPENAPI_SERVERS = [
 #     {"url": "http://localhost:5000/"},
 # ]
