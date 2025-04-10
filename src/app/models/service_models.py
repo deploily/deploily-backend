@@ -19,8 +19,8 @@ class Service(Model):
     documentation_url = Column(String(255), nullable=False)
     unit_price = Column(Float)
     service_url = Column(String(255), nullable=False)
+    api_playground_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
-    parameters = relationship("Parameter")
     tags = relationship(
         "ServiceTag", secondary="service_tag_association", back_populates="services"
     )

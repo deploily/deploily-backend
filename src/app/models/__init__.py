@@ -1,7 +1,5 @@
 from .contact_us_models import ContactUs
 from .my_favorites_models import MyFavorites
-from .parameters_models import Parameter
-from .parameters_value_models import ParameterValue
 from .payment_models import Payment
 from .plan_models import Plan
 from .payment_profile_models import PaymentProfile

@@ -13,9 +13,7 @@ KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = (
-    f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
-)
+LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -126,14 +124,6 @@ FAB_ROLES = {
         ["MyFavoritesModelApi", "can_put"],
         ["MyFavoritesModelApi", "can_post"],
         ["MyFavoritesModelApi", "can_delete"],
-        ["ParametersModelApi", "can_get"],
-        ["ParametersModelApi", "can_put"],
-        ["ParametersModelApi", "can_post"],
-        ["ParametersModelApi", "can_delete"],
-        ["ParameterValueModelApi", "can_get"],
-        ["ParameterValueModelApi", "can_put"],
-        ["ParameterValueModelApi", "can_post"],
-        ["ParameterValueModelApi", "can_delete"],
         ["PaymentModelApi", "can_get"],
         # ["PaymentModelApi", "can_put"],
         # ["PaymentModelApi", "can_post"],
@@ -204,7 +194,5 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv(
-    "APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin"
-)
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
 APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
