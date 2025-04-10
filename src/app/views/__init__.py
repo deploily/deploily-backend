@@ -1,8 +1,6 @@
 from app import appbuilder, db
 
 from . import (
-    service_parameters_views,
-    parameters_value_views,
     service_tag_views,
     service_plan_option_views,
     service_plan_views,

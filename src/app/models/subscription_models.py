@@ -43,7 +43,6 @@ class Subscription(Model, AuditMixin):
     service_plan = relationship("ServicePlan")
     promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)
     promo_code = relationship("PromoCode", back_populates="subscriptions")
-    parameters_values = relationship("ParameterValue")
     api_key = Column("api_key", String(255))
     is_encrypted = Column(Boolean, default=False)
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")

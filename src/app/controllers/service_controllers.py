@@ -21,6 +21,7 @@ _service_value_display_columns = [
     "short_description",
     "specifications",
     "is_in_favorite",
+    "api_playground_url",
 ]
 
 

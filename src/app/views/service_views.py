@@ -19,12 +19,12 @@ class ServiceModelView(ModelView):
         "image_service",
         "is_in_favorite",
         "curl_command",
+        "api_playground_url",
     ]
 
     def post_add(self, item):
         item.service_slug = slugify(item.name)
         db.session.commit()
-
 
 
 db.create_all()

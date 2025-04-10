@@ -10,7 +10,6 @@ class ExtendedServiceView(ModelView):
 
     list_columns = [
         "name",
-        "parameters",
         "description",
         "short_description",
         "specifications",
@@ -23,7 +22,6 @@ class ExtendedServiceView(ModelView):
     ]
     add_columns = [
         "name",
-        "parameters",
         "description",
         "short_description",
         "specifications",
@@ -36,7 +34,6 @@ class ExtendedServiceView(ModelView):
     ]
     edit_columns = [
         "name",
-        "parameters",
         "description",
         "short_description",
         "specifications",
@@ -49,7 +46,6 @@ class ExtendedServiceView(ModelView):
     ]
     show_columns = [
         "name",
-        "parameters",
         "description",
         "short_description",
         "specifications",
