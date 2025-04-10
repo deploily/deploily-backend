@@ -12,16 +12,13 @@ class ServiceModelView(ModelView):
     list_columns = [
         "id",
         "name",
-        "parameters",
-        "description",
-        "short_description",
-        "specifications",
         "documentation_url",
         "unit_price",
         "service_url",
         "image_service",
         "is_in_favorite",
-        "curl_command"]
+        "curl_command",
+    ]
 
 
 db.create_all()

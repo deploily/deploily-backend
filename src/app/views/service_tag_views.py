@@ -10,7 +10,7 @@ from app.models.service_tag_models import ServiceTag
 class ServiceTagModelView(ModelView):
     route_base = "/admin/service-tag"
     datamodel = SQLAInterface(ServiceTag)
-    list_columns = ["id", "name", "color", "service_id"]
+    list_columns = ["id", "name", "color", "services"]
     base_order = ("id", "desc")
 
 

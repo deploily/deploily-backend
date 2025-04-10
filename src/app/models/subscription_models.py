@@ -27,7 +27,7 @@ encryptor = Fernet(FERNET_KEY)
 _logger = logging.getLogger(__name__)
 
 
-class Subscribe(Model, AuditMixin):
+class Subscription(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     start_date = Column(
@@ -85,8 +85,8 @@ def decrypt_api_key(api_key):
         return None
 
 
-@event.listens_for(Subscribe, "before_insert")
-@event.listens_for(Subscribe, "before_update")
+@event.listens_for(Subscription, "before_insert")
+@event.listens_for(Subscription, "before_update")
 def encrypt_data_before_save(mapper, connection, target):
     """Ensure api_key is encrypted before saving."""
     target.is_encrypted = False
@@ -97,7 +97,7 @@ def encrypt_data_before_save(mapper, connection, target):
         target.is_encrypted = True
 
 
-@event.listens_for(Subscribe, "load")
+@event.listens_for(Subscription, "load")
 def decrypt_data_on_load(target, context):
     """Decrypt api_key when loading the object from the database."""
     if target.api_key and target.is_encrypted:

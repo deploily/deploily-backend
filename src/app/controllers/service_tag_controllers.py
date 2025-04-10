@@ -9,7 +9,7 @@ from app import appbuilder
 from app.models.service_tag_models import ServiceTag
 
 _logger = logging.getLogger(__name__)
-_service_tag_display_columns = ["id", "name", "color", "service"]
+_service_tag_display_columns = ["id", "name", "color", "services"]
 
 
 class ServiceTagModelApi(ModelRestApi):

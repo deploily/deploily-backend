@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
-from app import appbuilder
+import os
 
 from .A6Client import A6Client
 
@@ -11,8 +10,8 @@ _logger = logging.getLogger(__name__)
 
 class ApiSixService:
     def __init__(self):
-        self.admin_url = appbuilder.get_app.config.get("APISIX_ADMIN_URL")
-        self.api_key = appbuilder.get_app.config.get("APISIX_API_KEY")
+        self.admin_url = os.getenv("APISIX_ADMIN_URL")
+        self.api_key = os.getenv("APISIX_API_KEY")
 
         if not self.admin_url or not isinstance(self.admin_url, str):
             raise ValueError("APISIX URL is missing or invalid.")

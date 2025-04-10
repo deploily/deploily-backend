@@ -70,11 +70,14 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
+    {"url": "https://admin.deploily.cloud/"},
     {"url": "http://localhost:5000/"},
+    {"url": "http://192.168.1.14:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
+
 
 # ------------------------------
 # GLOBALS FOR APP Builder
@@ -115,9 +118,9 @@ FAB_ROLES = {
     "User": [
         ["ConsumerApi", "can_post"],
         ["ContactUSModelApi", "can_get"],
-        ["ContactUSModelApi", "can_put"],
+        # ["ContactUSModelApi", "can_put"],
         ["ContactUSModelApi", "can_post"],
-        ["ContactUSModelApi", "can_delete"],
+        # ["ContactUSModelApi", "can_delete"],
         ["MyFavoritesApi", "can_post"],
         ["MyFavoritesModelApi", "can_get"],
         ["MyFavoritesModelApi", "can_put"],
@@ -132,14 +135,14 @@ FAB_ROLES = {
         ["ParameterValueModelApi", "can_post"],
         ["ParameterValueModelApi", "can_delete"],
         ["PaymentModelApi", "can_get"],
-        ["PaymentModelApi", "can_put"],
-        ["PaymentModelApi", "can_post"],
-        ["PaymentModelApi", "can_delete"],
+        # ["PaymentModelApi", "can_put"],
+        # ["PaymentModelApi", "can_post"],
+        # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
-        ["ProfileModelApi", "can_get"],
-        ["ProfileModelApi", "can_put"],
-        ["ProfileModelApi", "can_post"],
-        ["ProfileModelApi", "can_delete"],
+        ["PaymentProfileModelApi", "can_get"],
+        ["PaymentProfileModelApi", "can_put"],
+        ["PaymentProfileModelApi", "can_post"],
+        ["PaymentProfileModelApi", "can_delete"],
         ["PromoCodeApi", "can_post"],
         ["ServiceModelApi", "can_get"],
         ["ServiceModelApi", "can_put"],
@@ -150,13 +153,13 @@ FAB_ROLES = {
         ["ServicePlanModelApi", "can_post"],
         ["ServicePlanModelApi", "can_delete"],
         ["ServiceTagModelApi", "can_get"],
-        ["ServiceTagModelApi", "can_put"],
-        ["ServiceTagModelApi", "can_post"],
-        ["ServiceTagModelApi", "can_delete"],
-        ["SubscribeModelApi", "can_get"],
-        ["SubscribeModelApi", "can_put"],
-        ["SubscribeModelApi", "can_post"],
-        ["SubscribeModelApi", "can_delete"],
+        # ["ServiceTagModelApi", "can_put"],
+        # ["ServiceTagModelApi", "can_post"],
+        # ["ServiceTagModelApi", "can_delete"],
+        ["SubscriptionModelApi", "can_get"],
+        ["SubscriptionModelApi", "can_put"],
+        ["SubscriptionModelApi", "can_post"],
+        ["SubscriptionModelApi", "can_delete"],
         ["SubscriptionApi", "can_post"],
         ["SupportTicketResponseModelApi", "can_get"],
         ["SupportTicketResponseModelApi", "can_put"],
