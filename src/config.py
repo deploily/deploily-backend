@@ -13,7 +13,9 @@ KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+)
 
 OAUTH_PROVIDERS = [
     {
@@ -72,9 +74,10 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
     {"url": "http://192.168.1.14:5000"},
 ]
-# FAB_OPENAPI_SERVERS = [
-#     {"url": "http://localhost:5000/"},
-# ]
+BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
+if BACKEND_ADMIN_URL:
+    FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
+
 
 # ------------------------------
 # GLOBALS FOR APP Builder
@@ -201,5 +204,7 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
+APISIX_ADMIN_URL = os.getenv(
+    "APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin"
+)
 APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
