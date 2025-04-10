@@ -26,7 +26,7 @@ class StatusApi(BaseApi):
                 - in: query
                   name: order_id
                   schema:
-                    type: integer
+                    type: string
                   required: true
                   description: The order ID to check
             responses:
@@ -64,7 +64,7 @@ class StatusApi(BaseApi):
         """
 
         try:
-            order_id = request.args.get("order_id", type=int)
+            order_id = request.args.get("order_id", type=str)
             if not order_id:
                 return self.response_400(
                     message="order_id est requis et doit être un entier valide."
@@ -72,33 +72,26 @@ class StatusApi(BaseApi):
 
             payment_service = PaymentService()
             response = payment_service.get_payment_status(order_id)
+            print(response)
 
-            _logger.info(f"Statut de la réponse du service de paiement: {response.status_code}")
-            _logger.info(f"Contenu brut de la réponse du service de paiement: {response.text}")
+            try:
+                response_data = response.json()
+                print(response_data)
+            except ValueError as e:
+                _logger.error(f"Erreur lors de l'analyse JSON de la réponse: {e}")
+                return self.response_500(
+                    message="Erreur lors de l'analyse de la réponse du service de paiement."
+                )
 
-            if "application/json" in response.headers.get("Content-Type", ""):
-                try:
-                    response_data = response.json()
-                except ValueError as e:
-                    _logger.error(f"Erreur lors de l'analyse JSON de la réponse: {e}")
-                    return self.response_500(
-                        message="Erreur lors de l'analyse de la réponse du service de paiement."
-                    )
-
-                if (
-                    response_data.get("ERRORCODE") == "0"
-                    and response_data.get("ERRORMESSAGE") == "Success"
-                ):
-                    return self.response(200, status="success", details=response_data)
-                else:
-                    return self.response_400(
-                        message="Échec de la vérification du paiement.",
-                        error_code=response_data.get("ERRORCODE"),
-                        details=response_data.get("ERRORMESSAGE"),
-                    )
+            if (
+                response_data.get("ERROR_CODE") == "0"
+                and response_data.get("ERROR_MESSAGE") == "Success"
+            ):
+                return self.response(200, status="success", details=response_data)
             else:
-                _logger.error("Le service de paiement a renvoyé une réponse non-JSON.")
-                return self.response_500(message="Réponse invalide du service de paiement.")
+                return self.response_400(
+                    response_data.get("ERROR_MESSAGE"),
+                )
 
         except Exception as e:
             _logger.error(
