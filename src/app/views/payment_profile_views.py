@@ -5,12 +5,12 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.models.profile_models import Profile
+from app.models.payment_profile_models import PaymentProfile
 
 
-class ProfileModelView(ModelView):
+class PaymentProfileModelView(ModelView):
     route_base = "/admin/profile"
-    datamodel = SQLAInterface(Profile)
+    datamodel = SQLAInterface(PaymentProfile)
     list_columns = [
         "id",
         "name",
@@ -25,8 +25,8 @@ class ProfileModelView(ModelView):
 
 db.create_all()
 appbuilder.add_view(
-    ProfileModelView,
-    "profile",
+    PaymentProfileModelView,
+    "Payment profile",
     icon="fa-solid fa-sliders",
-    category="Security",
+    category="Billing",
 )

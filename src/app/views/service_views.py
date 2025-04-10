@@ -13,10 +13,6 @@ class ServiceModelView(ModelView):
     list_columns = [
         "id",
         "name",
-        "parameters",
-        "description",
-        "short_description",
-        "specifications",
         "documentation_url",
         "unit_price",
         "service_url",
@@ -28,6 +24,7 @@ class ServiceModelView(ModelView):
     def post_add(self, item):
         item.service_slug = slugify(item.name)
         db.session.commit()
+
 
 
 db.create_all()

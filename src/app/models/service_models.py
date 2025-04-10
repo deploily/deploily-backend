@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Column, Float, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -13,15 +13,17 @@ class Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     short_description = Column(String(255))
-    curl_command = Column(String(255))
-    description = Column(String(255), nullable=False)
-    specifications = Column(String(255))
+    curl_command = Column(Text)
+    description = Column(Text, nullable=False)
+    specifications = Column(Text)
     documentation_url = Column(String(255), nullable=False)
     unit_price = Column(Float)
     service_url = Column(String(255), nullable=False)
     image_service = Column(ImageColumn)
     parameters = relationship("Parameter")
-    tags = relationship("ServiceTag", overlaps="service")
+    tags = relationship(
+        "ServiceTag", secondary="service_tag_association", back_populates="services"
+    )
     service_plans = relationship("ServicePlan")
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
     type = Column(String(50), default="service", nullable=False)

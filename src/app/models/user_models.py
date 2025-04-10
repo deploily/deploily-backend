@@ -8,5 +8,5 @@ from sqlalchemy.orm import relationship
 class MyUser(User):
     __tablename__ = "ab_user"
 
-    profiles = relationship("Profile")
+    profiles = relationship("PaymentProfile")
     # phone = Column(String)
