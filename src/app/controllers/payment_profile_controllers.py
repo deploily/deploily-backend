@@ -23,7 +23,7 @@ _profile_display_columns = [
 
 
 class PaymentProfileModelApi(ModelRestApi):
-    resource_name = "profile"
+    resource_name = "payment-profile"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(PaymentProfile)
     add_columns = _profile_display_columns

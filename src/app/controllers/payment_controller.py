@@ -23,7 +23,7 @@ _payment_display_columns = [
 
 
 class PaymentModelApi(ModelRestApi):
-    resource_name = "payment"
+    resource_name = "payments"
     base_order = ("id", "desc")
     exclude_route_methods = "delete"
     datamodel = SQLAInterface(Payment)
