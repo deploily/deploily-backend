@@ -99,7 +99,7 @@ class ConsumerApi(BaseApi):
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
-                labels={"service": service.name.strip()},
+                labels={"service": service.service_slug},
             )
 
             return jsonify({"auth-key": api_key}), 200
