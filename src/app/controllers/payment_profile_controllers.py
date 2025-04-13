@@ -19,6 +19,7 @@ _profile_display_columns = [
     "company_name",
     "company_registration_number",
     "balance",
+    "is_default_profile",
 ]
 
 
