@@ -8,9 +8,9 @@ _logger = logging.getLogger(__name__)
 
 class PaymentService:
     def __init__(self):
-        self.URL = os.getenv("PAYMENT_URL", "http://192.168.1.14:5265/api/v1/epayment")
+        self.URL = os.getenv("PAYMENT_URL", "https://pay.deploily.cloud/api/v1/epayment")
         self.STATUS_URL = os.getenv(
-            "PAYMENT_STATUS_URL", "http://192.168.1.14:5265/api/v1/epayment"
+            "PAYMENT_STATUS_URL", "https://pay.deploily.cloud/api/v1/epayment"
         )
 
     def post_payement(self, payment_id, total_amount):

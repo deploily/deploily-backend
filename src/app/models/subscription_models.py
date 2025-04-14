@@ -37,7 +37,7 @@ class Subscription(Model, AuditMixin):
     )
     total_amount = Column(Float)
     price = Column(Float)
-    status = Column(Enum("unpaid", "paid", name="subscribe_status"))
+    payment_status = Column(Enum("unpaid", "paid", name="subscribe_status"))
     duration_month = Column(Integer)
     # Todo add attribut status (active/unactive)
     status = Column(

@@ -10,8 +10,7 @@ from app.models.support_ticket_models import SupportTicket
 class SupportTicketModelView(ModelView):
     route_base = "/admin/supportticket"
     datamodel = SQLAInterface(SupportTicket)
-    list_columns = ["id", "title", "description",
-                    "status", "image", "subscribe_id"]
+    list_columns = ["id", "title", "description", "status", "image", "subscription_id"]
     base_order = ("id", "desc")
 
 

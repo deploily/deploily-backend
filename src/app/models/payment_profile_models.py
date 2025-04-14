@@ -23,14 +23,14 @@ class PaymentProfile(Model):
     user = relationship("MyUser", back_populates="profiles")
     subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
 
-    # TODO ADD BALANCE COMPUTE FUNCTION
-
     @property
     def balance(self):
         # """Compute balance"""
         balance_rate = 0.0
         # Payments that are not cloud_credit
-        payments_amounts = db.session.query(Payment.amount).filter_by(profile_id=self.id).all()
+        payments_amounts = (
+            db.session.query(Payment.amount).filter_by(profile_id=self.id, status="completed").all()
+        )
         # Sum payment amounts (they come as list of tuples)
         total_payments = sum([p.amount for p in payments_amounts])
 
