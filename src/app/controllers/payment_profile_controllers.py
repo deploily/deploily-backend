@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 _profile_display_columns = [
     "id",
     "name",
+    "last_name",
     "user_id",
     "user",
     "phone",

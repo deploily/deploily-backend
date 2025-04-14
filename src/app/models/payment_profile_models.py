@@ -6,7 +6,8 @@ from sqlalchemy.orm import relationship
 
 class PaymentProfile(Model):
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), nullable=False)
+    last_name = Column(String(255))
     balance = Column(Float, default=0.0)
     profile_type = Column(Enum("default", "personal", "company", name="profile_type"))
     phone = Column(String, nullable=True)
