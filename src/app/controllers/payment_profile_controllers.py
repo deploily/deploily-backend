@@ -17,8 +17,8 @@ _profile_display_columns = [
     "user",
     "phone",
     "company_name",
-    "company_registration_number",
     "balance",
+    "company_registration_number",
 ]
 
 

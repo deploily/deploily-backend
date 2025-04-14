@@ -1,19 +1,47 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from flask_appbuilder import Model
-from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
+from app import db
+from app.models.payment_models import Payment
+from app.models.subscription_models import Subscription
+
+_logger = logging.getLogger(__name__)
 
 
 class PaymentProfile(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
-    balance = Column(Float, default=0.0)
     profile_type = Column(Enum("default", "personal", "company", name="profile_type"))
     phone = Column(String, nullable=True)
     company_name = Column(String(255), nullable=True)
     company_registration_number = Column(String(255), nullable=True)
     user_id = Column(Integer, ForeignKey("ab_user.id"))
     user = relationship("MyUser", back_populates="profiles")
+    subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
+
+    # TODO ADD BALANCE COMPUTE FUNCTION
+
+    @property
+    def balance(self):
+        # """Compute balance"""
+        balance_rate = 0.0
+        # Payments that are not cloud_credit
+        payments_amounts = db.session.query(Payment.amount).filter_by(profile_id=self.id).all()
+        # Sum payment amounts (they come as list of tuples)
+        total_payments = sum([p.amount for p in payments_amounts])
+
+        # Sum subscription amounts from already-loaded self.subscriptions
+        subscriptions_amounts = (
+            db.session.query(Subscription.total_amount).filter_by(profile_id=self.id).all()
+        )
+        total_subscriptions = sum([p.total_amount for p in subscriptions_amounts])
+        # Compute balance
+        balance_rate = total_payments - total_subscriptions
+        return balance_rate if not None else 0.0
 
     def __repr__(self):
         return f"{self.name}"
