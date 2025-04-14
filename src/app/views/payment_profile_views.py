@@ -19,6 +19,8 @@ class PaymentProfileModelView(ModelView):
         "phone",
         "company_name",
         "company_registration_number",
+        "is_default_profile",
+        "is_company",
     ]
     base_order = ("id", "desc")
 
