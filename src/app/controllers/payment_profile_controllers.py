@@ -20,6 +20,15 @@ _profile_display_columns = [
     "company_registration_number",
     "balance",
     "is_default_profile",
+    "is_company",
+    "tax_article",
+    "nif",
+    "nis",
+    "address",
+    "city",
+    "wilaya",
+    "country",
+    "postal_code",
 ]
 
 
