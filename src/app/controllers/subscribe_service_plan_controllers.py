@@ -154,6 +154,7 @@ class SubscriptionApi(BaseApi):
             satim_order_id = ""
             form_url = ""
 
+            
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price > 0:
