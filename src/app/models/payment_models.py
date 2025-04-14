@@ -14,7 +14,7 @@ class Payment(Model):
     )
     start_date = Column(DateTime, default=lambda: datetime.now().replace(microsecond=0))
     payment_method = Column(
-        Enum("card", "bank_transfer", name="payment_method_enum"), nullable=False
+        Enum("card", "bank_transfer", "cloud_credit", name="payment_method_enum"), nullable=False
     )
     profile_id = Column(Integer, ForeignKey("payment_profile.id"), nullable=False)
     profile = relationship("PaymentProfile")
