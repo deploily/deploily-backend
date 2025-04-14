@@ -19,6 +19,7 @@ _payment_display_columns = [
     "profile_id",
     "subscription",
     "profile",
+    "payment_receipt",
 ]
 
 

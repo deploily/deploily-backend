@@ -2,6 +2,7 @@
 from datetime import datetime
 
 from flask_appbuilder import Model
+from flask_appbuilder.models.mixins import ImageColumn
 from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
@@ -20,6 +21,7 @@ class Payment(Model):
     profile = relationship("PaymentProfile")
     subscription_id = Column(Integer, ForeignKey("subscription.id"))
     subscription = relationship("Subscription", back_populates="payments", overlaps="payments")
+    payment_receipt = Column(ImageColumn, nullable=True)
 
     def __repr__(self):
         return str(self.id)
