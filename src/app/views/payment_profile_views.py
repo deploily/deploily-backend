@@ -22,6 +22,7 @@ class PaymentProfileModelView(ModelView):
         "balance",
         "is_default_profile",
         "is_company",
+        "balance",
     ]
     base_order = ("id", "desc")
 
