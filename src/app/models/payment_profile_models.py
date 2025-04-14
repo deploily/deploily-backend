@@ -14,7 +14,8 @@ _logger = logging.getLogger(__name__)
 
 class PaymentProfile(Model):
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), nullable=False)
+    last_name = Column(String(255))
     profile_type = Column(
         Enum("default", "personal", "company", name="profile_type"))
     phone = Column(String, nullable=True)

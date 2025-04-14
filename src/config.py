@@ -69,7 +69,7 @@ CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
-    {"url": "http://192.168.1.14:5000"},
+    {"url": "http://192.168.1.21:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 if BACKEND_ADMIN_URL:
