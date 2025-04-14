@@ -23,12 +23,43 @@ class CustomSsoSecurityManager(SecurityManager):
         }
 
     def load_user_jwt(self, _jwt_header, jwt_data):
+        from app import db
+        from app.models.payment_models import Payment
+        from app.models.payment_profile_models import PaymentProfile
+
         username = jwt_data["preferred_username"]
         user = self.find_user(username=username)
         if user and user.is_active:
             # Set flask g.user to JWT user, we can't do it on before request
+            existing_profile = (
+                db.session.query(PaymentProfile)
+                .filter_by(user_id=user.id, is_default_profile=True)
+                .first()
+            )
+            if not existing_profile:
+                payment_profile = PaymentProfile(
+                    name="Default",
+                    balance=2000.0,
+                    profile_type="default",
+                    user_id=user.id,
+                    is_default_profile=True,
+                )
+                db.session.add(payment_profile)
+                db.session.commit()
+
+                payment = Payment(
+                    amount=100.0,
+                    status="pending",
+                    payment_method="cloud_credit",
+                    profile_id=payment_profile.id,
+                )
+                db.session.add(payment)
+                db.session.commit()
+
+                _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
+
         if user is None and self.auth_user_registration:
             user = self.add_user(
                 username=username,
