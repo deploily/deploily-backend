@@ -14,7 +14,7 @@ class PaymentService:
         )
 
     def post_payement(self, payment_id, total_amount):
-        payload = {"ORDER_ID": str(payment_id), "NET_AMOUNT": total_amount}
+        payload = {"ORDER_ID": payment_id, "NET_AMOUNT": total_amount}
         headers = {"Content-Type": "application/json"}
 
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")

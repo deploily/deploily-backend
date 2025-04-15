@@ -4,7 +4,9 @@ from flask import request
 from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import jwt_required
 
-from app import appbuilder
+from app import appbuilder, db
+from app.models.payment_models import Payment
+from app.models.subscription_models import Subscription
 from app.services.payment_service import PaymentService
 
 _logger = logging.getLogger(__name__)
@@ -72,11 +74,9 @@ class StatusApi(BaseApi):
 
             payment_service = PaymentService()
             response = payment_service.get_payment_status(order_id)
-            print(response)
-
             try:
                 response_data = response.json()
-                print(response_data)
+
             except ValueError as e:
                 _logger.error(f"Erreur lors de l'analyse JSON de la réponse: {e}")
                 return self.response_500(
@@ -87,6 +87,16 @@ class StatusApi(BaseApi):
                 response_data.get("ERROR_CODE") == "0"
                 and response_data.get("ERROR_MESSAGE") == "Success"
             ):
+                payment = db.session.query(Payment).filter_by(satim_order_id=order_id).first()
+                if not payment:
+                    return self.response_400(message="Payment not found")
+                payment.status = "completed"
+                subscription = (
+                    db.session.query(Subscription).filter_by(id=payment.subscription_id).first()
+                )
+                if not subscription:
+                    return self.response_400(message="subscription not found")
+                subscription.payment_status = "paid"
                 return self.response(200, status="success", details=response_data)
             else:
                 return self.response_400(

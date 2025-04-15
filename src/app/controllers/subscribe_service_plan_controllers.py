@@ -197,18 +197,18 @@ class SubscriptionApi(BaseApi):
                     profile_id=profile.id,
                     status="pending",
                 )
-
                 db.session.add(payment)
                 db.session.commit()
 
                 if data.get("payment_method", "card") == "card":
-                    print("mmmmmmmmmmmmmmmmmmm")
                     payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
                     if not payment_check:
                         return self.response_400(message="Payment ID not found in database")
-
+                    payment.order_id = "PAY" + str(payment.id)
                     payment_service = PaymentService()
-                    payment_response = payment_service.post_payement(payment.id, total_amount)[0]
+                    payment_response = payment_service.post_payement(
+                        payment.order_id, total_amount
+                    )[0]
 
                     _logger.error(f"Payment service response: {payment_response}")
 
@@ -234,7 +234,8 @@ class SubscriptionApi(BaseApi):
                     satim_order_id = payment_response.get("ORDER_ID")
                     form_url = payment_response.get("FORM_URL")
 
-                    payment.status = "completed"
+                    payment.satim_order_id = satim_order_id
+
                     db.session.commit()
 
             return self.response(
