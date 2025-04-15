@@ -7,12 +7,14 @@ import uuid
 from flask import jsonify, request
 from flask_appbuilder import expose
 from flask_appbuilder.api import ModelRestApi, protect
+from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
 from werkzeug.utils import secure_filename
 
 from app import appbuilder, db
 from app.models.payment_models import Payment
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 _payment_display_columns = [
@@ -37,6 +39,8 @@ class PaymentModelApi(ModelRestApi):
     add_columns = _payment_display_columns
     list_columns = _payment_display_columns
     edit_columns = _payment_display_columns
+    base_filters = [["created_by", FilterEqualFunction, get_user]]
+    _exclude_columns = ["changed_by", "changed_on", "created_by"]
 
     @protect()
     @jwt_required()
