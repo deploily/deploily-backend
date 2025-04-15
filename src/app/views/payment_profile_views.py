@@ -19,7 +19,6 @@ class PaymentProfileModelView(ModelView):
         "phone",
         "company_name",
         "company_registration_number",
-        "balance",
         "is_default_profile",
         "is_company",
         "balance",
