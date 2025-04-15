@@ -2,12 +2,12 @@
 from datetime import datetime
 
 from flask_appbuilder import Model
-from flask_appbuilder.models.mixins import ImageColumn
+from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
 from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 
-class Payment(Model):
+class Payment(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
     status = Column(
