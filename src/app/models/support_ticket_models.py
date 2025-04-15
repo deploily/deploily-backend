@@ -11,8 +11,8 @@ class SupportTicket(Model, AuditMixin):
     description = Column(String(255), nullable=False)
     image = Column(ImageColumn)
     status = Column(Enum("open", "closed", name="status"))
-    subscribe_id = Column(Integer, ForeignKey("subscription.id"))
-    subscribe = relationship("Subscription")
+    subscription_id = Column(Integer, ForeignKey("subscription.id"))
+    subscription = relationship("Subscription")
     support_ticket_responses = relationship("SupportTicketResponse")
 
     def __repr__(self):

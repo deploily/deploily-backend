@@ -18,10 +18,10 @@ _support_ticket_display_columns = [
     "status",
     "description",
     "image",
-    "subscribe_id",
-    "subscribe",
+    "subscription_id",
+    "subscription",
     "created_on",
-    "support_ticket_responses"
+    "support_ticket_responses",
 ]
 
 
@@ -36,9 +36,9 @@ class SupportTicketModelApi(ModelRestApi):
         "status",
         "description",
         "image",
-        "subscribe_id",
-        "subscribe",
-        "support_ticket_responses"
+        "subscription_id",
+        "subscription",
+        "support_ticket_responses",
     ]
     list_columns = _support_ticket_display_columns
     edit_columns = _support_ticket_display_columns

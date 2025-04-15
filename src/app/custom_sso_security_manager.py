@@ -39,7 +39,6 @@ class CustomSsoSecurityManager(SecurityManager):
             if not existing_profile:
                 payment_profile = PaymentProfile(
                     name="Default",
-                    balance=2000.0,
                     profile_type="default",
                     user_id=user.id,
                     is_default_profile=True,
