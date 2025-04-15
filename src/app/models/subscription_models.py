@@ -39,12 +39,10 @@ class Subscription(Model, AuditMixin):
     price = Column(Float)
     payment_status = Column(Enum("unpaid", "paid", name="subscribe_status"))
     duration_month = Column(Integer)
-    # Todo add attribut status (active/unactive)
     status = Column(
         Enum("unactive", "active", name="subscription_status"),
         default="unactive",
     )
-    # Todo add attribute is_expired (autocompute)
     is_expired = Column(Boolean, default=False)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")
@@ -53,8 +51,7 @@ class Subscription(Model, AuditMixin):
     api_key = Column("api_key", String(255))
     is_encrypted = Column(Boolean, default=False)
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
-    # TODO ADD payment_profile relationship
-    profile_id = Column(Integer, ForeignKey("payment_profile.id"), nullable=False)
+    profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
 
     @property
