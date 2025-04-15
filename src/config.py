@@ -72,8 +72,12 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://192.168.1.21:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
+
 if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
+
+
+PAYMENT_AMOUNT = float(os.getenv("PAYMENT_AMOUNT", "1000"))
 
 
 # ------------------------------
@@ -125,7 +129,8 @@ FAB_ROLES = {
         ["MyFavoritesModelApi", "can_delete"],
         ["PaymentModelApi", "can_get"],
         # ["PaymentModelApi", "can_put"],
-        # ["PaymentModelApi", "can_post"],
+        ["PaymentModelApi", "can_post"],
+        ["PaymentModelApi", "can_upload_receipt"],
         # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
         ["PaymentProfileModelApi", "can_get"],
@@ -164,6 +169,7 @@ FAB_ROLES = {
 
 IMG_UPLOAD_URL = "/static/uploads/"
 IMG_UPLOAD_FOLDER = basedir + "/app/static/uploads/"
+UPLOAD_FOLDER = basedir + "/app/static/uploads/"
 
 
 # When using LDAP Auth, setup the ldap server

@@ -23,7 +23,7 @@ class CustomSsoSecurityManager(SecurityManager):
         }
 
     def load_user_jwt(self, _jwt_header, jwt_data):
-        from app import db
+        from app import appbuilder, db
         from app.models.payment_models import Payment
         from app.models.payment_profile_models import PaymentProfile
 
@@ -47,7 +47,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.commit()
 
                 payment = Payment(
-                    amount=100.0,
+                    amount=appbuilder.get_app.config["PAYMENT_AMOUNT"],
                     status="pending",
                     payment_method="cloud_credit",
                     profile_id=payment_profile.id,

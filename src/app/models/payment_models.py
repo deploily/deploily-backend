@@ -2,11 +2,13 @@
 from datetime import datetime
 
 from flask_appbuilder import Model
+
+from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
 from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class Payment(Model):
+class Payment(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     amount = Column(Float)
     status = Column(
@@ -20,6 +22,8 @@ class Payment(Model):
     profile = relationship("PaymentProfile")
     subscription_id = Column(Integer, ForeignKey("subscription.id"))
     subscription = relationship("Subscription", back_populates="payments", overlaps="payments")
+
+    payment_receipt = Column(ImageColumn, nullable=True)
     satim_order_id = Column(String)
     order_id = Column(String)
 
