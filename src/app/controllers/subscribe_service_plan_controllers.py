@@ -154,7 +154,6 @@ class SubscriptionApi(BaseApi):
             satim_order_id = ""
             form_url = ""
 
-            
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price > 0:
@@ -183,7 +182,7 @@ class SubscriptionApi(BaseApi):
                     service_plan_id=plan.id,
                     duration_month=duration,
                     promo_code_id=promo_code.id if promo_code else None,
-                    status="unactive",
+                    status="inactive",
                     payment_status="unpaid",
                     profile_id=profile.id,
                 )

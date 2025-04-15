@@ -40,8 +40,8 @@ class Subscription(Model, AuditMixin):
     payment_status = Column(Enum("unpaid", "paid", name="payment_status"))
     duration_month = Column(Integer)
     status = Column(
-        Enum("unactive", "active", name="subscription_status"),
-        default="unactive",
+        Enum("inactive", "active", name="subscription_status"),
+        default="inactive",
     )
     is_expired = Column(Boolean, default=False)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
