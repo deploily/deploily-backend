@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-import logging
-
 from flask_appbuilder import Model
-from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -14,15 +12,12 @@ from app.models.subscription_models import Subscription
 _logger = logging.getLogger(__name__)
 
 
-
-
 class PaymentProfile(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     last_name = Column(String(255))
     balance = Column(Float, default=0.0)
-    profile_type = Column(
-        Enum("default", "personal", "company", name="profile_type"))
+    profile_type = Column(Enum("default", "personal", "company", name="profile_type"))
     phone = Column(String, nullable=True)
     is_company = Column(Boolean, default=False)
     company_name = Column(String(255), nullable=True)
@@ -39,8 +34,7 @@ class PaymentProfile(Model):
     user_id = Column(Integer, ForeignKey("ab_user.id"))
     is_default_profile = Column(Boolean, default=False)
     user = relationship("MyUser", back_populates="profiles")
-    subscriptions = relationship(
-        "Subscription", back_populates="profile", overlaps="profile")
+    subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
 
     @property
     def balance(self):
@@ -48,19 +42,16 @@ class PaymentProfile(Model):
         balance_rate = 0.0
         # Payments that are not cloud_credit
         payments_amounts = (
-            db.session.query(Payment.amount).filter_by(
-                profile_id=self.id, status="completed").all()
+            db.session.query(Payment.amount).filter_by(profile_id=self.id, status="completed").all()
         )
         # Sum payment amounts (they come as list of tuples)
         total_payments = sum([p.amount for p in payments_amounts])
 
         # Sum subscription amounts from already-loaded self.subscriptions
         subscriptions_amounts = (
-            db.session.query(Subscription.total_amount).filter_by(
-                profile_id=self.id).all()
+            db.session.query(Subscription.total_amount).filter_by(profile_id=self.id).all()
         )
-        total_subscriptions = sum(
-            [p.total_amount for p in subscriptions_amounts])
+        total_subscriptions = sum([p.total_amount for p in subscriptions_amounts])
         # Compute balance
         balance_rate = total_payments - total_subscriptions
         return balance_rate if not None else 0.0
