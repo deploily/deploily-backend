@@ -142,7 +142,7 @@ class SubscriptionApi(BaseApi):
             total_amount = data.get("total_amount")
             promo_code_str = data.get("promo_code")
             duration = data.get("duration")
-
+            # code promo verification
             promo_code_amount = 0
             promo_code = None
             if promo_code_str:
@@ -151,60 +151,92 @@ class SubscriptionApi(BaseApi):
                     promo_code_amount = (total_amount * promo_code.rate) / 100
 
             price = total_amount - promo_code_amount
+            satim_order_id = ""
+            form_url = ""
 
-            subscription = Subscription(
-                name=plan.plan.name,
-                start_date=datetime.now(),
-                total_amount=total_amount,
-                price=price,
-                status="paid",
-                service_plan_id=plan.id,
-                duration_month=duration,
-                promo_code_id=promo_code.id if promo_code else None,
-            )
-            db.session.add(subscription)
-            db.session.flush()
-
-            payment = Payment(
-                amount=price,
-                payment_method=data.get("payment_method", "card"),
-                subscription_id=subscription.id,
-                profile_id=profile.id,
-                status="pending",
-            )
-
-            db.session.add(payment)
-            db.session.commit()
-
-            payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
-            if not payment_check:
-                return self.response_400(message="Payment ID not found in database")
-
-            payment_service = PaymentService()
-            payment_response = payment_service.post_payement(payment.id, total_amount)[0]
-
-            _logger.error(f"Payment service response: {payment_response}")
-
-            if isinstance(payment_response, str):
-                try:
-                    import json
-
-                    payment_response = json.loads(payment_response)
-                except json.JSONDecodeError:
-                    return self.response_500(message="Invalid payment service response format")
-
-            if not isinstance(payment_response, dict):
-                return self.response_500(message="Invalid payment service response")
-
-            if "ERRORCODE" in payment_response and payment_response["ERRORCODE"] != 0:
-                return self.response_400(
-                    message="Payment failed",
-                    error_code=payment_response.get("ERRORCODE"),
-                    details=payment_response.get("ERRORMESSAGE", "Unknown error"),
+            # Balance verification
+            # Case1: Sufficient balance
+            if profile.balance - price > 0:
+                subscription = Subscription(
+                    name=plan.plan.name,
+                    start_date=datetime.now(),
+                    total_amount=total_amount,
+                    price=price,
+                    service_plan_id=plan.id,
+                    duration_month=duration,
+                    promo_code_id=promo_code.id if promo_code else None,
+                    status="active",
+                    payment_status="paid",
+                    profile_id=profile.id,
                 )
 
-            payment.status = "completed"
-            db.session.commit()
+                db.session.add(subscription)
+                db.session.flush()
+            else:  # Case2: unsufficient balance
+
+                subscription = Subscription(
+                    name=plan.plan.name,
+                    start_date=datetime.now(),
+                    total_amount=total_amount,
+                    price=price,
+                    service_plan_id=plan.id,
+                    duration_month=duration,
+                    promo_code_id=promo_code.id if promo_code else None,
+                    status="inactive",
+                    payment_status="unpaid",
+                    profile_id=profile.id,
+                )
+
+                db.session.add(subscription)
+                db.session.flush()
+
+                payment = Payment(
+                    amount=price,
+                    payment_method=data.get("payment_method", "card"),
+                    subscription_id=subscription.id,
+                    profile_id=profile.id,
+                    status="pending",
+                )
+                db.session.add(payment)
+                db.session.commit()
+
+                if data.get("payment_method", "card") == "card":
+                    payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
+                    if not payment_check:
+                        return self.response_400(message="Payment ID not found in database")
+                    payment.order_id = "PAY" + str(payment.id)
+                    payment_service = PaymentService()
+                    payment_response = payment_service.post_payement(
+                        payment.order_id, total_amount
+                    )[0]
+
+                    _logger.error(f"Payment service response: {payment_response}")
+
+                    if isinstance(payment_response, str):
+                        try:
+                            import json
+
+                            payment_response = json.loads(payment_response)
+                        except json.JSONDecodeError:
+                            return self.response_500(
+                                message="Invalid payment service response format"
+                            )
+
+                    if not isinstance(payment_response, dict):
+                        return self.response_500(message="Invalid payment service response")
+
+                    if "ERROR_CODE" in payment_response and payment_response["ERROR_CODE"] != "0":
+                        return self.response_400(
+                            message="Payment failed",
+                            # error_code=payment_response.get("ERROR_CODE"),
+                            details=payment_response.get("ERROR_MESSAGE", "Unknown error"),
+                        )
+                    satim_order_id = payment_response.get("ORDER_ID")
+                    form_url = payment_response.get("FORM_URL")
+
+                    payment.satim_order_id = satim_order_id
+
+                    db.session.commit()
 
             return self.response(
                 200,
@@ -220,8 +252,8 @@ class SubscriptionApi(BaseApi):
                         "service_plan_id": subscription.service_plan_id,
                         "promo_code_id": subscription.promo_code_id,
                     },
-                    "order_id": payment_response.get("ORDER_ID"),
-                    "form_url": payment_response.get("FORM_URL"),
+                    "order_id": satim_order_id,
+                    "form_url": form_url,
                 },
             )
 

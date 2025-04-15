@@ -18,6 +18,7 @@ _profile_display_columns = [
     "user",
     "phone",
     "company_name",
+    "balance",
     "company_registration_number",
     "balance",
     "is_default_profile",

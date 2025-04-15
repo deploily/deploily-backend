@@ -78,7 +78,6 @@ class SubscriptionModelApi(ModelRestApi):
               description: Internal server error
         """
         get_user()
-
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
