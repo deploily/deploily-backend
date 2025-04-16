@@ -139,9 +139,9 @@ class SubscriptionApi(BaseApi):
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
-            total_amount = data.get("total_amount")
             promo_code_str = data.get("promo_code")
             duration = data.get("duration")
+            total_amount = plan.price * duration
             # code promo verification
             promo_code_amount = 0
             promo_code = None
@@ -171,6 +171,7 @@ class SubscriptionApi(BaseApi):
                 )
 
                 db.session.add(subscription)
+                db.session.commit()
                 db.session.flush()
             else:  # Case2: unsufficient balance
 
