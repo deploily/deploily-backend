@@ -27,6 +27,7 @@ _subscribe_display_columns = [
     "service_details",
     "api_key",
     "service_plan_id",
+    "is_expired",
 ]
 
 
@@ -38,7 +39,7 @@ class SubscriptionModelApi(ModelRestApi):
     add_columns = _subscribe_display_columns
     list_columns = _subscribe_display_columns
     show_columns = _subscribe_display_columns
-    edit_columns = _subscribe_display_columns
+    edit_columns = [col for col in _subscribe_display_columns if col != "is_expired"]
     _exclude_columns = [
         "created_on",
         "changed_on",

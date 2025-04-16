@@ -41,7 +41,7 @@ class PaymentProfileModelApi(ModelRestApi):
     add_columns = _profile_display_columns
     list_columns = _profile_display_columns
     show_columns = _profile_display_columns
-    edit_columns = _profile_display_columns
+    edit_columns = edit_columns = [col for col in _profile_display_columns if col != "balance"]
     base_filters = [["created_by", FilterEqualFunction, get_user]]
     # _exclude_columns = ["changed_by", "changed_on", "created_by"]
 
