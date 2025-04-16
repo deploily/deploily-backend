@@ -39,7 +39,7 @@ class Subscription(Model, AuditMixin):
     total_amount = Column(Float)
     price = Column(Float)
     payment_status = Column(Enum("unpaid", "paid", name="payment_status"))
-    duration_month = Column(Integer)
+    duration_month = Column(Integer, default=0)
     status = Column(
         Enum("inactive", "active", name="subscription_status"),
         default="inactive",
@@ -74,7 +74,7 @@ class Subscription(Model, AuditMixin):
     @property
     def is_expired(self):
         is_subscription_expired = False
-        if self.start_date + relativedelta(months=self.duration_month) > datetime.now():
+        if self.start_date + relativedelta(months=1) < datetime.now():
             is_subscription_expired = True
         return is_subscription_expired
 

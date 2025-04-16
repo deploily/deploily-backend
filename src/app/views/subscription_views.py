@@ -11,7 +11,15 @@ from app.models.subscription_models import Subscription
 class SubscriptionModelView(ModelView):
     route_base = "/admin/Subscription"
     datamodel = SQLAInterface(Subscription)
-    list_columns = ["id", "start_date", "status", "total_amount", "price", "duration_month"]
+    list_columns = [
+        "id",
+        "start_date",
+        "status",
+        "total_amount",
+        "price",
+        "duration_month",
+        "is_expired",
+    ]
     base_order = ("id", "desc")
 
 
