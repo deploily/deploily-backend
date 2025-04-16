@@ -48,7 +48,7 @@ class CustomSsoSecurityManager(SecurityManager):
 
                 payment = Payment(
                     amount=appbuilder.get_app.config["PAYMENT_AMOUNT"],
-                    status="pending",
+                    status="completed",
                     payment_method="cloud_credit",
                     profile_id=payment_profile.id,
                 )
