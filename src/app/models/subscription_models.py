@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 from cryptography.fernet import Fernet
+from dateutil.relativedelta import relativedelta
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
 from sqlalchemy import (
@@ -43,7 +44,6 @@ class Subscription(Model, AuditMixin):
         Enum("inactive", "active", name="subscription_status"),
         default="inactive",
     )
-    is_expired = Column(Boolean, default=False)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")
     promo_code_id = Column(Integer, ForeignKey("promo_code.id"), nullable=True)
@@ -70,6 +70,13 @@ class Subscription(Model, AuditMixin):
         else:
             _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
             return {}
+
+    @property
+    def is_expired(self):
+        is_subscription_expired = False
+        if self.start_date + relativedelta(months=self.duration_month) > datetime.now():
+            is_subscription_expired = True
+        return is_subscription_expired
 
     def __repr__(self):
         return str(self.id)

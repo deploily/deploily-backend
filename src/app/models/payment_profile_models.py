@@ -2,7 +2,8 @@
 import logging
 
 from flask_appbuilder import Model
-from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer, String
+from flask_appbuilder.models.mixins import AuditMixin
+from sqlalchemy import Boolean, Column, Enum, Float, Integer, String
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -12,7 +13,7 @@ from app.models.subscription_models import Subscription
 _logger = logging.getLogger(__name__)
 
 
-class PaymentProfile(Model):
+class PaymentProfile(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     last_name = Column(String(255))
@@ -31,9 +32,9 @@ class PaymentProfile(Model):
     country = Column(String(255), nullable=True)
     postal_code = Column(String(20), nullable=True)
 
-    user_id = Column(Integer, ForeignKey("ab_user.id"))
+    # user_id = Column(Integer, ForeignKey("ab_user.id"))
     is_default_profile = Column(Boolean, default=False)
-    user = relationship("MyUser", back_populates="profiles")
+    # user = relationship("MyUser", back_populates="profiles")
     subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
 
     @property

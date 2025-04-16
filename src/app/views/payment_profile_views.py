@@ -15,7 +15,7 @@ class PaymentProfileModelView(ModelView):
         "id",
         "name",
         "profile_type",
-        "user_id",
+        # "user_id",
         "phone",
         "company_name",
         "company_registration_number",

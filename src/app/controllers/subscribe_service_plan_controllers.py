@@ -123,7 +123,7 @@ class SubscriptionApi(BaseApi):
             if not user:
                 return self.response_400(message="User not found")
 
-            profile = db.session.query(PaymentProfile).filter_by(user_id=user.id).first()
+            profile = db.session.query(PaymentProfile).filter_by(created_by=user).first()
             if not profile:
                 return self.response_400(message="PaymentProfile not found")
 

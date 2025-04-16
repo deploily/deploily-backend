@@ -16,8 +16,6 @@ _profile_display_columns = [
     "id",
     "name",
     "last_name",
-    "user_id",
-    "user",
     "phone",
     "company_name",
     "balance",
@@ -44,8 +42,8 @@ class PaymentProfileModelApi(ModelRestApi):
     list_columns = _profile_display_columns
     show_columns = _profile_display_columns
     edit_columns = _profile_display_columns
-    base_filters = [["user", FilterEqualFunction, get_user]]
-    _exclude_columns = ["changed_by", "changed_on", "created_by"]
+    base_filters = [["created_by", FilterEqualFunction, get_user]]
+    # _exclude_columns = ["changed_by", "changed_on", "created_by"]
 
 
 appbuilder.add_api(PaymentProfileModelApi)
