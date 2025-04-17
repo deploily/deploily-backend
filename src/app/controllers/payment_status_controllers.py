@@ -76,7 +76,6 @@ class StatusApi(BaseApi):
             response = payment_service.get_payment_status(order_id)
             try:
                 response_data = response.json()
-
             except ValueError as e:
                 _logger.error(f"Erreur lors de l'analyse JSON de la réponse: {e}")
                 return self.response_500(
