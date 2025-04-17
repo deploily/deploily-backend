@@ -31,6 +31,7 @@ _profile_display_columns = [
     "wilaya",
     "country",
     "postal_code",
+    "profile_type",
 ]
 
 
