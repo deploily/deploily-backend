@@ -119,20 +119,24 @@ class SubscriptionApi(BaseApi):
                                         type: string
         """
         try:
+
             user = get_user()
             if not user:
                 return self.response_400(message="User not found")
-
-            profile = db.session.query(PaymentProfile).filter_by(created_by=user).first()
+            data = request.get_json(silent=True)
+            if not data:
+                return self.response_400(message="Invalid request data")
+            profile_id = data.get("profile_id")
+            if not profile_id:
+                return self.response_404(message="Profile id is required")
+            profile = (
+                db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
+            )
             if not profile:
                 return self.response_400(message="PaymentProfile not found")
 
             if profile.balance is None:
                 return self.response_404(message="Insufficient balance")
-
-            data = request.get_json(silent=True)
-            if not data:
-                return self.response_400(message="Invalid request data")
 
             plan_id = data.get("service_plan_selected_id")
             plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
@@ -156,6 +160,7 @@ class SubscriptionApi(BaseApi):
 
             # Balance verification
             # Case1: Sufficient balance
+
             if profile.balance - price > 0:
                 subscription = Subscription(
                     name=plan.plan.name,
@@ -200,15 +205,16 @@ class SubscriptionApi(BaseApi):
                 )
                 db.session.add(payment)
                 db.session.commit()
-
                 if (
                     data.get("payment_method", "card") == "card"
                     and profile.profile_type != "default"
                 ):
+
                     payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
                     if not payment_check:
                         return self.response_400(message="Payment ID not found in database")
                     payment.order_id = "PAY" + str(payment.id)
+                    db.session.commit()
                     payment_service = PaymentService()
                     payment_response = payment_service.post_payement(
                         payment.order_id, total_amount
