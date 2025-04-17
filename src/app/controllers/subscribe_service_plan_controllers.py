@@ -201,7 +201,10 @@ class SubscriptionApi(BaseApi):
                 db.session.add(payment)
                 db.session.commit()
 
-                if data.get("payment_method", "card") == "card":
+                if (
+                    data.get("payment_method", "card") == "card"
+                    and profile.profile_type != "default"
+                ):
                     payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
                     if not payment_check:
                         return self.response_400(message="Payment ID not found in database")

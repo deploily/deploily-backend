@@ -50,7 +50,9 @@ class PaymentProfile(Model, AuditMixin):
 
         # Sum subscription amounts from already-loaded self.subscriptions
         subscriptions_amounts = (
-            db.session.query(Subscription.total_amount).filter_by(profile_id=self.id).all()
+            db.session.query(Subscription.total_amount)
+            .filter_by(profile_id=self.id, status="active")
+            .all()
         )
         total_subscriptions = sum([p.total_amount for p in subscriptions_amounts])
         # Compute balance
