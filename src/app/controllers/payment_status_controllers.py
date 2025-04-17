@@ -78,6 +78,8 @@ class StatusApi(BaseApi):
                 response_data = response.json()
                 print(response_data)
             except ValueError as e:
+                print(response_data)
+                print("pppppppppppppppppppppppppp")
                 _logger.error(f"Erreur lors de l'analyse JSON de la réponse: {e}")
                 return self.response_500(
                     message="Erreur lors de l'analyse de la réponse du service de paiement."
