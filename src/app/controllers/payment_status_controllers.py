@@ -99,9 +99,7 @@ class StatusApi(BaseApi):
                 subscription.payment_status = "paid"
                 return self.response(200, status="success", details=response_data)
             else:
-                return self.response_400(
-                    response_data.get("ERROR_MESSAGE"),
-                )
+                return self.response(200, **response_data)
 
         except Exception as e:
             _logger.error(
