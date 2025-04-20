@@ -154,6 +154,7 @@ FAB_ROLES = {
         ["SubscriptionModelApi", "can_put"],
         ["SubscriptionModelApi", "can_post"],
         ["SubscriptionModelApi", "can_delete"],
+        ["SubscriptionModelApi", "can_create_my_service_consumer"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
         ["SupportTicketResponseModelApi", "can_get"],
