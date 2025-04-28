@@ -38,7 +38,7 @@ class CustomSsoSecurityManager(SecurityManager):
             )
             if not existing_profile:
                 payment_profile = PaymentProfile(
-                    name="Default",
+                    name=user.username,
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
@@ -58,9 +58,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.add(payment)
                 db.session.commit()
 
-                _logger.info(
-                    f"Payment profile created for existing user: {payment_profile}"
-                )
+                _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
 
