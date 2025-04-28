@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
-# from flask_appbuilder import current_user
 from flask_appbuilder.api import BaseApi, expose, protect
 from flask_jwt_extended import current_user
 
@@ -9,42 +7,42 @@ from app import appbuilder
 
 
 class UserModelApi(BaseApi):
+    resource_name = "user"  # good practice to define this
+
     @expose("/me", methods=["GET"])
     @protect()
     def get_me(self):
-        """Checks the status of a payment using the order_id provided by the frontend.
+        """
+        Get the current authenticated user's profile.
         ---
         get:
-            responses:
-                200:
-                    description: Payment status successfully retrieved
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-
-                400:
-                    description: Invalid request (missing or invalid parameters)
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: string
-                                    message:
-                                        type: string
-                500:
-                    description: Internal server error
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: string
+          description: Retrieve the current user's profile information.
+          responses:
+            200:
+              description: Successfully retrieved user profile
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+            401:
+              description: Unauthorized (user not authenticated)
+            500:
+              description: Internal server error
         """
-        """Returns the current user's profile"""
+        if not current_user or not current_user.is_authenticated:
+            return self.response_401()
+
         user = current_user
         return self.response(
             200,
@@ -58,4 +56,5 @@ class UserModelApi(BaseApi):
         )
 
 
+# Register the API with AppBuilder
 appbuilder.add_api(UserModelApi)
