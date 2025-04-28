@@ -48,7 +48,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.commit()
 
                 payment = Payment(
-                    amount=appbuilder.get_app.config["PAYMENT_AMOUNT"],
+                    amount=appbuilder.get_app.config["DEFAULT_CREDIT_AMOUNT"],
                     status="completed",
                     payment_method="cloud_credit",
                     profile_id=payment_profile.id,

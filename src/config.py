@@ -77,7 +77,7 @@ if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
 
 
-PAYMENT_AMOUNT = float(os.getenv("PAYMENT_AMOUNT", "1000"))
+DEFAULT_CREDIT_AMOUNT = float(os.getenv("DEFAULT_CREDIT_AMOUNT", "10000"))
 
 
 # ------------------------------
