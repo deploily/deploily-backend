@@ -52,6 +52,8 @@ class CustomSsoSecurityManager(SecurityManager):
                     status="completed",
                     payment_method="cloud_credit",
                     profile_id=payment_profile.id,
+                    created_by=user,
+                    changed_by=user,
                 )
                 db.session.add(payment)
                 db.session.commit()
