@@ -12,6 +12,9 @@ class SupportTicketModelView(ModelView):
     datamodel = SQLAInterface(SupportTicket)
     list_columns = ["id", "title", "description", "status", "image", "subscription_id"]
     base_order = ("id", "desc")
+    _exclude_columns = ["created_on", "changed_on"]
+    add_exclude_columns = _exclude_columns
+    edit_exclude_columns = _exclude_columns
 
 
 db.create_all()
