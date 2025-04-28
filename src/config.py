@@ -7,7 +7,7 @@ from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.dev.deploily.cloud")
 
 # TODO  add KEYCLOAK_... prefix to the variables
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
@@ -157,6 +157,7 @@ FAB_ROLES = {
         ["SubscriptionModelApi", "can_create_my_service_consumer"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
+        ["BalanceApi", "can_fund_balance"],
         ["SupportTicketResponseModelApi", "can_get"],
         ["SupportTicketResponseModelApi", "can_put"],
         ["SupportTicketResponseModelApi", "can_post"],

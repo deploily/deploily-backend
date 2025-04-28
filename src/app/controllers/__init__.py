@@ -14,4 +14,5 @@ from . import (
     subscription_controllers,
     support_ticket_response_controllers,
     supprot_ticket_controllers,
+    balance_controllers,
 )
