@@ -13,7 +13,7 @@ from app.utils.utils import get_user
 _logger = logging.getLogger(__name__)
 
 
-class BalanceApi(BaseApi):
+class AccountFundingApi(BaseApi):
     resource_name = "balance"
 
     @expose("/fund-balance", methods=["POST"])
@@ -56,6 +56,8 @@ class BalanceApi(BaseApi):
                                         type: string
                                     form_url:
                                         type: string
+                                    new_balance:
+                                        type: number
                 400:
                     description: Bad request
                 500:
@@ -87,7 +89,6 @@ class BalanceApi(BaseApi):
             if not profile:
                 return self.response_400(message="Profile not found")
 
-            # Create payment record
             payment = Payment(
                 amount=total_amount,
                 payment_method=payment_method,
@@ -97,11 +98,9 @@ class BalanceApi(BaseApi):
             db.session.add(payment)
             db.session.commit()
 
-            # Default response
             satim_order_id = ""
             form_url = ""
 
-            # External payment only for card + non-default profiles
             if payment_method == "card" and profile.profile_type != "default":
                 payment.order_id = f"PAY{payment.id}"
                 db.session.commit()
@@ -127,9 +126,20 @@ class BalanceApi(BaseApi):
                 satim_order_id = response.get("ORDER_ID")
                 form_url = response.get("FORM_URL")
                 payment.satim_order_id = satim_order_id
+                payment.status = "completed"
                 db.session.commit()
 
-            return self.response(200, payload={"order_id": satim_order_id, "form_url": form_url})
+            else:
+                payment.status = "completed"
+                db.session.commit()
+
+            profile.balance
+
+            return self.response(
+                200,
+                message="Your balance has been sucessfully recharged .",
+                payload={"order_id": satim_order_id, "form_url": form_url},
+            )
 
         except Exception as e:
             _logger.error(f"Error in fund_balance: {e}", exc_info=True)
@@ -137,4 +147,4 @@ class BalanceApi(BaseApi):
             return self.response_500(message="Internal Server Error")
 
 
-appbuilder.add_api(BalanceApi)
+appbuilder.add_api(AccountFundingApi)
