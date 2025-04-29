@@ -126,19 +126,17 @@ class AccountFundingApi(BaseApi):
                 satim_order_id = response.get("ORDER_ID")
                 form_url = response.get("FORM_URL")
                 payment.satim_order_id = satim_order_id
-                payment.status = "completed"
-                db.session.commit()
 
-            else:
-                payment.status = "completed"
                 db.session.commit()
 
             profile.balance
 
             return self.response(
                 200,
-                message="Your balance has been sucessfully recharged .",
-                payload={"order_id": satim_order_id, "form_url": form_url},
+                **{
+                    "order_id": satim_order_id,
+                    "form_url": form_url,
+                },
             )
 
         except Exception as e:
