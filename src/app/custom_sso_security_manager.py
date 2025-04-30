@@ -63,6 +63,7 @@ class CustomSsoSecurityManager(SecurityManager):
             return user
 
         if user is None and self.auth_user_registration:
+
             user = self.add_user(
                 username=username,
                 first_name=jwt_data["family_name"],

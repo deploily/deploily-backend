@@ -72,9 +72,12 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://192.168.1.22:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
+PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
+SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
 
 if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
+
 
 
 DEFAULT_CREDIT_AMOUNT = float(os.getenv("DEFAULT_CREDIT_AMOUNT", "10000"))
@@ -166,6 +169,7 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_put"],
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
+        ["UserModelApi", "can_get"],
     ]
 }
 
