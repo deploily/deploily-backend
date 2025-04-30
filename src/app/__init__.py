@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask_appbuilder import SQLA, AppBuilder
 from flask_cors import CORS
@@ -34,10 +35,18 @@ migrate = Migrate(app, db, render_as_batch=True)
 # appbuilder = AppBuilder(app, db.session)
 appbuilder = AppBuilder(app, db.session, security_manager_class=CustomSsoSecurityManager)
 
+"""Cron configuartion"""
+if app.config["SCHEDULER_ENABLED"] in ["True", "true", "t", "1"]:
+    from flask_apscheduler import APScheduler
 
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    logging.getLogger("apscheduler").setLevel(logging.INFO)
+    from . import schedulers
+
+    scheduler.start()
 # Register views
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-from . import api_services, controllers, models, services, views
+from . import api_services, controllers, models, services, views, schedulers
