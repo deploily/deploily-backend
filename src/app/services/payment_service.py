@@ -12,6 +12,8 @@ class PaymentService:
         self.STATUS_URL = os.getenv(
             "PAYMENT_STATUS_URL", "https://pay.deploily.cloud/api/v1/epayment"
         )
+        self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
+        self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
 
     def post_payement(self, payment_id, total_amount):
         payload = {"ORDER_ID": payment_id, "NET_AMOUNT": int(total_amount)}
@@ -49,6 +51,28 @@ class PaymentService:
         params = {"SATIM_ORDER_ID": satim_order_id}
         try:
             response = requests.get(self.STATUS_URL, params=params)
+            _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
+            _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
+            return response
+        except requests.RequestException as e:
+            _logger.error(f"[PAYMENT SERVICE] Failed to check payment status: {str(e)}")
+            return None
+
+    def get_pdf_receipt(self, satim_order_id):
+        params = {"SATIM_ORDER_ID": satim_order_id}
+        try:
+            response = requests.get(self.PDF_RECEIPT_URL, params=params)
+            _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
+            _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
+            return response
+        except requests.RequestException as e:
+            _logger.error(f"[PAYMENT SERVICE] Failed to check payment status: {str(e)}")
+            return None
+
+    def send_pdf_receipt_mail(self, satim_order_id, email):
+        params = {"SATIM_ORDER_ID": satim_order_id, "EMAIL": email}
+        try:
+            response = requests.get(self.SEND_RECEIPT_MAIL_URL, params=params)
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
             return response

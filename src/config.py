@@ -7,7 +7,7 @@ from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.deploily.cloud")
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.dev.deploily.cloud")
 
 # TODO  add KEYCLOAK_... prefix to the variables
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
@@ -72,12 +72,14 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://192.168.1.21:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
+PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
+SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
 
 if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
 
 
-PAYMENT_AMOUNT = float(os.getenv("PAYMENT_AMOUNT", "1000"))
+PAYMENT_AMOUNT = float(os.getenv("PAYMENT_AMOUNT", "10000"))
 
 
 # ------------------------------
@@ -165,6 +167,7 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_put"],
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
+        ["UserModelApi", "can_get"],
     ]
 }
 

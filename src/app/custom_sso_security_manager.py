@@ -38,7 +38,7 @@ class CustomSsoSecurityManager(SecurityManager):
             )
             if not existing_profile:
                 payment_profile = PaymentProfile(
-                    name="Default",
+                    name=user.username,
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
@@ -52,17 +52,18 @@ class CustomSsoSecurityManager(SecurityManager):
                     status="completed",
                     payment_method="cloud_credit",
                     profile_id=payment_profile.id,
+                    created_by=user,
+                    changed_by=user,
                 )
                 db.session.add(payment)
                 db.session.commit()
 
-                _logger.info(
-                    f"Payment profile created for existing user: {payment_profile}"
-                )
+                _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
 
         if user is None and self.auth_user_registration:
+
             user = self.add_user(
                 username=username,
                 first_name=jwt_data["family_name"],
