@@ -69,7 +69,7 @@ CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
-    {"url": "http://192.168.1.21:5000"},
+    {"url": "http://192.168.1.22:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -79,7 +79,8 @@ if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
 
 
-PAYMENT_AMOUNT = float(os.getenv("PAYMENT_AMOUNT", "10000"))
+
+DEFAULT_CREDIT_AMOUNT = float(os.getenv("DEFAULT_CREDIT_AMOUNT", "10000"))
 
 
 # ------------------------------
@@ -159,6 +160,7 @@ FAB_ROLES = {
         ["SubscriptionModelApi", "can_create_my_service_consumer"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
+        ["AccountFundingApi", "can_fund_balance"],
         ["SupportTicketResponseModelApi", "can_get"],
         ["SupportTicketResponseModelApi", "can_put"],
         ["SupportTicketResponseModelApi", "can_post"],
@@ -206,3 +208,12 @@ LANGUAGES = {
 
 APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
 APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
+MAIL_HOST = os.getenv("MAIL_HOST")
+MAIL_PORT = int(os.getenv("MAIL_PORT", 465))
+MAIL_USERNAME = os.getenv("MAIL_USER")
+MAIL_PASSWORD = os.getenv("MAIL_PASS")
+MAIL_USE_SSL = True
+
+SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "True")
+
+NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL")

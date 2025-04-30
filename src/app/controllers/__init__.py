@@ -15,4 +15,5 @@ from . import (
     support_ticket_response_controllers,
     supprot_ticket_controllers,
     user_profile_controllers,
+    balance_controllers,
 )
