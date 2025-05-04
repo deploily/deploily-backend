@@ -79,7 +79,6 @@ if BACKEND_ADMIN_URL:
     FAB_OPENAPI_SERVERS.append({"url": BACKEND_ADMIN_URL})
 
 
-
 DEFAULT_CREDIT_AMOUNT = float(os.getenv("DEFAULT_CREDIT_AMOUNT", "10000"))
 
 
@@ -120,6 +119,7 @@ AUTH_USER_REGISTRATION_ROLE = "User"
 
 FAB_ROLES = {
     "User": [
+        ["MyFavoritesModelApi", "can_add_remove_favorite"],
         ["ConsumerApi", "can_post"],
         ["ContactUSModelApi", "can_get"],
         # ["ContactUSModelApi", "can_put"],
