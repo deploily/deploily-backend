@@ -2,9 +2,8 @@
 from datetime import datetime
 
 from flask_appbuilder import Model
-
 from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
-from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, Integer, String, event
 from sqlalchemy.orm import relationship
 
 
@@ -29,3 +28,17 @@ class Payment(Model, AuditMixin):
 
     def __repr__(self):
         return str(self.id)
+
+
+@event.listens_for(Payment.status, "set")
+def update_subscription_status(target, value, oldvalue, initiator):
+    if oldvalue != value and value == "completed":
+        if target.subscription:
+            target.subscription.status = "active"
+            target.subscription.payment_status = "paid"
+    elif oldvalue != value and value == "failed":
+        if target.subscription:
+            target.subscription.status = "inactive"
+            target.subscription.payment_status = "unpaid"
+
+    return value
