@@ -161,7 +161,7 @@ class SubscriptionApi(BaseApi):
             # Balance verification
             # Case1: Sufficient balance
 
-            if profile.balance - price > 0:
+            if profile.balance - price >= 0:
                 subscription = Subscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
