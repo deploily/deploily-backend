@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from flask import current_app
 
 from app import app, db, scheduler
-from app.models import Mail
+from app.core.models import Mail
 
 logger = logging.getLogger(__name__)
 
