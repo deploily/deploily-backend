@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import g
+from flask import current_app, g
 from flask_appbuilder.const import LOGMSG_WAR_SEC_LOGIN_FAILED
 from flask_appbuilder.security.sqla.manager import SecurityManager
 
@@ -24,6 +24,7 @@ class CustomSsoSecurityManager(SecurityManager):
 
     def load_user_jwt(self, _jwt_header, jwt_data):
         from app import appbuilder, db
+        from app.models.mail_models import Mail
         from app.models.payment_models import Payment
         from app.models.payment_profile_models import PaymentProfile
 
@@ -56,6 +57,14 @@ class CustomSsoSecurityManager(SecurityManager):
                     changed_by=user,
                 )
                 db.session.add(payment)
+                db.session.commit()
+                email = Mail(
+                    title="New User Created",
+                    email_to=current_app.config["NOTIFICATION_EMAIL"],
+                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    mail_state="outGoing",
+                )
+                db.session.add(email)
                 db.session.commit()
 
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
