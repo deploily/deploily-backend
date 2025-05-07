@@ -1,7 +1,8 @@
 import json
 import logging
 
-from flask import request
+import requests
+from flask import current_app, request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
@@ -44,6 +45,9 @@ class AccountFundingApi(BaseApi):
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
+                                captcha_token:
+                                    type: string
+                                    description: Google reCAPTCHA token
             responses:
                 200:
                     description: Payment successful
@@ -71,6 +75,27 @@ class AccountFundingApi(BaseApi):
             data = request.get_json(silent=True)
             if not data:
                 return self.response_400(message="Invalid request data")
+
+            # ✅ reCAPTCHA Verification
+            captcha_token = data.get("captcha_token")
+            if not captcha_token:
+                return self.response_400(message="Missing CAPTCHA token")
+
+            verify_url = "https://www.google.com/recaptcha/api/siteverify"
+            payload = {
+                "secret": current_app.config["CAPTCHA_SECRET_KEY"],
+                "response": captcha_token,
+            }
+
+            try:
+                captcha_response = requests.post(verify_url, data=payload)
+                captcha_result = captcha_response.json()
+            except Exception:
+                _logger.error("Failed to contact reCAPTCHA", exc_info=True)
+                return self.response_500(message="CAPTCHA verification error")
+
+            if not captcha_result.get("success"):
+                return self.response_400(message="CAPTCHA verification failed")
 
             profile_id = data.get("profile_id")
             total_amount = data.get("total_amount")
@@ -128,8 +153,6 @@ class AccountFundingApi(BaseApi):
                 payment.satim_order_id = satim_order_id
 
                 db.session.commit()
-
-            profile.balance
 
             return self.response(
                 200,
