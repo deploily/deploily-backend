@@ -55,4 +55,6 @@ if __name__ == "__main__":
 from .core import models, views, controllers
 from .service_api import models, views, controllers
 from .service_apps import models, views, controllers
+from .service_cicd import models, views, controllers
+from .service_ressources import models, views, controllers
 from . import services, schedulers
