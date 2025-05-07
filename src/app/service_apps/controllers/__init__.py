@@ -1,1 +1,1 @@
-from . import apps_services_model
+from . import apps_services_controller
