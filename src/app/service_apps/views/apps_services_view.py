@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
-from app.service_api.models.api_services_model import ApiService
+from app.service_apps.models.apps_services_model import AppService
 
 
-class ApiServiceView(ModelView):
-    datamodel = SQLAInterface(ApiService)
+class AppServiceView(ModelView):
+    datamodel = SQLAInterface(AppService)
 
     list_columns = [
         "name",
@@ -17,9 +18,8 @@ class ApiServiceView(ModelView):
         "specifications",
         "documentation_url",
         "unit_price",
-        "service_url",
         "image_service",
-        "curl_command",
+        "apps_field",
     ]
     add_columns = [
         "name",
@@ -28,9 +28,7 @@ class ApiServiceView(ModelView):
         "specifications",
         "documentation_url",
         "unit_price",
-        "service_url",
-        "image_service",
-        "curl_command",
+        "apps_field",
     ]
     edit_columns = [
         "name",
@@ -39,9 +37,7 @@ class ApiServiceView(ModelView):
         "specifications",
         "documentation_url",
         "unit_price",
-        "service_url",
-        "image_service",
-        "curl_command",
+        "apps_field",
     ]
     show_columns = [
         "name",
@@ -50,15 +46,13 @@ class ApiServiceView(ModelView):
         "specifications",
         "documentation_url",
         "unit_price",
-        "service_url",
-        "image_service",
-        "curl_command",
+        "apps_field",
     ]
 
 
 appbuilder.add_view(
-    ApiServiceView,
-    "Api Services",
+    AppServiceView,
+    "App Services",
     icon="fa-cogs",
-    category="Api Services",
+    category="App Services",
 )

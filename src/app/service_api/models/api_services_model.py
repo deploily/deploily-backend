@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import Column, String, Text
 
 from app.core.models import Service

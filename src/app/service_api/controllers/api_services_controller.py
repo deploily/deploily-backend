@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from flask_appbuilder.api import expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
