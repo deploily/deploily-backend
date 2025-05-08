@@ -10,8 +10,8 @@ class ApiService(Service):
     __mapper_args__ = {"polymorphic_identity": "api_service"}
 
     curl_command = Column(Text)
-    service_url = Column(String(255), nullable=False)
-    api_playground_url = Column(String(255), nullable=False)
+    service_url = Column(String(255))
+    api_playground_url = Column(String(255))
 
     def __repr__(self):
         return f"ApiService: {self.name} "

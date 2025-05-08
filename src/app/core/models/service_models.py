@@ -23,7 +23,7 @@ class Service(Model):
     )
     service_plans = relationship("ServicePlan")
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
-    service_slug = Column(String(255), unique=True, default="temp-slug")
+    service_slug = Column(String(255), default="temp-slug")
     type = Column(String(50), default="service", nullable=False)
 
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
