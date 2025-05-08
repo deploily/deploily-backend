@@ -13,6 +13,7 @@ class RessourceServiceView(ModelView):
     list_columns = [
         "tags",
         "service_plans",
+        "providers",
         "myfavorites",
         "name",
         "description",
@@ -27,6 +28,7 @@ class RessourceServiceView(ModelView):
     add_columns = [
         "tags",
         "service_plans",
+        "providers",
         "myfavorites",
         "name",
         "description",
@@ -41,6 +43,7 @@ class RessourceServiceView(ModelView):
     edit_columns = [
         "tags",
         "service_plans",
+        "providers",
         "myfavorites",
         "name",
         "description",
@@ -56,6 +59,7 @@ class RessourceServiceView(ModelView):
         "tags",
         "service_plans",
         "myfavorites",
+        "providers",
         "name",
         "description",
         "short_description",
@@ -76,5 +80,5 @@ appbuilder.add_view(
     RessourceServiceView,
     "Ressources Services",
     icon="fa-cogs",
-    category="Ressources Services",
+    category="Service",
 )

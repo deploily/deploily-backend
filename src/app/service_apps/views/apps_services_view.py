@@ -78,5 +78,5 @@ appbuilder.add_view(
     AppServiceView,
     "App Services",
     icon="fa-cogs",
-    category="App Services",
+    category="Service",
 )

@@ -85,5 +85,5 @@ appbuilder.add_view(
     ApiServiceView,
     "Api Services",
     icon="fa-cogs",
-    category="Api Services",
+    category="Service",
 )
