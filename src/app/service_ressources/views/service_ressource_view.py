@@ -13,7 +13,7 @@ class RessourceServiceView(ModelView):
     list_columns = [
         "tags",
         "service_plans",
-        "providers",
+        "provider",
         "myfavorites",
         "name",
         "description",
@@ -28,7 +28,7 @@ class RessourceServiceView(ModelView):
     add_columns = [
         "tags",
         "service_plans",
-        "providers",
+        "provider",
         "myfavorites",
         "name",
         "description",
@@ -43,7 +43,7 @@ class RessourceServiceView(ModelView):
     edit_columns = [
         "tags",
         "service_plans",
-        "providers",
+        "provider",
         "myfavorites",
         "name",
         "description",
@@ -59,7 +59,7 @@ class RessourceServiceView(ModelView):
         "tags",
         "service_plans",
         "myfavorites",
-        "providers",
+        "provider",
         "name",
         "description",
         "short_description",

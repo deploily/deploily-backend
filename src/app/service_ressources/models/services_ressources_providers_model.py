@@ -2,7 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -19,9 +19,7 @@ class ProvidersRessourceService(Model):
     instagram_page = Column(String(255))
     linkedin_page = Column(String(255))
     extra_info = Column(Text)
-
-    ressource_service_id = Column(Integer, ForeignKey("ressource_service.id"))
-    ressource_service = relationship("RessourceService", back_populates="providers")
+    ressource_services = relationship("RessourceService", back_populates="provider")
 
     def __repr__(self):
-        return f"Ressource Providers Service: {self.name} "
+        return f"Ressource Provider Service: {self.name} "

@@ -22,7 +22,7 @@ _service_ressources_providers_value_display_columns = [
     "instagram_page",
     "linkedin_page",
     "extra_info",
-    "ressource_service",
+    # "ressource_service",
 ]
 
 

@@ -14,7 +14,8 @@ class RessourceService(Service):
     }
 
     ressource_field = Column(Text)
-    providers = relationship("ProvidersRessourceService", back_populates="ressource_service")
+    provider_id = Column(Integer, ForeignKey("providers_ressource_service.id"))
+    provider = relationship("ProvidersRessourceService", back_populates="ressource_services")
 
     def __repr__(self):
         return f"RessourceService: {self.name} "
