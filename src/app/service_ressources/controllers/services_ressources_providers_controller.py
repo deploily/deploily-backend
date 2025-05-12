@@ -13,6 +13,7 @@ from app.service_ressources.models.services_ressources_providers_model import (
 _logger = logging.getLogger(__name__)
 
 _service_ressources_providers_value_display_columns = [
+    "id",
     "name",
     "logo",
     "short_description",
@@ -22,7 +23,13 @@ _service_ressources_providers_value_display_columns = [
     "instagram_page",
     "linkedin_page",
     "extra_info",
-    # "ressource_service",
+    "mail_support",
+    "mail_sailes",
+    "mail_partnership",
+    "phone_support",
+    "phone_sailes",
+    "phone_partnership",
+    "affiliations",
 ]
 
 

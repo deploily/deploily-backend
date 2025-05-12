@@ -22,6 +22,13 @@ class ProvidersRessourceServiceView(ModelView):
         "linkedin_page",
         "extra_info",
         "ressource_service",
+        "affiliations",
+        "mail_support",
+        "mail_sales",
+        "mail_partnership",
+        "phone_support",
+        "phone_sailes",
+        "phone_partnership",
     ]
 
 
