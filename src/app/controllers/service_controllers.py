@@ -7,6 +7,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
 from app.models.service_models import Service
+from config import DB_LANGUAGES
 
 _logger = logging.getLogger(__name__)
 
@@ -14,12 +15,15 @@ _service_value_display_columns = [
     "id",
     "name",
     "description",
+    *[f"description_{lang}" for lang in DB_LANGUAGES if lang != 'en'],
     "documentation_url",
     "unit_price",
     "service_url",
     "image_service",
     "short_description",
+    *[f"short_description_{lang}" for lang in DB_LANGUAGES if lang != 'en'],
     "specifications",
+    *[f"specifications_{lang}" for lang in DB_LANGUAGES if lang != 'en'],
     "is_in_favorite",
     "api_playground_url",
 ]
