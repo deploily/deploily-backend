@@ -52,6 +52,48 @@ Users will see the following sentence during registration:
 Where **Terms of Service** and **Privacy Policy** are clickable links.
 
 
+# ✅ Procedure: Enable Sign in with GitHub in Keycloak
+
+This guide explains how to configure **GitHub login** as an identity provider in Keycloak.
+
+---
+
+## 1. 🧱 Create a GitHub OAuth App
+
+1. Go to [https://github.com/organizations/deploily/settings/applications](https://github.com/organizations/deploily/settings/applications)
+2. Click **"New OAuth App"**
+3. Fill in the fields:
+
+   - **Application name**: `Deploily Login`
+   - **Homepage URL**:  
+     ```
+     https://auth.dev.deploily.cloud
+     ```
+   - **Authorization callback URL**:  
+     ```
+     https://auth.dev.deploily.cloud/realms/myrealm/broker/github/endpoint
+     ```
+
+4. Click **Register application**
+5. Copy the **Client ID** and **Client Secret**
+
+---
+
+## 2. 🔐 Configure GitHub as Identity Provider in Keycloak
+
+1. Log into the **Keycloak Admin Console**
+2. Select your realm (e.g., `myrealm`)
+3. Go to **Identity Providers**
+4. Click **"Add provider" → GitHub**
+5. Fill in the required fields:
+   - **Client ID**: (from GitHub)
+   - **Client Secret**: (from GitHub)
+   - **Default Scopes**: `user:email`
+6. Click **Save**
+
+---
+
+
 
 
 
