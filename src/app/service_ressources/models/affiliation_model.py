@@ -2,7 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Float, ForeignKey, Integer
+from sqlalchemy import Column, Enum, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 
@@ -10,6 +10,7 @@ class Affiliation(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
 
     total_price = Column(Float)
+    Affiliation_state = Column(Enum("pending", "confirmed", name="Affiliation_state"))
 
     provider_id = Column(Integer, ForeignKey("providers_ressource_service.id"))
     provider = relationship("ProvidersRessourceService", back_populates="affiliations")
@@ -18,4 +19,4 @@ class Affiliation(Model, AuditMixin):
     service_plan = relationship("ServicePlan")
 
     def __repr__(self):
-        return f"Affiliation: {self.ressource_service.name} )"
+        return f" {self.id} "

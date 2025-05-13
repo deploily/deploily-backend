@@ -70,6 +70,7 @@ FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
     {"url": "http://192.168.1.22:5000"},
+    {"url": "http://192.168.1.21:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -169,6 +170,7 @@ FAB_ROLES = {
         ["AffiliationModelApi", "can_put"],
         ["AffiliationModelApi", "can_post"],
         ["AffiliationModelApi", "can_delete"],
+        ["AffiliationModelApi", "can_create_affiliation"],
         ["ServicePlanModelApi", "can_get"],
         ["ServicePlanModelApi", "can_put"],
         ["ServicePlanModelApi", "can_post"],

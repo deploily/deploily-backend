@@ -8,9 +8,11 @@ from app.service_ressources.models.affiliation_model import Affiliation
 
 class AffiliationView(ModelView):
     datamodel = SQLAInterface(Affiliation)
+    route_base = "/admin/affiliation"
 
     list_columns = [
         "total_price",
+        "Affiliation_state",
         "provider",
         "service_plan",
     ]
