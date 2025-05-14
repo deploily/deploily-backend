@@ -161,23 +161,6 @@ class SubscriptionApi(BaseApi):
             price = total_amount - promo_code_amount
             satim_order_id = ""
             form_url = ""
-            captcha_token = data.get("captcha_token")
-            if not captcha_token:
-                return self.response_400(message="Missing CAPTCHA token")
-            verify_url = "https://www.google.com/recaptcha/api/siteverify"
-            payload = {
-                "secret": current_app.config["CAPTCHA_SECRET_KEY"],
-                "response": captcha_token,
-            }
-            try:
-                captcha_response = requests.post(verify_url, data=payload)
-                captcha_result = captcha_response.json()
-            except Exception:
-                _logger.error("Failed to contact reCAPTCHA", exc_info=True)
-                return self.response_500(message="CAPTCHA verification error")
-
-            if not captcha_result.get("success"):
-                return self.response_400(message="CAPTCHA verification failed")
             # Balance verification
             # Case1: Sufficient balance
 
@@ -229,6 +212,23 @@ class SubscriptionApi(BaseApi):
                     data.get("payment_method", "card") == "card"
                     and profile.profile_type != "default"
                 ):
+                    captcha_token = data.get("captcha_token")
+                    if not captcha_token:
+                        return self.response_400(message="Missing CAPTCHA token")
+                    verify_url = "https://www.google.com/recaptcha/api/siteverify"
+                    payload = {
+                        "secret": current_app.config["CAPTCHA_SECRET_KEY"],
+                        "response": captcha_token,
+                    }
+                    try:
+                        captcha_response = requests.post(verify_url, data=payload)
+                        captcha_result = captcha_response.json()
+                    except Exception:
+                        _logger.error("Failed to contact reCAPTCHA", exc_info=True)
+                        return self.response_500(message="CAPTCHA verification error")
+
+                    if not captcha_result.get("success"):
+                        return self.response_400(message="CAPTCHA verification failed")
 
                     payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
                     if not payment_check:
