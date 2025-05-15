@@ -8,6 +8,7 @@ from app import db
 from app.models.my_favorites_models import MyFavorites
 from app.utils.utils import get_user
 
+from config import DB_LANGUAGES
 
 class Service(Model):
     id = Column(Integer, primary_key=True)
@@ -28,6 +29,12 @@ class Service(Model):
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
     type = Column(String(50), default="service", nullable=False)
     service_slug = Column(String(255), unique=True, default="temp-slug")
+
+    for lang in DB_LANGUAGES:
+        if lang != 'en':
+            locals()[f'description_{lang}'] = Column(Text, nullable=True)
+            locals()[f'short_description_{lang}'] = Column(String(255), nullable=True)
+            locals()[f'specifications_{lang}'] = Column(Text, nullable=True)
 
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
 

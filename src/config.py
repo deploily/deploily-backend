@@ -3,9 +3,15 @@ import os
 import urllib.request
 from datetime import timedelta
 
-from flask_appbuilder.security.manager import AUTH_OAUTH
+from flask_appbuilder.security.manager import AUTH_OAUTH, AUTH_DB
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Here we define the supported langages in the database
+
+# Whenever you add a new language, you need to add it here and update 
+# the database so the fields are created and can be edited
+DB_LANGUAGES = ["en","fr", "ar"]
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.dev.deploily.cloud")
 

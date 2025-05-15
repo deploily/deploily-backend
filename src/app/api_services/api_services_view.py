@@ -3,7 +3,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
 from app.api_services.api_services import ExtendedService
-
+from config import DB_LANGUAGES
 
 class ExtendedServiceView(ModelView):
     datamodel = SQLAInterface(ExtendedService)
@@ -11,8 +11,11 @@ class ExtendedServiceView(ModelView):
     list_columns = [
         "name",
         "description",
+         *[f"description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "short_description",
+         *[f"short_description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "specifications",
+         *[f"specifications_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "documentation_url",
         "unit_price",
         "service_url",
@@ -23,8 +26,11 @@ class ExtendedServiceView(ModelView):
     add_columns = [
         "name",
         "description",
+        *[f"description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "short_description",
+        *[f"short_description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "specifications",
+        *[f"specifications_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "documentation_url",
         "unit_price",
         "service_url",
@@ -35,8 +41,11 @@ class ExtendedServiceView(ModelView):
     edit_columns = [
         "name",
         "description",
+        *[f"description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "short_description",
+        *[f"short_description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "specifications",
+        *[f"specifications_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "documentation_url",
         "unit_price",
         "service_url",
@@ -47,8 +56,11 @@ class ExtendedServiceView(ModelView):
     show_columns = [
         "name",
         "description",
+        *[f"description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "short_description",
+        *[f"short_description_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "specifications",
+        *[f"specifications_{lang}" for lang in DB_LANGUAGES if lang != 'en'], 
         "documentation_url",
         "unit_price",
         "service_url",
