@@ -10,6 +10,7 @@ from app.custom_sso_security_manager import CustomSsoSecurityManager
 app = Flask(__name__)
 app.config.from_object("config")
 
+# TODO move urls to .env | localhost should only be available for dev
 CORS(
     app,
     resources={
@@ -49,4 +50,11 @@ if app.config["SCHEDULER_ENABLED"] in ["True", "true", "t", "1"]:
 
 if __name__ == "__main__":
     app.run(debug=True)
-from . import api_services, controllers, models, services, views, schedulers
+
+
+from .core import models, views, controllers
+from .service_api import models, views, controllers
+from .service_apps import models, views, controllers
+from .service_cicd import models, views, controllers
+from .service_ressources import models, views, controllers
+from . import services, schedulers

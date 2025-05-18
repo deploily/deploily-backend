@@ -24,9 +24,9 @@ class CustomSsoSecurityManager(SecurityManager):
 
     def load_user_jwt(self, _jwt_header, jwt_data):
         from app import appbuilder, db
-        from app.models.mail_models import Mail
-        from app.models.payment_models import Payment
-        from app.models.payment_profile_models import PaymentProfile
+        from app.core.models.mail_models import Mail
+        from app.core.models.payment_models import Payment
+        from app.core.models.payment_profile_models import PaymentProfile
 
         username = jwt_data["preferred_username"]
         user = self.find_user(username=username)
