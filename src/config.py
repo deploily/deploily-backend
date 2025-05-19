@@ -3,6 +3,7 @@ import os
 import urllib.request
 from datetime import timedelta
 
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -239,6 +240,13 @@ MAIL_PORT = int(os.getenv("MAIL_PORT", 465))
 MAIL_USERNAME = os.getenv("MAIL_USER")
 MAIL_PASSWORD = os.getenv("MAIL_PASS")
 MAIL_USE_SSL = True
+
+
+SCHEDULER_JOBSTORES = {
+    "default": SQLAlchemyJobStore(url="sqlite:///" + os.path.join(basedir, "scheduler.db"))
+}
+SCHEDULER_EXECUTORS = {"default": {"type": "threadpool", "max_workers": 1}}
+SCHEDULER_JOB_DEFAULTS = {"coalesce": False, "max_instances": 1}
 
 SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "True")
 

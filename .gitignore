@@ -168,3 +168,5 @@ src/migrations/versions/*
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+
+scheduler.db
