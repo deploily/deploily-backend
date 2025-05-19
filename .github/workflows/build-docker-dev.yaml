@@ -67,5 +67,7 @@ jobs:
       - run: |
           echo "🎉 Deploy using runner scale set runners:)"
           kubectl -n deploily rollout restart deployment deploily-back
+          kubectl -n deploily rollout restart deployment deploily-cron
+          kubectl -n deploily rollout restart deployment deploily-celery
           echo "🎉 Deployment runners finished"
 
