@@ -4,7 +4,7 @@ name: Create and publish a Docker image
 on:
   push:
     branches:
-      - dev
+      - main
 
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
@@ -59,8 +59,8 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
-  deploiy-image-dev:
-    runs-on: arc-runner-set-deploily
+  deploiy-image-prod:
+    runs-on: arc-rs-deploily-console
     needs: build-and-push-image # 👈 Ensures it runs only after build-and-push-image completes
     if: github.repository_owner == 'deploily' # 👈 Restrict to 'deploily' org
     steps:
@@ -68,4 +68,3 @@ jobs:
           echo "🎉 Deploy using runner scale set runners:)"
           kubectl -n deploily rollout restart deployment deploily-back
           echo "🎉 Deployment runners finished"
-
