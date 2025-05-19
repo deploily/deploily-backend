@@ -9,6 +9,7 @@ from app.service_ressources.models.services_ressources_model import RessourceSer
 api_columns = [
     "ressource_field",
     "provider",
+    "discount",
 ]
 
 

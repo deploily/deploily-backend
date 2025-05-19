@@ -27,6 +27,7 @@ _affiliation_value_display_columns = [
 class AffiliationModelApi(ModelRestApi):
     resource_name = "affiliation"
     datamodel = SQLAInterface(Affiliation)
+    exclude_route_methods = "post"
     add_columns = _affiliation_value_display_columns
     list_columns = _affiliation_value_display_columns
     show_columns = _affiliation_value_display_columns
@@ -123,7 +124,10 @@ class AffiliationModelApi(ModelRestApi):
             return self.response_404(message="Provider not found.")
 
         affiliation = Affiliation(
-            service_plan_id=service_plan.id, provider_id=provider.id, total_price=total_price
+            service_plan_id=service_plan.id,
+            provider_id=provider.id,
+            total_price=total_price,
+            Affiliation_state="pending",
         )
 
         db.session.add(affiliation)
