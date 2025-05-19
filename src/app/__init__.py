@@ -4,6 +4,7 @@ from flask_appbuilder import SQLA, AppBuilder
 from flask_cors import CORS
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
+from celery import Celery
 
 from app.custom_sso_security_manager import CustomSsoSecurityManager
 
@@ -36,6 +37,7 @@ migrate = Migrate(app, db, render_as_batch=True)
 # appbuilder = AppBuilder(app, db.session)
 appbuilder = AppBuilder(app, db.session, security_manager_class=CustomSsoSecurityManager)
 
+
 """Cron configuartion"""
 if app.config["SCHEDULER_ENABLED"] in ["True", "true", "t", "1"]:
     from flask_apscheduler import APScheduler
@@ -47,6 +49,19 @@ if app.config["SCHEDULER_ENABLED"] in ["True", "true", "t", "1"]:
 
     scheduler.start()
 # Register views
+
+
+# Configure Celery
+app.config["CELERY_BROKER_URL"] = app.config["CACHE_REDIS_URL"]
+app.config["CELERY_RESULT_BACKEND"] = app.config["CACHE_REDIS_URL"]
+
+# Initialize Celery
+celery = Celery(
+    app.name,
+    broker=app.config["CACHE_REDIS_URL"],
+    backend=app.config["CELERY_RESULT_BACKEND"],
+)
+celery.conf.update(app.config)
 
 if __name__ == "__main__":
     app.run(debug=True)
