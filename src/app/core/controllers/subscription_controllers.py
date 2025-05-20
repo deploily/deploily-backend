@@ -10,6 +10,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
+from app.core.models.service_plan_option_models import ServicePlanOption
 from app.core.models.subscription_models import Subscription
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
@@ -78,7 +79,8 @@ class SubscriptionModelApi(ModelRestApi):
             500:
               description: Internal server error
         """
-        get_user()
+        user = get_user()
+        user_name = user.username
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
@@ -97,14 +99,28 @@ class SubscriptionModelApi(ModelRestApi):
             db.session.commit()
 
         try:
-            consumer_username = f"subscribe_{subscribe_id}_user"
+            consumer_username = f"{user_name}"
             apisix_service = ApiSixService()
+            service_plan_option = (
+                db.session.query(ServicePlanOption)
+                .filter_by(service_plan_id=subscribe.service_plan.id, option_type="request_limit")
+                .first()
+            )
+            rate = service_plan_option.option_value
+            print(rate)
+            limit_config = {
+                "count": rate,
+                "time_window": 1,
+                "rejected_code": 429,
+                "key": "consumer_name",
+                "policy": "local",
+            }
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
+                limit_count=limit_config,
                 labels={"service": service.service_slug},
             )
-
             return jsonify({"auth-key": api_key}), 200
 
         except Exception as e:
