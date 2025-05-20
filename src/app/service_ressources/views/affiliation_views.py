@@ -12,7 +12,7 @@ class AffiliationView(ModelView):
 
     list_columns = [
         "total_price",
-        "Affiliation_state",
+        "affiliation_state",
         "provider",
         "service_plan",
     ]
