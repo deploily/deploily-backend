@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import jsonify, request
+from flask import jsonify, render_template, request
 from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import current_user, jwt_required
@@ -101,7 +101,6 @@ class AffiliationModelApi(ModelRestApi):
                       error:
                         type: string
         """
-
         data = request.get_json()
         service_plan_id = data.get("service_plan_selected_id")
         total_price = data.get("total_price")
@@ -129,45 +128,48 @@ class AffiliationModelApi(ModelRestApi):
             total_price=total_price,
             affiliation_state="pending",
         )
-
         db.session.add(affiliation)
         db.session.commit()
 
         user = current_user
 
-        user_email_body = f"""
-            <h3>Bonjour {user.first_name},</h3>
-            <p>Vous vous êtes affilié au service suivant :</p>
-            <ul>
-                <li>Fournisseur : {provider.name}</li>
-                <li> Website : {provider.website}</li>
-                <li>Support Email : {provider.mail_support}</li>
-                <li> Sailes Email : {provider.mail_sailes}</li>
-                <li> Numero : {provider.phone_support}</li>
-                <li>Prix total : {total_price} DZ</li>
-            </ul>
-        """
+        # -------- Email templates --------
+        # Email to user
+        user_email_body = render_template(
+            "emails/user_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
-            to=user.email, subject="Confirmation d'affiliation", body=user_email_body
+            to=user.email,
+            subject=f"Confirmation d'affiliation : {user.first_name}",
+            body=user_email_body,
         )
 
-        # Envoi email au provider
-        provider_email_body = f"""
-            <h3>Bonjour {provider.name},</h3>
-            <p>L'utilisateur {user.first_name} {user.last_name} ({user.email}) s'est affilié à votre service.</p>
-        """
+        # Email to provider
+        provider_email_body = render_template(
+            "emails/provider_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
             to=provider.mail_support,
             subject="Nouvelle affiliation via notre plateforme",
             body=provider_email_body,
         )
 
-        deploily_email_body = f"""
-            <p> et L'utilisateur {user.first_name} {user.last_name} ({user.email}) .</p>
-        """
+        # Email to internal team
+        deploily_email_body = render_template(
+            "emails/deploily_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
             to="deploily@transformatek.dz",
-            subject="Nouvelle affiliation via notre plateforme",
+            subject=f"Nouvelle affiliation via notre plateforme entre l' utilisateur:  {user.first_name} et le provider :{provider.name}",
             body=deploily_email_body,
         )
 
