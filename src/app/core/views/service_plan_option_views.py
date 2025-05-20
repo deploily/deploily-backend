@@ -9,7 +9,15 @@ class ServicePlanOptionModelView(ModelView):
     route_base = "/admin/service-plan-option"
     datamodel = SQLAInterface(ServicePlanOption)
 
-    list_columns = ["id", "icon", "html_content", "service_plan_id", "option_type", "option_value"]
+    list_columns = [
+        "id",
+        "icon",
+        "html_content",
+        "service_plan_id",
+        "option_type",
+        "option_value",
+        "limit_request",
+    ]
     base_order = ("id", "desc")
 
 
