@@ -10,7 +10,7 @@ class Affiliation(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
 
     total_price = Column(Float)
-    Affiliation_state = Column(Enum("pending", "confirmed", name="Affiliation_state"))
+    affiliation_state = Column(Enum("pending", "confirmed", name="affiliation_state"))
 
     provider_id = Column(Integer, ForeignKey("providers_ressource_service.id"))
     provider = relationship("ProvidersRessourceService", back_populates="affiliations")
