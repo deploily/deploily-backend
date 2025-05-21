@@ -23,6 +23,7 @@ class RessourceServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
+        "discount",
         "ressource_field",
     ]
     add_columns = [
@@ -37,6 +38,7 @@ class RessourceServiceView(ModelView):
         "documentation_url",
         "unit_price",
         "image_service",
+        "discount",
         "service_slug",
         "ressource_field",
     ]
@@ -52,6 +54,7 @@ class RessourceServiceView(ModelView):
         "documentation_url",
         "unit_price",
         "image_service",
+        "discount",
         "service_slug",
         "ressource_field",
     ]
@@ -67,6 +70,7 @@ class RessourceServiceView(ModelView):
         "documentation_url",
         "unit_price",
         "image_service",
+        "discount",
         "service_slug",
         "ressource_field",
     ]

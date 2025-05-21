@@ -74,7 +74,7 @@ class Subscription(Model, AuditMixin):
     @property
     def is_expired(self):
         is_subscription_expired = False
-        if self.start_date + relativedelta(months=1) < datetime.now():
+        if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
             is_subscription_expired = True
         return is_subscription_expired
 

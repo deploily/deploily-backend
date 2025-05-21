@@ -59,7 +59,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.add(payment)
                 db.session.commit()
                 email = Mail(
-                    title="New User Created",
+                    title=f"New User Created : {user.username}",
                     body=f"New User Created: {user.username}",
                     email_to=current_app.config["NOTIFICATION_EMAIL"],
                     email_from=current_app.config["NOTIFICATION_EMAIL"],

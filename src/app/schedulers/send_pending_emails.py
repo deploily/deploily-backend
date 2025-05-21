@@ -7,13 +7,15 @@ from flask import current_app
 from app import app, db, scheduler
 from app.core.models import Mail
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@scheduler.task("cron", id="send_pending_emails", max_instances=1, minute="*/1")
+@scheduler.task("cron", id="send_pending_emails", max_instances=1, minute="*")
 def send_pending_emails():
+    logger.info("[CRON] Sending pending emails - START")
+
     with app.app_context():
-        logger.info("[CRON] Sending pending emails - START")
 
         try:
             mails = db.session.query(Mail).filter_by(mail_state="outGoing").all()
@@ -51,4 +53,4 @@ def send_pending_emails():
                 mail.mail_state = "error"
                 db.session.commit()
 
-        logger.info("[CRON] Sending pending emails - END")
+    logger.info("[CRON] Sending pending emails - END")

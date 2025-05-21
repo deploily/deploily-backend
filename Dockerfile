@@ -38,6 +38,14 @@ COPY ./scripts/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
 
+COPY ./scripts/worker /start-celeryworker
+RUN sed -i 's/\r$//g' /start-celeryworker
+RUN chmod +x /start-celeryworker
+
+COPY ./scripts/scheduler /start-cron
+RUN sed -i 's/\r$//g' /start-cron
+RUN chmod +x /start-cron
+
 USER python
 
 WORKDIR /app

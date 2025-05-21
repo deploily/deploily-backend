@@ -2,8 +2,9 @@
 
 import logging
 
-from flask import request
+from flask import jsonify, render_template, request
 from flask_appbuilder.api import ModelRestApi, expose, protect
+from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import current_user, jwt_required
 
@@ -12,13 +13,14 @@ from app.core.models.service_plan_models import ServicePlan
 from app.service_ressources.models.affiliation_model import Affiliation
 from app.service_ressources.models.services_ressources_model import RessourceService
 from app.services.mail_service import send_and_log_email
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
 _affiliation_value_display_columns = [
     "id",
     "total_price",
-    "Affiliation_state",
+    "affiliation_state",
     "provider",
     "service_plan",
 ]
@@ -27,6 +29,8 @@ _affiliation_value_display_columns = [
 class AffiliationModelApi(ModelRestApi):
     resource_name = "affiliation"
     datamodel = SQLAInterface(Affiliation)
+    base_filters = [["created_by", FilterEqualFunction, get_user]]
+    exclude_route_methods = ["get", "post", "get_list"]
     add_columns = _affiliation_value_display_columns
     list_columns = _affiliation_value_display_columns
     show_columns = _affiliation_value_display_columns
@@ -100,7 +104,6 @@ class AffiliationModelApi(ModelRestApi):
                       error:
                         type: string
         """
-
         data = request.get_json()
         service_plan_id = data.get("service_plan_selected_id")
         total_price = data.get("total_price")
@@ -123,51 +126,115 @@ class AffiliationModelApi(ModelRestApi):
             return self.response_404(message="Provider not found.")
 
         affiliation = Affiliation(
-            service_plan_id=service_plan.id, provider_id=provider.id, total_price=total_price
+            service_plan_id=service_plan.id,
+            provider_id=provider.id,
+            total_price=total_price,
+            affiliation_state="pending",
         )
-
         db.session.add(affiliation)
         db.session.commit()
 
         user = current_user
 
-        user_email_body = f"""
-            <h3>Bonjour {user.first_name},</h3>
-            <p>Vous vous êtes affilié au service suivant :</p>
-            <ul>
-                <li>Fournisseur : {provider.name}</li>
-                <li> Website : {provider.website}</li>
-                <li>Support Email : {provider.mail_support}</li>
-                <li> Sailes Email : {provider.mail_sailes}</li>
-                <li> Numero : {provider.phone_support}</li>
-                <li>Prix total : {total_price} DZ</li>
-            </ul>
-        """
+        # -------- Email templates --------
+        # Email to user
+        user_email_body = render_template(
+            "emails/user_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
-            to=user.email, subject="Confirmation d'affiliation", body=user_email_body
+            to=user.email,
+            subject=f"Confirmation d'affiliation : {user.first_name}",
+            body=user_email_body,
         )
 
-        # Envoi email au provider
-        provider_email_body = f"""
-            <h3>Bonjour {provider.name},</h3>
-            <p>L'utilisateur {user.first_name} {user.last_name} ({user.email}) s'est affilié à votre service.</p>
-        """
+        # Email to provider
+        provider_email_body = render_template(
+            "emails/provider_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
             to=provider.mail_support,
             subject="Nouvelle affiliation via notre plateforme",
             body=provider_email_body,
         )
 
-        deploily_email_body = f"""
-            <p> et L'utilisateur {user.first_name} {user.last_name} ({user.email}) .</p>
-        """
+        # Email to internal team
+        deploily_email_body = render_template(
+            "emails/deploily_affiliation.html",
+            user=user,
+            provider=provider,
+            total_price=total_price,
+        )
         send_and_log_email(
             to="deploily@transformatek.dz",
-            subject="Nouvelle affiliation via notre plateforme",
+            subject=f"Nouvelle affiliation via notre plateforme entre l' utilisateur:  {user.first_name} et le provider :{provider.name}",
             body=deploily_email_body,
         )
 
         return self.response(201, message="Affiliation créée et emails envoyés.")
+
+    @protect()
+    @jwt_required()
+    @expose("/all", methods=["GET"])
+    def get_all_affiliations(self):
+        """
+        Get all affiliations with details.
+        ---
+        get:
+          summary: List all affiliations
+          description: Returns a list of all affiliations with service and provider details.
+          responses:
+            200:
+              description: A list of affiliations
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        service_name:
+                          type: string
+                        provider_name:
+                          type: string
+                        total_price:
+                          type: number
+                        affiliation_state:
+                          type: string
+                        created_on:
+                          type: string
+                          format: date-time
+            401:
+              description: Unauthorized - JWT token missing or invalid
+            500:
+              description: Internal server error
+        """
+        affiliations = db.session.query(Affiliation).all()
+
+        results = []
+        for affiliation in affiliations:
+            result = {
+                "id": affiliation.id,
+                "service_name": (
+                    affiliation.service_plan.service.name
+                    if affiliation.service_plan and affiliation.service_plan.service
+                    else None
+                ),
+                "provider_name": affiliation.provider.name if affiliation.provider else None,
+                "total_price": affiliation.total_price,
+                "affiliation_state": affiliation.affiliation_state,
+                "created_on": affiliation.created_on if affiliation.created_on else None,
+            }
+            results.append(result)
+
+        return jsonify(results), 200
 
 
 appbuilder.add_api(AffiliationModelApi)
