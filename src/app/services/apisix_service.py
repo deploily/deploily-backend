@@ -63,20 +63,52 @@ class ApiSixService:
             _logger.error(f"Error creating route '{route_id}': {e}")
             return None
 
-    def create_consumer(self, username, api_key, labels=None):
-        """Creates an APISIX consumer with optional labels."""
+    def create_consumer(self, username, api_key, labels=None, limit_count=None):
+        """Creates an APISIX consumer with optional labels and limit-count plugin."""
+        plugins = {
+            "key-auth": {"key": api_key},
+        }
+
+        if limit_count:
+            plugins["limit-count"] = {
+                "count": limit_count.get("count", 1),
+                "time_window": limit_count.get("time_window", 10),
+                "rejected_code": limit_count.get("rejected_code", 429),
+                "key": limit_count.get("key", "consumer_name"),
+                "policy": limit_count.get("policy", "local"),
+            }
+
         consumer_data = {
             "username": username,
-            "plugins": {"key-auth": {"key": api_key}},
+            "plugins": plugins,
         }
+
         if labels:
             consumer_data["labels"] = labels
 
         try:
             response = self.client.new_consumer(**consumer_data)
-
             _logger.info(f"Consumer '{username}' created successfully: {response}")
             return response
         except Exception as e:
             _logger.error(f"Error creating consumer '{username}': {e}")
+            return None
+
+    def delete_consumer(self, username):
+        """Delete an APISIX consumer by username."""
+        if not username:
+            _logger.error("Username is required to delete consumer")
+            return None
+
+        try:
+            response = self.client.del_consumer(username)
+            if response and response.get("deleted") == "1":
+                _logger.info(f"Consumer '{username}' deleted successfully.")
+            else:
+                _logger.warning(
+                    f"Consumer '{username}' could not be deleted or does not exist: {response}"
+                )
+            return response
+        except Exception as e:
+            _logger.error(f"Error deleting consumer '{username}': {e}")
             return None
