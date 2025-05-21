@@ -1,3 +1,9 @@
+from . import services, schedulers
+from .service_ressources import models, views, controllers
+from .service_cicd import models, views, controllers
+from .service_apps import models, views, controllers
+from .service_api import models, views, controllers
+from .core import models, views, controllers
 import logging
 from flask import Flask
 from flask_appbuilder import SQLA, AppBuilder
@@ -10,8 +16,8 @@ import os
 
 
 template_folder = os.path.join(os.path.dirname(__file__), "templates")
-# app = Flask(__name__, template_folder=template_folder)
-app = Flask(__name__)
+app = Flask(__name__, template_folder=template_folder)
+# app = Flask(__name__)
 app.config.from_object("config")
 
 # TODO move urls to .env | localhost should only be available for dev
@@ -69,11 +75,3 @@ celery.conf.update(app.config)
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-from .core import models, views, controllers
-from .service_api import models, views, controllers
-from .service_apps import models, views, controllers
-from .service_cicd import models, views, controllers
-from .service_ressources import models, views, controllers
-from . import services, schedulers
