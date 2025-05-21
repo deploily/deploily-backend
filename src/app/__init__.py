@@ -16,8 +16,8 @@ import os
 
 
 template_folder = os.path.join(os.path.dirname(__file__), "templates")
-app = Flask(__name__, template_folder=template_folder)
-# app = Flask(__name__)
+# app = Flask(__name__, template_folder=template_folder)
+app = Flask(__name__)
 app.config.from_object("config")
 
 # TODO move urls to .env | localhost should only be available for dev
