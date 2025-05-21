@@ -4,6 +4,7 @@ import logging
 
 from flask import jsonify, render_template, request
 from flask_appbuilder.api import ModelRestApi, expose, protect
+from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import current_user, jwt_required
 
@@ -12,6 +13,7 @@ from app.core.models.service_plan_models import ServicePlan
 from app.service_ressources.models.affiliation_model import Affiliation
 from app.service_ressources.models.services_ressources_model import RessourceService
 from app.services.mail_service import send_and_log_email
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ _affiliation_value_display_columns = [
 class AffiliationModelApi(ModelRestApi):
     resource_name = "affiliation"
     datamodel = SQLAInterface(Affiliation)
+    base_filters = [["created_by", FilterEqualFunction, get_user]]
     exclude_route_methods = ["get", "post", "get_list"]
     add_columns = _affiliation_value_display_columns
     list_columns = _affiliation_value_display_columns
