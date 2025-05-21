@@ -16,7 +16,6 @@ class ServicePlanOptionModelView(ModelView):
         "service_plan_id",
         "option_type",
         "option_value",
-        "limit_request",
     ]
     base_order = ("id", "desc")
 
