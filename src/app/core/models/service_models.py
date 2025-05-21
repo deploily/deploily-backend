@@ -6,6 +6,8 @@ from sqlalchemy.orm import relationship
 
 from app import db
 from app.core.models.my_favorites_models import MyFavorites
+
+# from app.service_api.models.api_services_model import ApiService
 from app.utils.utils import get_user
 
 
@@ -41,6 +43,29 @@ class Service(Model):
         )
 
         return favori is not None
+
+    @property
+    def service_details(self):
+        service_json = {}
+
+        # Skip if it's the base class
+
+        # Get all keys from the base (Service)
+        base_keys = set(Service.__mapper__.c.keys())
+
+        # Get all keys from the subclass
+        child_keys = set(self.__class__.__mapper__.c.keys())
+
+        # Only use keys that are in child but not in base
+        specific_child_keys = child_keys - base_keys
+
+        for key in specific_child_keys:
+            try:
+                service_json[key] = getattr(self, key)
+            except Exception:
+                service_json[key] = None
+
+        return service_json
 
     def __repr__(self):
         return self.name
