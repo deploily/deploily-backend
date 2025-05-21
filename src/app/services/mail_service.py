@@ -3,10 +3,14 @@
 import smtplib
 from email.mime.text import MIMEText
 
-from flask import current_app
+from flask import current_app, render_template
 
 from app import db
 from app.core.models import Mail
+
+
+def render_email_template(template_name, **context):
+    return render_template(f"emails/{template_name}", **context)
 
 
 def send_and_log_email(to, subject, body, from_email=None):

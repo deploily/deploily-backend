@@ -5,10 +5,13 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
 from celery import Celery
-
 from app.custom_sso_security_manager import CustomSsoSecurityManager
+import os
 
-app = Flask(__name__)
+
+template_folder = os.path.join(os.path.dirname(__file__), "templates")
+app = Flask(__name__, template_folder=template_folder)
+# app = Flask(__name__)
 app.config.from_object("config")
 
 # TODO move urls to .env | localhost should only be available for dev
@@ -62,6 +65,7 @@ celery = Celery(
     backend=app.config["CELERY_RESULT_BACKEND"],
 )
 celery.conf.update(app.config)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
