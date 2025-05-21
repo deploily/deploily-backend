@@ -19,7 +19,7 @@ class ServiceModelView(ModelView):
         "is_in_favorite",
     ]
 
-    base_permissions = ["can_list", "can_show"]  # only allow viewing
+    # base_permissions = ["can_list", "can_show"]  # only allow viewing
 
     def post_add(self, item):
         item.service_slug = slugify(item.name)
