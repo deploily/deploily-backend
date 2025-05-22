@@ -16,4 +16,5 @@ from . import (
     supprot_ticket_controllers,
     user_profile_controllers,
     balance_controllers,
+    statistics_controllers,
 )
