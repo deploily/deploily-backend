@@ -7,6 +7,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import current_user
 
 from app import appbuilder, db
+from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models.mail_models import Mail
 from app.core.models.support_ticket_models import SupportTicket
 from app.utils.utils import get_user
@@ -68,6 +69,7 @@ class SupportTicketModelApi(ModelRestApi):
             )
             db.session.add(email)
             db.session.commit()
+            send_mail.delay(email.id)
             _logger.info(f"[EMAIL] Queued email for support ticket {item.id}")
         except Exception as e:
             _logger.error(f"[EMAIL] Failed to create email for support ticket {item.id}: {e}")
