@@ -1,16 +1,121 @@
 <!DOCTYPE html>
 <html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Affiliation confirmée</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: #212529;
+            margin: 0;
+            padding: 0;
+        }
 
-<h3>Bonjour {{ user.first_name }},</h3>
-<p>Vous vous êtes affilié au service suivant :</p>
-<ul>
-    <li>Fournisseur : {{ provider.name }}</li>
-    <li>Website : {{ provider.website }}</li>
-    <li>Support Email : {{ provider.mail_support }}</li>
-    <li>Sales Email : {{ provider.mail_sailes }}</li>
-    <li>Numéro : {{ provider.phone_support }}</li>
-    <li>Prix total : {{ total_price }} DZ</li>
-</ul>
+        .email-wrapper {
+            max-width: 620px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
 
+        .email-header {
+            background-color: #0d1014;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
 
+        .email-body {
+            padding: 30px;
+        }
+
+        .email-body h2 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+
+        .email-body ul {
+            padding-left: 20px;
+        }
+
+        .email-footer {
+            background-color: #f1f3f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .email-footer a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+        .social-icons {
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .social-icons img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-header">
+        <img src="https://console.deploily.cloud/_next/image?url=%2Fimages%2Flogo_name.png&amp;w=256&amp;q=75" alt="Logo Deploily">
+    </div>
+
+    <div class="email-body">
+        <h2>Bonjour {{ user.first_name }},</h2>
+        <p>Nous vous confirmons votre affiliation au service sélectionné. Voici les détails de votre souscription :</p>
+
+        <ul>
+            <li><strong>Fournisseur :</strong> {{ provider.name }}</li>
+            <li><strong>Site Web :</strong> <a href="{{ provider.website }}">{{ provider.website }}</a></li>
+            <li><strong>Email Support :</strong> {{ provider.mail_support }}</li>
+            <li><strong>Email Commercial :</strong> {{ provider.mail_sailes }}</li>
+            <li><strong>Téléphone :</strong> {{ provider.phone_support }}</li>
+            <li><strong>Montant total :</strong> {{ total_price }} DA</li>
+        </ul>
+
+        <p>Nous restons à votre disposition pour toute assistance complémentaire.</p>
+        <p>Merci pour votre confiance.</p>
+    </div>
+
+    <div class="email-footer">
+        <p><strong>Deploily</strong> – Deploy to sovereign infrastructure</p>
+        <p>📧 <a href="mailto:deploily@transformatek.dz">deploily@transformatek.dz</a> | 🌐 <a href="https://console.deploily.cloud">https://console.deploily.cloud</a></p>
+        <p>📍 N°21, Bloc E3, Ilot 10, Cité 220 logments CNEP, Ain Témouchent, Algérie</p>
+
+        <div class="social-icons">
+            <a href="https://www.facebook.com/transformatek" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
+            </a>
+            <a href="https://www.linkedin.com/authwall?trk=bf&trkInfo=AQHVUtFUot0RwAAAAZb4Xe_grMlulm16pTRV_0L2ssxZgBiEa7AURDj6V91t3P0tQR8FC-h-OF5tRMS9cS4hFjn65EktFUxgaW2EZGPyzLhw8sVgVnYPDF_zEjtiEL0ReJ6bSRc=&original_referer=&sessionRedirect=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Ftransformatek" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+            </a>
+            <a href="https://www.tiktok.com/@transformatek" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/3046/3046122.png" alt="TikTok">
+            </a>
+            <a href="https://www.instagram.com/transformatek/" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+            </a>
+            <a href="https://www.youtube.com/channel/UCOWkW-KP6QS0TlFzblz_rYw" target="_blank">
+                <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+            </a>
+        </div>
+    </div>
+</div>
+</body>
 </html>
