@@ -12,19 +12,9 @@ class RessourceServiceView(ModelView):
 
     list_columns = [
         "tags",
-        "service_plans",
-        "provider",
-        "myfavorites",
         "name",
-        "description",
-        "short_description",
-        "specifications",
-        "documentation_url",
         "unit_price",
-        "image_service",
-        "service_slug",
         "discount",
-        "ressource_field",
     ]
     add_columns = [
         "tags",

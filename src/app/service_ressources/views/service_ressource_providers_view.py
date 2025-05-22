@@ -13,20 +13,11 @@ class ProvidersRessourceServiceView(ModelView):
 
     list_columns = [
         "name",
-        "logo",
-        "short_description",
         "contact_number",
         "website",
-        "facebook_page",
-        "instagram_page",
-        "linkedin_page",
-        "extra_info",
-        "ressource_service",
-        "affiliations",
         "mail_support",
         "mail_sales",
         "mail_partnership",
-        "phone_support",
         "phone_sailes",
         "phone_partnership",
     ]
@@ -34,7 +25,7 @@ class ProvidersRessourceServiceView(ModelView):
 
 appbuilder.add_view(
     ProvidersRessourceServiceView,
-    "ProvidersRessource",
+    "Providers Ressource",
     icon="fa-users",
     category="Service",
 )

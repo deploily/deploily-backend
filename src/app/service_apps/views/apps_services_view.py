@@ -14,17 +14,8 @@ class AppServiceView(ModelView):
 
     list_columns = [
         "tags",
-        "service_plans",
-        "myfavorites",
         "name",
-        "description",
-        "short_description",
-        "specifications",
-        "documentation_url",
         "unit_price",
-        "image_service",
-        "service_slug",
-        "apps_field",
     ]
     add_columns = [
         "tags",
