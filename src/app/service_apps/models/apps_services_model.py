@@ -11,9 +11,6 @@ class AppService(Service):
     __mapper_args__ = {
         "polymorphic_identity": "app_service",
     }
-    __mapper_args__ = {
-        "polymorphic_identity": "cicd_service",
-    }
 
     apps_field = Column(Text)
 

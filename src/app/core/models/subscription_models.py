@@ -20,6 +20,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
+# from app.core.models.service_models import Service
+
 FERNET_KEY = os.getenv("FERNET_KEY", "QkqrpIbcUuQ_5Ho25VEv5oPFN4IVuOYojOMwneVbZNQ=")
 
 encryptor = Fernet(FERNET_KEY)
@@ -59,12 +61,24 @@ class Subscription(Model, AuditMixin):
 
         if self.service_plan and self.service_plan.service:
             service = self.service_plan.service
-
             service_json = {}
-            for key, value in service.__dict__.items():
+            # Get all keys from the base (Service)
+            # base_keys = set(Service.__mapper__.c.keys())
 
-                if not key.startswith("_"):
-                    service_json[key] = value
+            # Get all keys from the subclass
+            child_keys = set(service.__class__.__mapper__.c.keys())
+
+            # Only use keys that are in child but not in base
+            specific_child_keys = child_keys
+
+            for key in specific_child_keys:
+                try:
+                    service_json[key] = getattr(service, key)
+                except Exception:
+                    service_json[key] = None
+            # for key, value in service.__dict__.items():
+            #     if not key.startswith("_"):
+            #         service_json[key] = value
 
             return service_json
         else:
