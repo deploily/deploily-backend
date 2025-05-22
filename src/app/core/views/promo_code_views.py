@@ -20,5 +20,5 @@ appbuilder.add_view(
     PromoCodeModelView,
     "Promo Code",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Billing",
 )

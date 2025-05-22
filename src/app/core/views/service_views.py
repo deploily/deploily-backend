@@ -15,7 +15,6 @@ class ServiceModelView(ModelView):
         "name",
         "documentation_url",
         "unit_price",
-        "image_service",
         "is_in_favorite",
     ]
 

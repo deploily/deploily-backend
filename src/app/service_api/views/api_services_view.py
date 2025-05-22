@@ -13,19 +13,8 @@ class ApiServiceView(ModelView):
 
     list_columns = [
         "tags",
-        "service_plans",
-        "myfavorites",
         "name",
-        "description",
-        "short_description",
-        "specifications",
-        "documentation_url",
         "unit_price",
-        "service_url",
-        "image_service",
-        "curl_command",
-        "api_playground_url",
-        "service_slug",
     ]
     add_columns = [
         "tags",
