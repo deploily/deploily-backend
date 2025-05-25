@@ -24,7 +24,7 @@ _service_ressources_providers_value_display_columns = [
     "linkedin_page",
     "extra_info",
     "mail_support",
-    "mail_sailes",
+    "mail_sales",
     "phone_support",
     "phone_sailes",
     "phone_partnership",
