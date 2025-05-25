@@ -10,7 +10,14 @@ from app.core.models.service_plan_models import ServicePlan
 class ServicePlanModelView(ModelView):
     route_base = "/admin/service-plan"
     datamodel = SQLAInterface(ServicePlan)
-    list_columns = ["id", "price", "limit", "service_id" "subscription_category", "options"]
+    list_columns = [
+        "id",
+        "price",
+        "limit",
+        "service_id" "subscription_category",
+        "options",
+        "is_custom",
+    ]
     base_order = ("id", "desc")
 
 

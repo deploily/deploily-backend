@@ -18,6 +18,7 @@ _service_plan_value_display_columns = [
     "subscription_category",
     "plan",
     "options",
+    "is_custom",
 ]
 
 
