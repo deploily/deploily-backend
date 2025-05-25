@@ -93,9 +93,13 @@
         </p>
 
         <p>
-            <strong>Détails de l'utilisateur :</strong><br>
-            ➤ Nom : <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
-            ➤ Email : <strong>{{ user.email }}</strong>
+            <p>
+                <strong>Détails de l'utilisateur :</strong><br>
+                ➤ Nom : <strong>{{ user.first_name }} {{ user.last_name }}</strong><br>
+                ➤ Email : <strong>{{ user.email }}</strong><br>
+                ➤ Service : <strong>{{ service_name }}</strong><br>
+                ➤ Plan choisi : <strong>{{ plan_name}}</strong>
+            </p>
         </p>
 
         <div class="highlight">

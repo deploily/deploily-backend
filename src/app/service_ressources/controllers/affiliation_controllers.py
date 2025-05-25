@@ -135,6 +135,9 @@ class AffiliationModelApi(ModelRestApi):
         db.session.commit()
 
         user = current_user
+        print(
+            f"ressource_service.name: {ressource_service.name}, service_plan.plan.name: {service_plan.plan.name}"
+        )
 
         # -------- Email templates --------
         # Email to user
@@ -156,9 +159,11 @@ class AffiliationModelApi(ModelRestApi):
             user=user,
             provider=provider,
             total_price=total_price,
+            service_name=ressource_service.name,
+            plan_name=service_plan.plan.name,
         )
         send_and_log_email(
-            to=provider.mail_support,
+            to=provider.mail_partnership,
             subject="Nouvelle affiliation via notre plateforme",
             body=provider_email_body,
         )
