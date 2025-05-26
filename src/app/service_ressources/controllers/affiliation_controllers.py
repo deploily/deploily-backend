@@ -216,8 +216,8 @@ class AffiliationModelApi(ModelRestApi):
             500:
               description: Internal server error
         """
-        affiliations = db.session.query(Affiliation).all()
-
+        user = current_user
+        affiliations = db.session.query(Affiliation).filter_by(created_by=user).all()
         results = []
         for affiliation in affiliations:
             result = {
