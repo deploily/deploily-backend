@@ -18,4 +18,5 @@ from . import (
     balance_controllers,
     statistics_controllers,
     comment_controllerrs,
+    rating_controllers,
 )

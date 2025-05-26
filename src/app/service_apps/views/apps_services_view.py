@@ -25,6 +25,7 @@ class AppServiceView(ModelView):
         "image_service",
         "service_slug",
         "apps_field",
+        "ratings",
     ]
     add_columns = [
         "tags",
@@ -39,6 +40,7 @@ class AppServiceView(ModelView):
         "image_service",
         "service_slug",
         "apps_field",
+        "ratings",
     ]
     edit_columns = [
         "tags",
@@ -53,6 +55,7 @@ class AppServiceView(ModelView):
         "image_service",
         "service_slug",
         "apps_field",
+        "ratings",
     ]
     show_columns = [
         "tags",
@@ -67,6 +70,7 @@ class AppServiceView(ModelView):
         "image_service",
         "service_slug",
         "apps_field",
+        "ratings",
     ]
 
     def post_add(self, item):

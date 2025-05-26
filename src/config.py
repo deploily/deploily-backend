@@ -143,6 +143,7 @@ FAB_ROLES = {
         ["PaymentModelApi", "can_upload_receipt"],
         # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
+        ["RatingApi", "can_create_or_update_rating"],
         ["PaymentProfileModelApi", "can_get"],
         ["PaymentProfileModelApi", "can_put"],
         ["PaymentProfileModelApi", "can_post"],

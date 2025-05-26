@@ -26,6 +26,7 @@ class ApiServiceView(ModelView):
         "curl_command",
         "api_playground_url",
         "service_slug",
+        "ratings",
     ]
     add_columns = [
         "tags",
@@ -42,6 +43,7 @@ class ApiServiceView(ModelView):
         "curl_command",
         "api_playground_url",
         "service_slug",
+        "ratings",
     ]
     edit_columns = [
         "tags",
@@ -58,6 +60,7 @@ class ApiServiceView(ModelView):
         "curl_command",
         "api_playground_url",
         "service_url",
+        "ratings",
     ]
     show_columns = [
         "tags",
@@ -74,6 +77,7 @@ class ApiServiceView(ModelView):
         "curl_command",
         "api_playground_url",
         "service_slug",
+        "ratings",
     ]
 
     def post_add(self, item):

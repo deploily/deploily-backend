@@ -6,11 +6,11 @@ from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 
-class Rating(Model, AuditMixin):
+class Score(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
-    Rating = Column(Integer)
+    rating = Column(Integer)
     service_id = Column(Integer, ForeignKey("service.id"))
-    service = relationship("Service")
+    service = relationship("Service", overlaps="ratings")
 
     def __repr__(self):
         return str(self.id)
