@@ -6,9 +6,7 @@ from app import appbuilder
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_cicd.models.cicd_services_model import CicdService
 
-api_columns = [
-    "cicd_field",
-]
+api_columns = ["cicd_field", "average_rating"]
 
 
 class CicdServiceModelApi(ServiceModelApi):
