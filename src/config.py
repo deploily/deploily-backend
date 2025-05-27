@@ -123,9 +123,15 @@ FAB_ROLES = {
         ["MyFavoritesModelApi", "can_add_remove_favorite"],
         ["ConsumerApi", "can_post"],
         ["ContactUSModelApi", "can_get"],
+        ["ContactUSModelApi", "can_info"],
         # ["ContactUSModelApi", "can_put"],
         ["ContactUSModelApi", "can_post"],
         # ["ContactUSModelApi", "can_delete"],
+        ["CommentModelApi", "can_get"],
+        ["CommentModelApi", "can_post"],
+        ["CommentModelApi", "can_info"],
+        ["CommentModelApi", "can_put"],
+        ["CommentModelApi", "can_delete"],
         ["MyFavoritesApi", "can_post"],
         ["MyFavoritesModelApi", "can_get"],
         ["MyFavoritesModelApi", "can_put"],
@@ -137,6 +143,7 @@ FAB_ROLES = {
         ["PaymentModelApi", "can_upload_receipt"],
         # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
+        ["RatingApi", "can_create_or_update_rating"],
         ["PaymentProfileModelApi", "can_get"],
         ["PaymentProfileModelApi", "can_put"],
         ["PaymentProfileModelApi", "can_post"],
@@ -247,7 +254,7 @@ SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "True")
 
 NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL")
 
-CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY", "6Ldb_i8rAAAAAKHLinX4bNEs8M_kofYlLtDpYuRE")
+CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY")
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "False")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "False")

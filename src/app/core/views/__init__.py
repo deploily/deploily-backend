@@ -16,6 +16,8 @@ from . import (
     contact_us,
     my_favorites_views,
     mail_views,
+    comment_views,
+    rating_views,
 )
 
 appbuilder.add_link(
