@@ -2,11 +2,12 @@
 
 import logging
 
-from flask import current_app
+from flask import current_app, render_template
 from flask_appbuilder.api import ModelRestApi
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
+from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models.contact_us_models import ContactUs
 from app.core.models.mail_models import Mail
 
@@ -25,27 +26,26 @@ class ContactUSModelApi(ModelRestApi):
 
     def post_add(self, item: ContactUs):
         """
-
-
         Called after a contact us is successfully created.
-
-
         """
 
         try:
 
+            contact_us_template = render_template("emails/contact_us.html", item=item)
+
             email = Mail(
                 title=f"New Contact US Created par : {item.name}",
-                body=f"New Contact US Created By: {item.name}",
+                body=contact_us_template,
                 email_to=current_app.config["NOTIFICATION_EMAIL"],
                 email_from=current_app.config["NOTIFICATION_EMAIL"],
                 mail_state="outGoing",
             )
 
             db.session.add(email)
-
             db.session.commit()
-
+            print("fffffffffffffffff")
+            send_mail.delay(email.id)
+            print("mmmmmmmmmmmmmmmmmmmmmmmm")
             _logger.info(f"[EMAIL] Queued email for contact us {item.id}")
 
         except Exception as e:

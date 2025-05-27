@@ -20,7 +20,7 @@ class ProvidersRessourceService(Model):
     linkedin_page = Column(String(255))
     extra_info = Column(Text)
     mail_support = Column(String(255))
-    mail_sailes = Column(String(255))
+    mail_sales = Column(String(255))
     mail_partnership = Column(String(255))
     phone_support = Column(String(50))
     phone_sailes = Column(String(50))

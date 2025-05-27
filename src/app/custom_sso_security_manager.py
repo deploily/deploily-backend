@@ -2,10 +2,11 @@
 
 import logging
 
-from flask import current_app, g
+from flask import current_app, g, render_template
 from flask_appbuilder.const import LOGMSG_WAR_SEC_LOGIN_FAILED
 from flask_appbuilder.security.sqla.manager import SecurityManager
 
+# from app import db
 _logger = logging.getLogger(__name__)
 
 
@@ -24,6 +25,7 @@ class CustomSsoSecurityManager(SecurityManager):
 
     def load_user_jwt(self, _jwt_header, jwt_data):
         from app import appbuilder, db
+        from app.core.celery_tasks.send_mail_task import send_mail
         from app.core.models.mail_models import Mail
         from app.core.models.payment_models import Payment
         from app.core.models.payment_profile_models import PaymentProfile
@@ -58,9 +60,16 @@ class CustomSsoSecurityManager(SecurityManager):
                 )
                 db.session.add(payment)
                 db.session.commit()
+                send_mail.delay(email.id)
+                user_email_body = render_template(
+                    "emails/create_user.html",
+                    user=user,
+                    username=user.username,
+                )
+
                 email = Mail(
                     title=f"New User Created : {user.username}",
-                    body=f"New User Created: {user.username}",
+                    body=user_email_body,
                     email_to=current_app.config["NOTIFICATION_EMAIL"],
                     email_from=current_app.config["NOTIFICATION_EMAIL"],
                     mail_state="outGoing",

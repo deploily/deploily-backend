@@ -13,11 +13,10 @@ class PaymentModelView(ModelView):
         "id",
         "amount",
         "payment_method",
-        "subscription_id",
         "status",
         "profile",
-        "profile_id",
         "start_date",
+        "created_by",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
