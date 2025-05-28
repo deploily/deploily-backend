@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 _service_value_display_columns = [
     "id",
+    "category",
     "name",
     "description",
     "documentation_url",

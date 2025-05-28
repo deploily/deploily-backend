@@ -2,6 +2,7 @@ from app import appbuilder, db
 
 from . import (
     service_tag_views,
+    service_category_views,
     service_plan_option_views,
     service_plan_views,
     plan_views,

@@ -14,5 +14,6 @@ from .support_ticket_response_models import SupportTicketResponse
 from .mail_models import Mail
 from .comment_models import Comment
 from .rating_models import Score
+from .service_category_models import ServiceCategory
 
 # from .user_models import MemberModel
