@@ -15,4 +15,4 @@ from .mail_models import Mail
 from .comment_models import Comment
 from .rating_models import Score
 
-from .user_models import MemberModel
+# from .user_models import MemberModel
