@@ -15,4 +15,5 @@
 #     add_columns = ["username", "email", "active", "roles", "phone"]
 
 
-# appbuilder.add_view(MyUserView, "List Users", icon="fa-user", category="Security")
+# appbuilder.add_view(MyUserView, "List Users",
+#                     icon="fa-user", category="Security")
