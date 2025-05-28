@@ -150,18 +150,18 @@ class AffiliationModelApi(ModelRestApi):
             body=user_email_body,
         )
 
-        # Email to provider
-        provider_email_body = render_template(
-            "emails/provider_affiliation.html",
-            user=user,
-            provider=provider,
-            total_price=total_price,
-        )
-        send_and_log_email(
-            to=provider.mail_support,
-            subject="Nouvelle affiliation via notre plateforme",
-            body=provider_email_body,
-        )
+        # # Email to provider
+        # provider_email_body = render_template(
+        #     "emails/provider_affiliation.html",
+        #     user=user,
+        #     provider=provider,
+        #     total_price=total_price,
+        # )
+        # send_and_log_email(
+        #     to=provider.mail_support,
+        #     subject="Nouvelle affiliation via notre plateforme",
+        #     body=provider_email_body,
+        # )
 
         # Email to internal team
         deploily_email_body = render_template(
