@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import jsonify, render_template, request
+from flask import current_app, jsonify, render_template, request
 from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -63,6 +63,10 @@ class AffiliationModelApi(ModelRestApi):
                       type: number
                       format: float
                       description: Total price of the affiliation
+                    phone_number:
+                      type: string
+                      description: number of user
+
           responses:
             201:
               description: Affiliation created and emails sent
@@ -107,6 +111,7 @@ class AffiliationModelApi(ModelRestApi):
         data = request.get_json()
         service_plan_id = data.get("service_plan_selected_id")
         total_price = data.get("total_price")
+        phone_number = data.get("phone_number")
 
         if not service_plan_id or total_price is None:
             return self.response_400(message="Missing required parameters.")
@@ -128,6 +133,7 @@ class AffiliationModelApi(ModelRestApi):
         affiliation = Affiliation(
             service_plan_id=service_plan.id,
             provider_id=provider.id,
+            phone_number=phone_number,
             total_price=total_price,
             affiliation_state="pending",
         )
@@ -154,19 +160,19 @@ class AffiliationModelApi(ModelRestApi):
         )
 
         # Email to provider
-        provider_email_body = render_template(
-            "emails/provider_affiliation.html",
-            user=user,
-            provider=provider,
-            total_price=total_price,
-            service_name=ressource_service.name,
-            plan_name=service_plan.plan.name,
-        )
-        send_and_log_email(
-            to=provider.mail_partnership,
-            subject="Nouvelle affiliation via notre plateforme",
-            body=provider_email_body,
-        )
+        # provider_email_body = render_template(
+        #     "emails/provider_affiliation.html",
+        #     user=user,
+        #     provider=provider,
+        #     total_price=total_price,
+        #     service_name=ressource_service.name,
+        #     plan_name=service_plan.plan.name,
+        # )
+        # send_and_log_email(
+        #     to=provider.mail_partnership,
+        #     subject="Nouvelle affiliation via notre plateforme",
+        #     body=provider_email_body,
+        # )
 
         # Email to internal team
         deploily_email_body = render_template(
@@ -176,7 +182,7 @@ class AffiliationModelApi(ModelRestApi):
             total_price=total_price,
         )
         send_and_log_email(
-            to="deploily@transformatek.dz",
+            to=current_app.config["NOTIFICATION_EMAIL"],
             subject=f"Nouvelle affiliation via notre plateforme entre l' utilisateur:  {user.first_name} et le provider :{provider.name}",
             body=deploily_email_body,
         )
