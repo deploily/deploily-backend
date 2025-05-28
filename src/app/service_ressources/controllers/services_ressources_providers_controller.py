@@ -26,7 +26,7 @@ _service_ressources_providers_value_display_columns = [
     "mail_support",
     "mail_sales",
     "phone_support",
-    "phone_sailes",
+    "phone_sales",
     "affiliations",
 ]
 
