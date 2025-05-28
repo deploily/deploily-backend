@@ -16,7 +16,6 @@ class CicdServiceView(ModelView):
         "tags",
         "name",
         "unit_price",
-
     ]
     add_columns = [
         "tags",
