@@ -1,10 +1,10 @@
 import logging
+from celery import Celery
 from flask import Flask
 from flask_appbuilder import SQLA, AppBuilder
 from flask_cors import CORS
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
-from celery import Celery
 from app.custom_sso_security_manager import CustomSsoSecurityManager
 import os
 
@@ -70,9 +70,9 @@ celery.conf.update(app.config)
 if __name__ == "__main__":
     app.run(debug=True)
 
-from .core import models, views, controllers
-from .service_api import models, views, controllers
-from .service_apps import models, views, controllers
-from .service_cicd import models, views, controllers
-from .service_ressources import models, views, controllers
 from . import services, schedulers
+from .service_ressources import models, views, controllers
+from .service_cicd import models, views, controllers
+from .service_apps import models, views, controllers
+from .service_api import models, views, controllers
+from .core import models, views, controllers

@@ -18,7 +18,7 @@ class ProvidersRessourceServiceView(ModelView):
         "mail_support",
         "mail_sales",
         "mail_partnership",
-        "phone_sailes",
+        "phone_sales",
         "phone_partnership",
     ]
 

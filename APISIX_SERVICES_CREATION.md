@@ -2,8 +2,8 @@
 
 ```
 
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/photon-upstream \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/upstreams/photon-upstream \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
 "type": "roundrobin",
@@ -17,8 +17,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/photon-upstr
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/photon \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/routes/photon \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
   -d '{
 "uri": "/photon/*",
@@ -34,8 +34,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/photon \
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/consumers/photon-consumer \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/consumers/photon-consumer \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
 "username": "photon-consumer",
@@ -54,8 +54,8 @@ curl -H "apikey: fcd1c8f035335f136f87ad84b625c8f1" "https://api.deploily.cloud/p
 ## ORS
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/ors \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/routes/ors \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
   "uri": "/ors/v2/*",
@@ -76,8 +76,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/ors \
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/consumers/ors-consumer \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/consumers/ors-consumer \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
 "username": "ors-consumer",
@@ -139,8 +139,8 @@ curl --request GET \
 # API WILAYA
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/consumers/api-wilaya-consumer \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/consumers/api-wilaya-consumer \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
 "username": "api-wilaya-consumer",
@@ -154,8 +154,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/consumers/api-wilaya-c
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/wilaya-upstream \
-  -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/upstreams/wilaya-upstream \
+  -H "X-API-KEY: your apisix  api key" \
   -H "Content-Type: application/json" \
   -d '{
     "type": "roundrobin",
@@ -169,8 +169,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/wilaya-upstr
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/wilaya \
-  -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/routes/wilaya \
+  -H "X-API-KEY: your apisix  api key" \
   -H "Content-Type: application/json" \
   -d '{
     "uri": "/wilaya/api/v1/*",
@@ -196,8 +196,8 @@ curl --request GET \
 
 ```
 
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/nominatim-upstream \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/upstreams/nominatim-upstream \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
  -d '{
 "type": "roundrobin",
@@ -211,8 +211,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/upstreams/nominatim-up
 ```
 
 ```
-curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/nominatim \
- -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+curl -X PUT https://your apisix admin url/apisix/admin/routes/nominatim \
+ -H "X-API-KEY: your apisix  api key" \
  -H "Content-Type: application/json" \
   -d '{
 "uri": "/nominatim/*",
@@ -230,8 +230,8 @@ curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/nominatim \
 ** Or with one curl command **
 
 ```
- curl -X PUT https://admin-api.deploily.cloud/apisix/admin/routes/nominatim \
-  -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+ curl -X PUT https://your apisix admin url/apisix/admin/routes/nominatim \
+  -H "X-API-KEY: your apisix  api key" \
   -H "Content-Type: application/json" \
   -d '{
     "uri": "/nominatim/*",

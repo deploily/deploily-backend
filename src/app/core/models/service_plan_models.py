@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_appbuilder import Model
-from sqlalchemy import Column, Enum, Float, ForeignKey, Integer
+from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 
@@ -12,6 +12,7 @@ class ServicePlan(Model):
     service = relationship("Service")
     plan_id = Column(Integer, ForeignKey("plan.id"))
     plan = relationship("Plan")
+    is_custom = Column(Boolean, default=False)
     subscription_category = Column(Enum("monthly", "yearly", name="subscription_category"))
     options = relationship("ServicePlanOption", back_populates="service_plan")
 

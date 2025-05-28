@@ -135,6 +135,9 @@ class AffiliationModelApi(ModelRestApi):
         db.session.commit()
 
         user = current_user
+        print(
+            f"ressource_service.name: {ressource_service.name}, service_plan.plan.name: {service_plan.plan.name}"
+        )
 
         # -------- Email templates --------
         # Email to user
@@ -162,6 +165,7 @@ class AffiliationModelApi(ModelRestApi):
         #     subject="Nouvelle affiliation via notre plateforme",
         #     body=provider_email_body,
         # )
+
 
         # Email to internal team
         deploily_email_body = render_template(
@@ -216,8 +220,8 @@ class AffiliationModelApi(ModelRestApi):
             500:
               description: Internal server error
         """
-        affiliations = db.session.query(Affiliation).all()
-
+        user = current_user
+        affiliations = db.session.query(Affiliation).filter_by(created_by=user).all()
         results = []
         for affiliation in affiliations:
             result = {

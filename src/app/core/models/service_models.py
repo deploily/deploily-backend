@@ -25,6 +25,8 @@ class Service(Model):
     )
     service_plans = relationship("ServicePlan")
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
+    ratings = relationship("Score", back_populates="service", overlaps="service")
+    comments = relationship("Comment", back_populates="service", overlaps="service")
     service_slug = Column(String(255), default="temp-slug")
     type = Column(String(50), default="service", nullable=False)
 

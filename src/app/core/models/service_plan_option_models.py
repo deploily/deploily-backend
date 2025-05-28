@@ -15,7 +15,7 @@ class ServicePlanOption(Model):
     icon = Column(String)
     html_content = Column(Text)
     option_type = Column(
-        Enum("cpu", "ram", "disque", "request_limit", name="option_type"), default="other"
+        Enum("cpu", "ram", "disque", "request_limit", "other", name="option_type"), default="other"
     )
     option_value = Column(Integer)
 
