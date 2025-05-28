@@ -7,10 +7,15 @@ from flask_appbuilder.api import BaseApi, expose
 from flask_appbuilder.security.sqla.models import Role, User
 
 from app import appbuilder, db
+
 from app.core.models.subscription_models import Subscription
 from app.service_api.models.api_services_model import ApiService
 from app.service_apps.models.apps_services_model import AppService
 from app.service_cicd.models.cicd_services_model import CicdService
+
+from app.core.models.service_models import Service
+from app.core.models.subscription_models import Subscription
+
 from app.service_ressources.models.services_ressources_providers_model import (
     ProvidersRessourceService,
 )
@@ -52,6 +57,7 @@ class StatisticsApi(BaseApi):
               description: Internal server error
         """
         try:
+
             api_services_count = db.session.query(ApiService).count()
             app_services_count = db.session.query(AppService).count()
             ci_cd_services_count = db.session.query(CicdService).count()
