@@ -19,4 +19,4 @@ class RessourceService(Service):
     provider = relationship("ProvidersRessourceService", back_populates="ressource_services")
 
     def __repr__(self):
-        return f"RessourceService: {self.name} "
+        return f"{self.provider} / {self.name}"

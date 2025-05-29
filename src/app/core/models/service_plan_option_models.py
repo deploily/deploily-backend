@@ -20,4 +20,4 @@ class ServicePlanOption(Model):
     option_value = Column(Integer)
 
     def __repr__(self):
-        return f"{self.icon} {self.html_content}"
+        return f"{self.service_plan} / {self.html_content}"

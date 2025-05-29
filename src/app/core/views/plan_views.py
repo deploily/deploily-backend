@@ -20,5 +20,5 @@ appbuilder.add_view(
     PlanModelView,
     "Plan",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Master",
 )

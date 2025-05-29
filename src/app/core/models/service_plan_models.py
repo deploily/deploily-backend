@@ -17,4 +17,4 @@ class ServicePlan(Model):
     options = relationship("ServicePlanOption", back_populates="service_plan")
 
     def __repr__(self):
-        return str(self.id)
+        return f"{self.service} | {self.plan}"

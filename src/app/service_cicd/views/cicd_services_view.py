@@ -72,5 +72,5 @@ appbuilder.add_view(
     CicdServiceView,
     "Cicd Services",
     icon="fa-cogs",
-    category="Service",
+    category="Master",
 )

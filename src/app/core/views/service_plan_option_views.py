@@ -25,5 +25,5 @@ appbuilder.add_view(
     ServicePlanOptionModelView,
     "Service Plan Option",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )

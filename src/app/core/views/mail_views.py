@@ -10,7 +10,7 @@ from app.core.models.mail_models import Mail
 class MailModelView(ModelView):
     route_base = "/admin/mail"
     datamodel = SQLAInterface(Mail)
-    list_columns = ["id", "title", "body", "mail_state", "email_from", "email_to"]
+    list_columns = ["id", "title", "email_from", "email_to", "mail_state"]
     base_order = ("id", "desc")
 
 
@@ -19,5 +19,5 @@ appbuilder.add_view(
     MailModelView,
     "Mail ",
     icon="fa-solid fa-cogs",
-    category="Contact US ",
+    category="Operations",
 )

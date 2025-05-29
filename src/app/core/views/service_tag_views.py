@@ -19,5 +19,5 @@ appbuilder.add_view(
     ServiceTagModelView,
     "ServiceTag",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )
