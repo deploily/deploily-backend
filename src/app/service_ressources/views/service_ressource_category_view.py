@@ -3,12 +3,14 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.core.models.service_category_models import ServiceCategory
+from app.service_ressources.models.services_ressources_category_model import (
+    ServiceRessouceCategory,
+)
 
 
-class ServiceCategoryModelView(ModelView):
-    route_base = "/admin/Service-Category"
-    datamodel = SQLAInterface(ServiceCategory)
+class ServiceRessourceCategoryModelView(ModelView):
+    route_base = "/admin/ressources-Category"
+    datamodel = SQLAInterface(ServiceRessouceCategory)
     list_columns = [
         "id",
         "name",
@@ -18,8 +20,8 @@ class ServiceCategoryModelView(ModelView):
 
 db.create_all()
 appbuilder.add_view(
-    ServiceCategoryModelView,
-    "Service Category",
+    ServiceRessourceCategoryModelView,
+    "Reesource Category",
     icon="fa-solid fa-cogs",
     category="Service",
 )

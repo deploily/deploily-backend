@@ -13,7 +13,7 @@ class ApiServiceView(ModelView):
 
     list_columns = ["tags", "name", "unit_price"]
     add_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "myfavorites",
@@ -31,7 +31,7 @@ class ApiServiceView(ModelView):
         "ratings",
     ]
     edit_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "myfavorites",
@@ -49,7 +49,7 @@ class ApiServiceView(ModelView):
         "ratings",
     ]
     show_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "myfavorites",

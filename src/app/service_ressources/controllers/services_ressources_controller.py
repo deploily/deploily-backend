@@ -10,6 +10,7 @@ api_columns = [
     "ressource_field",
     "provider",
     "discount",
+    "ressouce_category",
 ]
 
 

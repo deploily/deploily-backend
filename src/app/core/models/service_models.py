@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Float, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -29,8 +29,6 @@ class Service(Model):
     comments = relationship("Comment", back_populates="service", overlaps="service")
     service_slug = Column(String(255), default="temp-slug")
     type = Column(String(50), default="service", nullable=False)
-    category_id = Column(Integer, ForeignKey("service_category.id"))
-    category = relationship("ServiceCategory", back_populates="services")
 
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
 

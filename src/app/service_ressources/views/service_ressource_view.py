@@ -17,7 +17,7 @@ class RessourceServiceView(ModelView):
         "discount",
     ]
     add_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "provider",
@@ -34,7 +34,7 @@ class RessourceServiceView(ModelView):
         "ressource_field",
     ]
     edit_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "provider",
@@ -51,7 +51,7 @@ class RessourceServiceView(ModelView):
         "ressource_field",
     ]
     show_columns = [
-        "category",
+        # "category",
         "tags",
         "service_plans",
         "myfavorites",

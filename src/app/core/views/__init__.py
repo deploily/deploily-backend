@@ -2,7 +2,6 @@ from app import appbuilder, db
 
 from . import (
     service_tag_views,
-    service_category_views,
     service_plan_option_views,
     service_plan_views,
     plan_views,
@@ -19,6 +18,7 @@ from . import (
     mail_views,
     comment_views,
     rating_views,
+    media_views,
 )
 
 appbuilder.add_link(

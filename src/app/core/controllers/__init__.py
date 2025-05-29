@@ -19,5 +19,4 @@ from . import (
     statistics_controllers,
     comment_controllerrs,
     rating_controllers,
-    service_category_controller,
 )
