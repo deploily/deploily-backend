@@ -60,7 +60,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 )
                 db.session.add(payment)
                 db.session.commit()
-                send_mail.delay(email.id)
+
                 user_email_body = render_template(
                     "emails/create_user.html",
                     user=user,
@@ -76,7 +76,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 )
                 db.session.add(email)
                 db.session.commit()
-
+                send_mail.delay(email.id)
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
