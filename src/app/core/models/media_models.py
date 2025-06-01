@@ -14,9 +14,12 @@ class Media(Model):
     title = Column(String(255))
     image = Column(ImageColumn)
 
-    category_id = Column(Integer, ForeignKey("service_ressouce_category.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("service_ressouce_category.id"))
 
     category = relationship("ServiceRessouceCategory", back_populates="medias")
+
+    service_id = Column(Integer, ForeignKey("service.id"))
+    service = relationship("Service", back_populates="medias")
 
     def __repr__(self):
         return self.title

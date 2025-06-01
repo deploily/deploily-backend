@@ -29,6 +29,7 @@ class Service(Model):
     comments = relationship("Comment", back_populates="service", overlaps="service")
     service_slug = Column(String(255), default="temp-slug")
     type = Column(String(50), default="service", nullable=False)
+    medias = relationship("Media", back_populates="service", cascade="all, delete-orphan")
 
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
 

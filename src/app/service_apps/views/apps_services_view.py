@@ -15,6 +15,7 @@ class AppServiceView(ModelView):
     list_columns = ["tags", "name", "unit_price"]
     add_columns = [
         # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -31,6 +32,7 @@ class AppServiceView(ModelView):
     ]
     edit_columns = [
         # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -47,6 +49,7 @@ class AppServiceView(ModelView):
     ]
     show_columns = [
         # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",

@@ -15,6 +15,7 @@ class ApiServiceView(ModelView):
     add_columns = [
         # "category",
         "tags",
+        "medias",
         "service_plans",
         "myfavorites",
         "name",
@@ -32,6 +33,7 @@ class ApiServiceView(ModelView):
     ]
     edit_columns = [
         # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -50,6 +52,7 @@ class ApiServiceView(ModelView):
     ]
     show_columns = [
         # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
