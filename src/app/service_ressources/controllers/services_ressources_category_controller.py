@@ -5,7 +5,7 @@ import logging
 from flask_appbuilder.api import ModelRestApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
-from app import appbuilder
+from app import appbuilder, db
 from app.service_ressources.models.services_ressources_category_model import (
     ServiceRessouceCategory,
 )
@@ -35,36 +35,40 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
         """
         ---
         get:
-        summary: Get all service categories with full ressource_services including provider
-        description: Returns a list of all service resource categories with ressource_services and their providers.
-        responses:
+          summary: Get all service categories with full ressource_services including provider
+          description: Returns a list of all service resource categories with ressource_services and their providers.
+          responses:
             200:
-            description: A list of service categories
-            content:
+              description: A list of service categories
+              content:
                 application/json:
-                schema:
+                  schema:
                     type: array
                     items:
-                    type: object
-                    properties:
+                      type: object
+                      properties:
                         id:
-                        type: integer
+                          type: integer
                         name:
-                        type: string
+                          type: string
                         short_description:
-                        type: string
+                          type: string
                         description:
-                        type: string
+                          type: string
                         ressource_services:
-                        type: array
-                        items:
+                          type: array
+                          items:
+                            type: object
+                            additionalProperties: true
+                        medias:
+                          type: array
+                          items:
                             type: object
                             additionalProperties: true
             500:
-            description: Internal server error
+              description: Internal server error
         """
-        session = self.appbuilder.get_session
-        categories = session.query(ServiceRessouceCategory).all()
+        categories = db.session.query(ServiceRessouceCategory).all()
 
         def serialize_sqlalchemy_obj(obj):
             result = {}
