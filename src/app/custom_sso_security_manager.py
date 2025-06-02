@@ -60,7 +60,6 @@ class CustomSsoSecurityManager(SecurityManager):
                 )
                 db.session.add(payment)
                 db.session.commit()
-
                 user_email_body = render_template(
                     "emails/create_user.html",
                     user=user,
