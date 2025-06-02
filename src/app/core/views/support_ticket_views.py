@@ -22,5 +22,5 @@ appbuilder.add_view(
     SupportTicketModelView,
     "Support Ticket",
     icon="fa-solid fa-cogs",
-    category="Support Ticket",
+    category="Operations",
 )

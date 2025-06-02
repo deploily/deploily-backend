@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-import logging
-
 from flask_appbuilder import Model
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, Enum, Integer, String, Text
 from sqlalchemy.orm import relationship
 
-_logger = logging.getLogger(__name__)
+from app.core.models.service_plan_service_plan_option_association import (
+    service_plan_option_association,
+)
 
 
 class ServicePlanOption(Model):
     id = Column(Integer, primary_key=True)
-    service_plan_id = Column(Integer, ForeignKey("service_plan.id"), nullable=False)
-    service_plan = relationship("ServicePlan")
+
     icon = Column(String)
     html_content = Column(Text)
     option_type = Column(
@@ -19,5 +17,10 @@ class ServicePlanOption(Model):
     )
     option_value = Column(Integer)
 
+    service_plans = relationship(
+        "ServicePlan", secondary=service_plan_option_association, back_populates="options"
+    )
+
     def __repr__(self):
-        return f"{self.icon} {self.html_content}"
+        return f"{self.html_content}"
+

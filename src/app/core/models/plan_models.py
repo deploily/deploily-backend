@@ -11,4 +11,4 @@ class Plan(Model):
     service_plans = relationship("ServicePlan")
 
     def __repr__(self):
-        return str(self.id)
+        return f"{self.name}"

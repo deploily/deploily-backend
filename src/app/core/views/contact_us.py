@@ -10,7 +10,7 @@ from app.core.models.contact_us_models import ContactUs
 class ContactUsModelView(ModelView):
     route_base = "/admin/contact-us"
     datamodel = SQLAInterface(ContactUs)
-    list_columns = ["id", "name", "email", "message"]
+    list_columns = ["id", "created_by", "name", "email", "message"]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
@@ -22,5 +22,5 @@ appbuilder.add_view(
     ContactUsModelView,
     "Contact Us ",
     icon="fa-solid fa-cogs",
-    category="Contact US ",
+    category="Operations",
 )

@@ -14,12 +14,12 @@ class AffiliationView(ModelView):
     route_base = "/admin/affiliation"
 
     list_columns = [
+        "created_by",
         "total_price",
         "affiliation_state",
         "phone_number",
         "provider",
         "service_plan",
-        "created_by",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
@@ -75,5 +75,5 @@ appbuilder.add_view(
     AffiliationView,
     "Affiliation",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Operations",
 )

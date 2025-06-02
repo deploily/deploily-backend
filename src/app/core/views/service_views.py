@@ -30,5 +30,5 @@ appbuilder.add_view(
     ServiceModelView,
     "Service",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )
