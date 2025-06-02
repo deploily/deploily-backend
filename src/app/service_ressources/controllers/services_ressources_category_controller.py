@@ -18,6 +18,7 @@ _service_category_value_display_columns = [
     "description",
     "short_description",
     "ressouce_services",
+    "logo",
 ]
 
 
@@ -85,6 +86,7 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "id": cat.id,
                     "name": cat.name,
                     "short_description": cat.short_description,
+                    "logo": cat.logo,
                     "description": cat.description,
                     "ressource_services": [
                         serialize_sqlalchemy_obj(s) for s in cat.ressouce_services
