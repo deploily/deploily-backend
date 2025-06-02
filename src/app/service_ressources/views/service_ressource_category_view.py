@@ -23,5 +23,5 @@ appbuilder.add_view(
     ServiceRessourceCategoryModelView,
     "Reesource Category",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )

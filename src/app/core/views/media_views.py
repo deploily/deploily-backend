@@ -20,5 +20,5 @@ appbuilder.add_view(
     MediaModelView,
     "Media",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )
