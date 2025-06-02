@@ -19,5 +19,5 @@ appbuilder.add_view(
     RatingModelView,
     "Rating",
     icon="fa-solid fa-cogs",
-    category="Contact US ",
+    category="Operations",
 )

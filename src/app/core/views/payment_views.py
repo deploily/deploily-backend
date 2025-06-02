@@ -11,12 +11,12 @@ class PaymentModelView(ModelView):
     datamodel = SQLAInterface(Payment)
     list_columns = [
         "id",
+        "created_by",
         "amount",
         "payment_method",
         "status",
         "profile",
         "start_date",
-        "created_by",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

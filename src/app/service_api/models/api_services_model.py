@@ -27,4 +27,4 @@ class ApiService(Service):
         return round(result, 2) if result is not None else 0.0
 
     def __repr__(self):
-        return f"ApiService: {self.name} "
+        return f"{self.name} "

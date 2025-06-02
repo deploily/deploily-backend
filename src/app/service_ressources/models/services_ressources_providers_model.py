@@ -29,4 +29,4 @@ class ProvidersRessourceService(Model):
     affiliations = relationship("Affiliation", back_populates="provider")
 
     def __repr__(self):
-        return f"Ressource Provider Service: {self.name} "
+        return f"{self.name} "
