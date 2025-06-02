@@ -11,10 +11,11 @@ class RessourceServiceView(ModelView):
     datamodel = SQLAInterface(RessourceService)
 
     list_columns = [
-        "tags",
         "name",
+        "provider",
         "unit_price",
         "discount",
+        "tags",
     ]
     add_columns = [
         # "category",
@@ -75,7 +76,7 @@ class RessourceServiceView(ModelView):
 
 appbuilder.add_view(
     RessourceServiceView,
-    "Ressources Services",
+    "Ressources",
     icon="fa-cogs",
-    category="Service",
+    category="Master",
 )

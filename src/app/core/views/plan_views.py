@@ -11,7 +11,7 @@ from app.core.models.plan_models import Plan
 class PlanModelView(ModelView):
     route_base = "/admin/plan"
     datamodel = SQLAInterface(Plan)
-    list_columns = ["id", "name", "description", "service_plan_id"]
+    list_columns = ["id", "name", "description"]
     base_order = ("id", "desc")
 
 
@@ -20,5 +20,5 @@ appbuilder.add_view(
     PlanModelView,
     "Plan",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Master",
 )

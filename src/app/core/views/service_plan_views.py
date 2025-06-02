@@ -12,10 +12,10 @@ class ServicePlanModelView(ModelView):
     datamodel = SQLAInterface(ServicePlan)
     list_columns = [
         "id",
+        "service",
+        "plan",
         "price",
-        "limit",
-        "service_id" "subscription_category",
-        "options",
+        "subscription_category",
         "is_custom",
     ]
     base_order = ("id", "desc")
@@ -26,5 +26,5 @@ appbuilder.add_view(
     ServicePlanModelView,
     "Service Plan",
     icon="fa-solid fa-sliders",
-    category="Service",
+    category="Master",
 )

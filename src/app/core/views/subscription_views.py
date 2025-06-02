@@ -13,13 +13,13 @@ class SubscriptionModelView(ModelView):
     datamodel = SQLAInterface(Subscription)
     list_columns = [
         "id",
-        "start_date",
+        "created_by",
+        "price",
+        "total_amount",
         "status",
         "is_expired",
-        "total_amount",
-        "price",
+        "start_date",
         "duration_month",
-        "created_by",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
@@ -32,5 +32,5 @@ appbuilder.add_view(
     SubscriptionModelView,
     "Subscription",
     icon="fa-solid fa-sliders",
-    category="Subscription",
+    category="Operations",
 )

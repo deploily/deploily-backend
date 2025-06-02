@@ -21,4 +21,4 @@ class RessourceService(Service):
     ressouce_category = relationship("ServiceRessouceCategory", back_populates="ressouce_services")
 
     def __repr__(self):
-        return f"RessourceService: {self.name} "
+        return f"{self.provider} / {self.name}"

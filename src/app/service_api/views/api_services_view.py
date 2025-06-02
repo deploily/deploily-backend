@@ -11,6 +11,7 @@ from app.service_api.models.api_services_model import ApiService
 class ApiServiceView(ModelView):
     datamodel = SQLAInterface(ApiService)
 
+
     list_columns = ["tags", "name", "unit_price"]
     add_columns = [
         # "category",
@@ -79,5 +80,5 @@ appbuilder.add_view(
     ApiServiceView,
     "Api Services",
     icon="fa-cogs",
-    category="Service",
+    category="Master",
 )

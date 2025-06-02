@@ -12,7 +12,8 @@ from app.service_apps.models.apps_services_model import AppService
 class AppServiceView(ModelView):
     datamodel = SQLAInterface(AppService)
 
-    list_columns = ["tags", "name", "unit_price"]
+
+    list_columns = ["tags", "name", "unit_price", "average_rating"]
     add_columns = [
         # "category",
         "medias",
@@ -63,6 +64,7 @@ class AppServiceView(ModelView):
         "service_slug",
         "apps_field",
         "ratings",
+        "average_rating",
     ]
 
     def post_add(self, item):
@@ -74,5 +76,5 @@ appbuilder.add_view(
     AppServiceView,
     "App Services",
     icon="fa-cogs",
-    category="Service",
+    category="Master",
 )

@@ -14,7 +14,6 @@ class ProvidersRessourceServiceView(ModelView):
     list_columns = [
         "name",
         "contact_number",
-        "website",
         "mail_support",
         "mail_sales",
         "mail_partnership",
@@ -25,7 +24,7 @@ class ProvidersRessourceServiceView(ModelView):
 
 appbuilder.add_view(
     ProvidersRessourceServiceView,
-    "Providers Ressource",
+    "Ressource Providers",
     icon="fa-users",
-    category="Service",
+    category="Master",
 )

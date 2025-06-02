@@ -13,7 +13,7 @@ class ServicePlanOptionModelView(ModelView):
         "id",
         "icon",
         "html_content",
-        "service_plan_id",
+        "service_plans",
         "option_type",
         "option_value",
     ]
@@ -25,5 +25,5 @@ appbuilder.add_view(
     ServicePlanOptionModelView,
     "Service Plan Option",
     icon="fa-solid fa-cogs",
-    category="Service",
+    category="Master",
 )
