@@ -21,6 +21,8 @@ _service_value_display_columns = [
     "specifications",
     "is_in_favorite",
     "service_details",
+    "type",
+    "medias",
 ]
 
 

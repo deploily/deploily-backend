@@ -18,6 +18,7 @@ from . import (
     mail_views,
     comment_views,
     rating_views,
+    media_views,
 )
 
 appbuilder.add_link(

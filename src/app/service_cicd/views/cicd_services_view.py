@@ -18,6 +18,8 @@ class CicdServiceView(ModelView):
         "unit_price",
     ]
     add_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -33,6 +35,8 @@ class CicdServiceView(ModelView):
         "ratings",
     ]
     edit_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -48,6 +52,8 @@ class CicdServiceView(ModelView):
         "ratings",
     ]
     show_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",

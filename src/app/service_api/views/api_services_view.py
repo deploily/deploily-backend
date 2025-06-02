@@ -11,13 +11,12 @@ from app.service_api.models.api_services_model import ApiService
 class ApiServiceView(ModelView):
     datamodel = SQLAInterface(ApiService)
 
-    list_columns = [
-        "name",
-        "unit_price",
-        "tags",
-    ]
+
+    list_columns = ["tags", "name", "unit_price"]
     add_columns = [
+        # "category",
         "tags",
+        "medias",
         "service_plans",
         "myfavorites",
         "name",
@@ -34,6 +33,8 @@ class ApiServiceView(ModelView):
         "ratings",
     ]
     edit_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -51,6 +52,8 @@ class ApiServiceView(ModelView):
         "ratings",
     ]
     show_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
