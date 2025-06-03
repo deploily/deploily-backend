@@ -12,8 +12,11 @@ from app.service_apps.models.apps_services_model import AppService
 class AppServiceView(ModelView):
     datamodel = SQLAInterface(AppService)
 
+
     list_columns = ["tags", "name", "unit_price", "average_rating"]
     add_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -29,6 +32,8 @@ class AppServiceView(ModelView):
         "ratings",
     ]
     edit_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",
@@ -44,6 +49,8 @@ class AppServiceView(ModelView):
         "ratings",
     ]
     show_columns = [
+        # "category",
+        "medias",
         "tags",
         "service_plans",
         "myfavorites",

@@ -3,6 +3,7 @@ from flask_appbuilder import Model
 from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
+from app.core.models.service_plan_option_models import ServicePlanOption
 from app.core.models.service_plan_service_plan_option_association import (
     service_plan_option_association,
 )
@@ -25,6 +26,7 @@ class ServicePlan(Model):
         "ServicePlanOption",
         secondary=service_plan_option_association,
         back_populates="service_plans",
+        order_by=ServicePlanOption.sequence,
     )
 
     def __repr__(self):

@@ -16,6 +16,7 @@ class ServicePlanOption(Model):
         Enum("cpu", "ram", "disque", "request_limit", "other", name="option_type"), default="other"
     )
     option_value = Column(Integer)
+    sequence = Column(Integer)
 
     service_plans = relationship(
         "ServicePlan", secondary=service_plan_option_association, back_populates="options"
@@ -23,4 +24,3 @@ class ServicePlanOption(Model):
 
     def __repr__(self):
         return f"{self.html_content}"
-
