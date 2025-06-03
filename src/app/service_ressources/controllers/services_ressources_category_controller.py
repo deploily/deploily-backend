@@ -2,8 +2,10 @@
 
 import logging
 
+from flask import request
 from flask_appbuilder.api import ModelRestApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from sqlalchemy import or_
 
 from app import appbuilder, db
 from app.service_ressources.models.services_ressources_category_model import (
@@ -30,6 +32,7 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
     show_columns = _service_category_value_display_columns
     edit_columns = _service_category_value_display_columns
     exclude_route_methods = ["get", "put", "post", "get_list"]
+    search_columns = ["name", "description"]
 
     @expose("/all", methods=["GET"])
     def get_all_categories(self):
@@ -38,6 +41,13 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
         get:
           summary: Get all service categories with full ressource_services including provider
           description: Returns a list of all service resource categories with ressource_services and their providers.
+          parameters:
+            - in: query
+              name: search_value
+              schema:
+                type: string
+              required: false
+              description: Filter categories by name or description (partial match)
           responses:
             200:
               description: A list of service categories
@@ -69,7 +79,18 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
             500:
               description: Internal server error
         """
-        categories = db.session.query(ServiceRessouceCategory).all()
+        search_value = request.args.get("search_value")
+        query = db.session.query(ServiceRessouceCategory)
+
+        if search_value:
+            query = query.filter(
+                or_(
+                    ServiceRessouceCategory.name.ilike(f"%{search_value}%"),
+                    ServiceRessouceCategory.description.ilike(f"%{search_value}%"),
+                )
+            )
+
+        categories = query.all()
 
         def serialize_sqlalchemy_obj(obj):
             result = {}
