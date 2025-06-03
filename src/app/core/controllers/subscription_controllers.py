@@ -103,11 +103,13 @@ class SubscriptionModelApi(ModelRestApi):
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
-                .filter_by(service_plan_id=subscribe.service_plan.id, option_type="request_limit")
+                .filter(
+                    ServicePlanOption.option_type == "request_limit",
+                    ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
+                )
                 .first()
             )
             rate = service_plan_option.option_value
-            print(rate)
             limit_config = {
                 "count": rate,
                 "time_window": 1,
