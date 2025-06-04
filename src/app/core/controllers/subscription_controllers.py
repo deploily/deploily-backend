@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 import uuid
 
 from flask import Response, jsonify
@@ -8,7 +9,6 @@ from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
-from slugify import slugify
 
 from app import appbuilder, db
 from app.core.models.service_plan_option_models import ServicePlanOption
@@ -82,9 +82,8 @@ class SubscriptionModelApi(ModelRestApi):
         """
         user = get_user()
         user_name = user.username
-        slug_user_name = slugify(user_name)
-        print("**********************")
-        print(slug_user_name)
+        slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
+
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
@@ -103,7 +102,7 @@ class SubscriptionModelApi(ModelRestApi):
             db.session.commit()
 
         try:
-            consumer_username = f"{service.service_slug}{user.id}"
+            consumer_username = f"{service.service_slug}_{slug_user_name}"
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
