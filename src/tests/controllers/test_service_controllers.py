@@ -68,7 +68,6 @@ def test_get_service(client, test_user, app, appbuilder):
             "/api/v1/service/",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        print(response.get_json())
         assert response.status_code == 200
         try:
             ServiceListResponse.model_validate_json(response.text)
