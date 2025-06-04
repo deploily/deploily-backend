@@ -101,7 +101,7 @@ class SubscriptionModelApi(ModelRestApi):
             db.session.commit()
 
         try:
-            f"{user_name}"
+            consumer_username = f"{slug_user_name}"
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
@@ -120,7 +120,7 @@ class SubscriptionModelApi(ModelRestApi):
                 "policy": "local",
             }
             response = apisix_service.create_consumer(
-                username=slug_user_name,
+                username=consumer_username,
                 api_key=api_key,
                 limit_count=limit_config,
                 labels={"service": service.service_slug},
