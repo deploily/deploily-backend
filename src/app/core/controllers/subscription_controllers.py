@@ -83,6 +83,8 @@ class SubscriptionModelApi(ModelRestApi):
         user = get_user()
         user_name = user.username
         slug_user_name = slugify(user_name)
+        print("**********************")
+        print(slug_user_name)
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
@@ -101,7 +103,7 @@ class SubscriptionModelApi(ModelRestApi):
             db.session.commit()
 
         try:
-            consumer_username = f"{slug_user_name}"
+            consumer_username = f"{service.service_slug}{user.id}"
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
