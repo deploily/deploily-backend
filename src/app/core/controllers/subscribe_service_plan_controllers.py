@@ -171,7 +171,9 @@ class SubscriptionApi(BaseApi):
             form_url = ""
             # Balance verification
             # Case1: Sufficient balance
-            subscription_template = render_template("emails/subscription.html", item=user.username)
+            subscription_template = render_template(
+                "emails/deploily_subscription.html", item=user.username
+            )
             if profile.balance - price >= 0:
                 subscription = Subscription(
                     name=plan.plan.name,
@@ -297,6 +299,23 @@ class SubscriptionApi(BaseApi):
                     payment.satim_order_id = satim_order_id
 
                     db.session.commit()
+            # Email to user
+            subscription_template = render_template(
+                "emails/user_subscription.html",
+                user=user,
+                service_name=plan.plan.name,
+                total_price=total_amount,
+            )
+            email = Mail(
+                title=f"New Subscription Created by : {user.username}",
+                body=subscription_template,
+                email_to=user.email,
+                email_from=current_app.config["NOTIFICATION_EMAIL"],
+                mail_state="outGoing",
+            )
+            db.session.add(email)
+            db.session.commit()
+            send_mail.delay(email.id)
 
             return self.response(
                 200,
