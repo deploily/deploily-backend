@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import Column, ForeignKey, Integer, Text, func
+from sqlalchemy.orm import relationship
 
 from app import db
 from app.core.models import Service
@@ -15,6 +16,12 @@ class AppService(Service):
     }
 
     apps_field = Column(Text)
+    # many-to-many relationship
+    recommended_apps = relationship(
+        "RecommendationAppService",
+        secondary="app_service_recommendation",
+        back_populates="app_services",
+    )
 
     @property
     def average_rating(self):

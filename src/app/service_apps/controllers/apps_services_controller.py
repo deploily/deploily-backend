@@ -6,7 +6,7 @@ from app import appbuilder
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_apps.models.apps_services_model import AppService
 
-api_columns = ["apps_field", "average_rating"]
+api_columns = ["apps_field", "average_rating", "recommended_apps"]
 
 
 class AppServiceModelApi(ServiceModelApi):
