@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 import uuid
 
 from flask import jsonify
@@ -8,7 +9,6 @@ from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
-from slugify import slugify
 
 from app import appbuilder, db
 from app.core.models.service_plan_option_models import ServicePlanOption
@@ -83,14 +83,12 @@ class SubscriptionModelApi(ModelRestApi):
             500:
               description: Internal server error
         """
-        try:
-            user = get_user()
-            user_name = user.username
-            slug_user_name = slugify(user_name)
 
-            subscribe = (
-                db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
-            )
+        user = get_user()
+        user_name = user.username
+        slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
+        subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
+
             if not subscribe:
                 return jsonify({"error": "Subscription not found"}), 404
 
@@ -112,17 +110,15 @@ class SubscriptionModelApi(ModelRestApi):
                 _logger.error(f"Database error while generating API key: {db_err}", exc_info=True)
                 return jsonify({"error": "Failed to generate or save API key"}), 500
 
-            try:
-                consumer_username = slug_user_name
-                apisix_service = ApiSixService()
 
-                service_plan_option = (
-                    db.session.query(ServicePlanOption)
-                    .filter(
-                        ServicePlanOption.option_type == "request_limit",
-                        ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
-                    )
-                    .first()
+        try:
+            consumer_username = f"{service.service_slug}_{slug_user_name}"
+            apisix_service = ApiSixService()
+            service_plan_option = (
+                db.session.query(ServicePlanOption)
+                .filter(
+                    ServicePlanOption.option_type == "request_limit",
+                    ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
                 )
 
                 if not service_plan_option:

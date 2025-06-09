@@ -13,14 +13,9 @@ class PaymentProfileModelView(ModelView):
     datamodel = SQLAInterface(PaymentProfile)
     list_columns = [
         "id",
+        "created_by",
         "name",
         "profile_type",
-        # "user_id",
-        "phone",
-        "company_name",
-        "company_registration_number",
-        "is_default_profile",
-        "is_company",
         "balance",
     ]
     base_order = ("id", "desc")

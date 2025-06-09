@@ -14,7 +14,7 @@ class SubscriptionModelView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
+        "service_plan",
         "total_amount",
         "status",
         "is_expired",
