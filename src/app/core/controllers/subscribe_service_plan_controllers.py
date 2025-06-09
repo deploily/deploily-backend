@@ -2,11 +2,12 @@ import logging
 from datetime import datetime
 
 import requests
-from flask import current_app, request
+from flask import current_app, render_template, request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
+from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models import (
     Payment,
     PaymentProfile,
@@ -14,6 +15,7 @@ from app.core.models import (
     ServicePlan,
     Subscription,
 )
+from app.core.models.mail_models import Mail
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -169,7 +171,7 @@ class SubscriptionApi(BaseApi):
             form_url = ""
             # Balance verification
             # Case1: Sufficient balance
-
+            subscription_template = render_template("emails/subscription.html", item=user.username)
             if profile.balance - price >= 0:
                 subscription = Subscription(
                     name=plan.plan.name,
@@ -183,10 +185,21 @@ class SubscriptionApi(BaseApi):
                     payment_status="paid",
                     profile_id=profile.id,
                 )
-
                 db.session.add(subscription)
                 db.session.commit()
                 db.session.flush()
+
+                email = Mail(
+                    title=f"New Subscription Created by : {user.username}",
+                    body=subscription_template,
+                    email_to=current_app.config["NOTIFICATION_EMAIL"],
+                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    mail_state="outGoing",
+                )
+                db.session.add(email)
+                db.session.commit()
+                send_mail.delay(email.id)
+                _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
             else:  # Case2: unsufficient balance
 
                 subscription = Subscription(
@@ -214,6 +227,17 @@ class SubscriptionApi(BaseApi):
                 )
                 db.session.add(payment)
                 db.session.commit()
+                email = Mail(
+                    title=f"New Subscription Created by : {user.username}",
+                    body=subscription_template,
+                    email_to=current_app.config["NOTIFICATION_EMAIL"],
+                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    mail_state="outGoing",
+                )
+                db.session.add(email)
+                db.session.commit()
+                send_mail.delay(email.id)
+                _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
                 if (
                     data.get("payment_method", "card") == "card"
                     and profile.profile_type != "default"

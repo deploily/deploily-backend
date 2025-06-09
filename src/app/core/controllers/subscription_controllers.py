@@ -4,7 +4,7 @@ import logging
 import re
 import uuid
 
-from flask import Response, jsonify
+from flask import jsonify
 from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -17,6 +17,7 @@ from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
+
 _subscribe_display_columns = [
     "id",
     "start_date",
@@ -76,30 +77,39 @@ class SubscriptionModelApi(ModelRestApi):
                         type: string
                         description: Generated API key
             400:
-              description: Subscription not found
+              description: Bad request - missing subscription or service plan
+            404:
+              description: Resource not found
             500:
               description: Internal server error
         """
+
         user = get_user()
         user_name = user.username
         slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
-
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
-        if not subscribe or not subscribe.service_plan:
-            return Response("Subscription or ServicePlan not found", status=400)
+            if not subscribe:
+                return jsonify({"error": "Subscription not found"}), 404
 
-        service = subscribe.service_plan.service
+            if not subscribe.service_plan:
+                return jsonify({"error": "ServicePlan not found"}), 404
 
-        if not service:
-            return Response("Service not found", status=400)
+            service = subscribe.service_plan.service
+            if not service:
+                return jsonify({"error": "Associated service not found"}), 404
 
-        if subscribe.api_key:
-            api_key = subscribe.api_key
-        else:
-            api_key = uuid.uuid4().hex[:32]
-            subscribe.api_key = api_key
-            db.session.commit()
+            try:
+                if subscribe.api_key:
+                    api_key = subscribe.api_key
+                else:
+                    api_key = uuid.uuid4().hex[:32]
+                    subscribe.api_key = api_key
+                    db.session.commit()
+            except Exception as db_err:
+                _logger.error(f"Database error while generating API key: {db_err}", exc_info=True)
+                return jsonify({"error": "Failed to generate or save API key"}), 500
+
 
         try:
             consumer_username = f"{service.service_slug}_{slug_user_name}"
@@ -110,27 +120,38 @@ class SubscriptionModelApi(ModelRestApi):
                     ServicePlanOption.option_type == "request_limit",
                     ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
                 )
-                .first()
-            )
-            rate = service_plan_option.option_value
-            limit_config = {
-                "count": rate,
-                "time_window": 1,
-                "rejected_code": 429,
-                "key": "consumer_name",
-                "policy": "local",
-            }
-            response = apisix_service.create_consumer(
-                username=consumer_username,
-                api_key=api_key,
-                limit_count=limit_config,
-                labels={"service": service.service_slug},
-            )
-            return jsonify({"auth-key": api_key}), 200
+
+                if not service_plan_option:
+                    return (
+                        jsonify({"error": "Request limit option not found for this service plan"}),
+                        400,
+                    )
+
+                rate = service_plan_option.option_value
+                limit_config = {
+                    "count": rate,
+                    "time_window": 1,
+                    "rejected_code": 429,
+                    "key": "consumer_name",
+                    "policy": "local",
+                }
+
+                response = apisix_service.create_consumer(
+                    username=consumer_username,
+                    api_key=api_key,
+                    limit_count=limit_config,
+                    labels={"service": service.service_slug},
+                )
+
+                return jsonify({"auth-key": api_key}), 200
+
+            except Exception as apisix_err:
+                _logger.error(f"APISIX consumer creation failed: {apisix_err}", exc_info=True)
+                return jsonify({"error": "Failed to create APISIX consumer"}), 500
 
         except Exception as e:
-            _logger.error(f"Error creating API consumer: {e}", exc_info=True)
-            return Response("Internal Server Error", status=500)
+            _logger.error(f"Unexpected error in create_my_service_consumer: {e}", exc_info=True)
+            return jsonify({"error": "Internal server error"}), 500
 
 
 appbuilder.add_api(SubscriptionModelApi)

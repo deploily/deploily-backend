@@ -43,9 +43,7 @@ class ContactUSModelApi(ModelRestApi):
 
             db.session.add(email)
             db.session.commit()
-            print("fffffffffffffffff")
             send_mail.delay(email.id)
-            print("mmmmmmmmmmmmmmmmmmmmmmmm")
             _logger.info(f"[EMAIL] Queued email for contact us {item.id}")
 
         except Exception as e:
