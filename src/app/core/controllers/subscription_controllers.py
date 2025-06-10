@@ -98,8 +98,8 @@ class SubscriptionModelApi(ModelRestApi):
             api_key = subscribe.api_key
         else:
             api_key = uuid.uuid4().hex[:32]
-            subscribe.api_key = api_key
-            db.session.commit()
+            # subscribe.api_key = api_key
+            # db.session.commit()
 
         try:
             consumer_username = f"{service.service_slug}_{slug_user_name}"
@@ -112,7 +112,17 @@ class SubscriptionModelApi(ModelRestApi):
                 )
                 .first()
             )
+            if not service_plan_option:
+                _logger.error(
+                    f"No service plan option found for service plan {subscribe.service_plan.id}"
+                )
+                return Response("Service plan option not found", status=400)
             rate = service_plan_option.option_value
+            if not rate or not isinstance(rate, int) or rate <= 0:
+                _logger.error(
+                    f"Invalid rate value for service plan option {service_plan_option.id}: {rate}"
+                )
+                return Response("Invalid rate value", status=400)
             limit_config = {
                 "count": rate,
                 "time_window": 1,
@@ -126,6 +136,11 @@ class SubscriptionModelApi(ModelRestApi):
                 limit_count=limit_config,
                 labels={"service": service.service_slug},
             )
+            if not response:
+                _logger.error(f"Failed to create API consumer")
+                return Response("Failed to create API consumer", status=500)
+            subscribe.api_key = api_key
+            db.session.commit()
             return jsonify({"auth-key": api_key}), 200
 
         except Exception as e:
