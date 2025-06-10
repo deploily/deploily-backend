@@ -25,7 +25,7 @@ def send_mail(mail_id):
             _logger.info("[CRON] Sending pending emails - START")
             msg = MIMEText(mail.body or "", "html")
             msg["Subject"] = mail.title or "(No subject)"
-            msg["From"] = mail.email_from or current_app.config["MAIL_USERNAME"]
+            msg["From"] = current_app.config["MAIL_USERNAME"]
             msg["To"] = mail.email_to
 
             smtp_host = current_app.config["MAIL_HOST"]
