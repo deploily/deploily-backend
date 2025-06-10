@@ -118,6 +118,11 @@ class SubscriptionModelApi(ModelRestApi):
                 )
                 return Response("Service plan option not found", status=400)
             rate = service_plan_option.option_value
+            if not rate or not isinstance(rate, int) or rate <= 0:
+                _logger.error(
+                    f"Invalid rate value for service plan option {service_plan_option.id}: {rate}"
+                )
+                return Response("Invalid rate value", status=400)
             limit_config = {
                 "count": rate,
                 "time_window": 1,
