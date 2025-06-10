@@ -112,6 +112,11 @@ class SubscriptionModelApi(ModelRestApi):
                 )
                 .first()
             )
+            if not service_plan_option:
+                _logger.error(
+                    f"No service plan option found for service plan {subscribe.service_plan.id}"
+                )
+                return Response("Service plan option not found", status=400)
             rate = service_plan_option.option_value
             limit_config = {
                 "count": rate,
