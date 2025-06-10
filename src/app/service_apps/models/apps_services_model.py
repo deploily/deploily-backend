@@ -15,7 +15,8 @@ class AppService(Service):
         "polymorphic_identity": "app_service",
     }
 
-    apps_field = Column(Text)
+    ssh_access = Column(Text)
+    monitoring = Column(Text)
     # many-to-many relationship
     recommended_apps = relationship(
         "RecommendationAppService",
