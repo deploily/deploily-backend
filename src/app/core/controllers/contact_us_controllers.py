@@ -34,7 +34,7 @@ class ContactUSModelApi(ModelRestApi):
             contact_us_template = render_template("emails/contact_us.html", item=item)
 
             email = Mail(
-                title=f"New Contact US Created par : {item.name}",
+                title=f"New Contact US Created by {item.name}",
                 body=contact_us_template,
                 email_to=current_app.config["NOTIFICATION_EMAIL"],
                 email_from=current_app.config["NOTIFICATION_EMAIL"],

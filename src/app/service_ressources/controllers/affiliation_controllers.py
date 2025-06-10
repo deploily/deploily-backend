@@ -155,7 +155,7 @@ class AffiliationModelApi(ModelRestApi):
         )
         send_and_log_email(
             to=user.email,
-            subject=f"Confirmation d'affiliation : {user.first_name}",
+            subject=f"Nouvelle affiliation dans deploily.cloud",
             body=user_email_body,
         )
 
@@ -168,7 +168,7 @@ class AffiliationModelApi(ModelRestApi):
         )
         send_and_log_email(
             to=current_app.config["NOTIFICATION_EMAIL"],
-            subject=f"Nouvelle affiliation via notre plateforme entre l' utilisateur:  {user.first_name} et le provider :{provider.name}",
+            subject=f"New affiliation between the user {user.first_name} and the provider {provider.name}",
             body=deploily_email_body,
         )
 

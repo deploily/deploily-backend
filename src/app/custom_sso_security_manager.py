@@ -67,7 +67,7 @@ class CustomSsoSecurityManager(SecurityManager):
                 )
 
                 email = Mail(
-                    title=f"New User Created : {user.username}",
+                    title=f"New User Created {user.username}",
                     body=user_email_body,
                     email_to=current_app.config["NOTIFICATION_EMAIL"],
                     email_from=current_app.config["NOTIFICATION_EMAIL"],

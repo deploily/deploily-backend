@@ -40,7 +40,10 @@ class AffiliationView(ModelView):
         validated_count = 0
         for affiliation in affiliations:
             if affiliation.affiliation_state != "pending":
-                flash(f"L'affiliation #{affiliation.id} est déjà validée ou non valide.", "warning")
+                flash(
+                    f"L'affiliation #{affiliation.id} est déjà validée ou non valide.",
+                    "warning",
+                )
                 continue
 
             # Envoi de l'email au partenaire
@@ -59,7 +62,7 @@ class AffiliationView(ModelView):
                 )
                 send_and_log_email(
                     to=provider.mail_partnership,
-                    subject="Nouvelle affiliation via notre plateforme",
+                    subject="Nouvelle affiliation via deploily.cloud",
                     body=provider_email_body,
                 )
 
@@ -67,7 +70,10 @@ class AffiliationView(ModelView):
             self.datamodel.edit(affiliation)
             validated_count += 1
 
-        flash(f"{validated_count} affiliation(s) validée(s) et email(s) envoyé(s).", "success")
+        flash(
+            f"{validated_count} affiliation(s) validée(s) et email(s) envoyé(s).",
+            "success",
+        )
         return redirect(url_for("AffiliationView.list"))
 
 

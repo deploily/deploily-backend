@@ -171,7 +171,7 @@ class SubscriptionApi(BaseApi):
             form_url = ""
 
             subscription_template = render_template(
-                "emails/deploily_subscription.html", user_name=user.username, plan=plan.plan.name
+                "emails/deploily_subscription.html", user_name=user.username, plan=plan
             )
             # Balance verification
             # Case1: Sufficient balance
@@ -192,7 +192,7 @@ class SubscriptionApi(BaseApi):
                 db.session.commit()
                 db.session.flush()
                 email = Mail(
-                    title=f"New Subscription Created by : {user.username}",
+                    title=f"New Subscription Created by {user.username}",
                     body=subscription_template,
                     email_to=current_app.config["NOTIFICATION_EMAIL"],
                     email_from=current_app.config["NOTIFICATION_EMAIL"],
@@ -230,7 +230,7 @@ class SubscriptionApi(BaseApi):
                 db.session.add(payment)
                 db.session.commit()
                 email = Mail(
-                    title=f"New Subscription Created by : {user.username}",
+                    title=f"New Subscription Created by {user.username}",
                     body=subscription_template,
                     email_to=current_app.config["NOTIFICATION_EMAIL"],
                     email_from=current_app.config["NOTIFICATION_EMAIL"],
@@ -308,7 +308,7 @@ class SubscriptionApi(BaseApi):
                 total_price=total_amount,
             )
             email = Mail(
-                title=f"New Subscription Created by : {user.username}",
+                title=f"Nouvelle souscription à deploily.cloud",
                 body=subscription_template,
                 email_to=user.email,
                 email_from=current_app.config["NOTIFICATION_EMAIL"],
