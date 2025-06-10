@@ -89,11 +89,6 @@ class SubscriptionModelApi(ModelRestApi):
         slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
         subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
 
-        user = get_user()
-        user_name = user.username
-        slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
-        subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
-
         if not subscribe:
             return jsonify({"error": "Subscription not found"}), 404
 
@@ -118,9 +113,13 @@ class SubscriptionModelApi(ModelRestApi):
         try:
             consumer_username = f"{service.service_slug}_{slug_user_name}"
             apisix_service = ApiSixService()
-            service_plan_option = db.session.query(ServicePlanOption).filter(
-                ServicePlanOption.option_type == "request_limit",
-                ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
+            service_plan_option = (
+                db.session.query(ServicePlanOption)
+                .filter(
+                    ServicePlanOption.option_type == "request_limit",
+                    ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
+                )
+                .first()
             )
 
             if not service_plan_option:
@@ -137,7 +136,6 @@ class SubscriptionModelApi(ModelRestApi):
                 "key": "consumer_name",
                 "policy": "local",
             }
-
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
