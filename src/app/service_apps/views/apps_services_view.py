@@ -12,7 +12,6 @@ from app.service_apps.models.apps_services_model import AppService
 class AppServiceView(ModelView):
     datamodel = SQLAInterface(AppService)
 
-
     list_columns = ["tags", "name", "unit_price", "average_rating"]
     add_columns = [
         # "category",
@@ -28,8 +27,10 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "apps_field",
+        "ssh_access",
+        "monitoring",
         "ratings",
+        "recommended_apps",
     ]
     edit_columns = [
         # "category",
@@ -45,8 +46,10 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "apps_field",
+        "ssh_access",
+        "monitoring",
         "ratings",
+        "recommended_apps",
     ]
     show_columns = [
         # "category",
@@ -62,9 +65,11 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "apps_field",
+        "ssh_access",
+        "monitoring",
         "ratings",
         "average_rating",
+        "recommended_apps",
     ]
 
     def post_add(self, item):

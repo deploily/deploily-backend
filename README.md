@@ -70,6 +70,15 @@ Realm settings -> Token -> Default Signature Algorithm = HS256
 curl -d 'client_id=deploily'      -d 'username=saadia'      -d 'password=saadia'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW'      'https://auth.dev.deploily.cloud/realms/myrealm/protocol/openid-connect/token'
 ```
 
+## Get Keycloack login token using localhost
+
+Realm settings -> Token -> Default Signature Algorithm = HS256
+
+```bash
+ curl -d 'client_id=deploily'      -d 'username=admin'      -d 'password=admin'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=aYZTRwWfyLTRfqmBsqkfMJ9C68wSp0bO'      'http://localhost:8080/realms/myrealm/protocol/openid-connect/token'
+
+```
+
 To decode the JWT Token use [https://jwt.io/](https://jwt.io/)
 
 ## Useful links

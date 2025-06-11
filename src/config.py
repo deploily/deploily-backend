@@ -7,11 +7,11 @@ from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.dev.deploily.cloud")
-
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "")
 # TODO  add KEYCLOAK_... prefix to the variables
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
 LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
