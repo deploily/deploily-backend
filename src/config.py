@@ -1,21 +1,17 @@
 import json
-import logging
 import os
 import urllib.request
 from datetime import timedelta
 
 from flask_appbuilder.security.manager import AUTH_OAUTH
 
-_logger = logging.getLogger(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "")
 # TODO  add KEYCLOAK_... prefix to the variables
 REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-_logger.info("Keycloak URL: %s", KEYKCLOAK_URL)
-_logger.info("Realm Name: %s", REALM_NAME)
-_logger.info("Realm Name: %s", CLIENT_SECRET)
+
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
 LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
