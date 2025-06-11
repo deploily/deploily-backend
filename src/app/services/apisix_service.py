@@ -63,7 +63,7 @@ class ApiSixService:
             _logger.error(f"Error creating route '{route_id}': {e}")
             return None
 
-    def create_consumer(self, username, api_key, labels=None, limit_count=None):
+    def create_consumer(self, username, api_key, labels=None, limit_count=None, group_id=None):
         """Creates an APISIX consumer with optional labels and limit-count plugin."""
         plugins = {
             "key-auth": {"key": api_key},
@@ -85,6 +85,8 @@ class ApiSixService:
 
         if labels:
             consumer_data["labels"] = labels
+        if group_id:
+            consumer_data["group_id"] = group_id
 
         try:
             response = self.client.new_consumer(**consumer_data)
