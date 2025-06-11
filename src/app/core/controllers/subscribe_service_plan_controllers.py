@@ -16,6 +16,7 @@ from app.core.models import (
     Subscription,
 )
 from app.core.models.mail_models import Mail
+from app.service_apps.models.subscription_app_services import SubscriptionAppService
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -65,6 +66,15 @@ class SubscriptionApi(BaseApi):
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
+                                secret_key:
+                                    type: string
+                                    description: secret_key
+                                access_url:
+                                    type: string
+                                    description: access_url
+
+
+
             responses:
                 200:
                     description: Subscription successful
@@ -96,6 +106,14 @@ class SubscriptionApi(BaseApi):
                                             promo_code_id:
                                                 type: integer
                                                 nullable: true
+                                            secret_key:
+                                                type: string
+                                                nullable: true
+                                            access_url:
+                                                type: string
+                                                nullable: true
+
+
                                     order_id:
                                         type: string
                                     form_url:
@@ -152,10 +170,16 @@ class SubscriptionApi(BaseApi):
 
             plan_id = data.get("service_plan_selected_id")
             plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
+            if plan and plan.service:
+                service_type = plan.service.type
+
+            # todo add new logic here
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
             promo_code_str = data.get("promo_code")
+            access_url = data.get("access_url")
+            secret_key = data.get("secret_key")
             duration = data.get("duration")
             total_amount = plan.price * duration
             # code promo verification
@@ -176,18 +200,37 @@ class SubscriptionApi(BaseApi):
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price >= 0:
-                subscription = Subscription(
-                    name=plan.plan.name,
-                    start_date=datetime.now(),
-                    total_amount=total_amount,
-                    price=price,
-                    service_plan_id=plan.id,
-                    duration_month=duration,
-                    promo_code_id=promo_code.id if promo_code else None,
-                    status="active",
-                    payment_status="paid",
-                    profile_id=profile.id,
-                )
+                # todo add new logic here
+                if service_type == "app_service":
+
+                    subscription = SubscriptionAppService(
+                        name=plan.plan.name,
+                        start_date=datetime.now(),
+                        total_amount=total_amount,
+                        price=price,
+                        service_plan_id=plan.id,
+                        duration_month=duration,
+                        promo_code_id=promo_code.id if promo_code else None,
+                        status="active",
+                        payment_status="paid",
+                        profile_id=profile.id,
+                        access_url=access_url,
+                        secret_key=secret_key,
+                    )
+
+                else:
+                    subscription = Subscription(
+                        name=plan.plan.name,
+                        start_date=datetime.now(),
+                        total_amount=total_amount,
+                        price=price,
+                        service_plan_id=plan.id,
+                        duration_month=duration,
+                        promo_code_id=promo_code.id if promo_code else None,
+                        status="active",
+                        payment_status="paid",
+                        profile_id=profile.id,
+                    )
                 db.session.add(subscription)
                 db.session.commit()
                 db.session.flush()
@@ -204,18 +247,37 @@ class SubscriptionApi(BaseApi):
                 _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
 
             else:  # Case2: unsufficient balance
-                subscription = Subscription(
-                    name=plan.plan.name,
-                    start_date=datetime.now(),
-                    total_amount=total_amount,
-                    price=price,
-                    service_plan_id=plan.id,
-                    duration_month=duration,
-                    promo_code_id=promo_code.id if promo_code else None,
-                    status="inactive",
-                    payment_status="unpaid",
-                    profile_id=profile.id,
-                )
+
+                if service_type == "app_service":
+
+                    subscription = SubscriptionAppService(
+                        name=plan.plan.name,
+                        start_date=datetime.now(),
+                        total_amount=total_amount,
+                        price=price,
+                        service_plan_id=plan.id,
+                        duration_month=duration,
+                        promo_code_id=promo_code.id if promo_code else None,
+                        status="inactive",
+                        payment_status="unpaid",
+                        profile_id=profile.id,
+                        access_url=access_url,
+                        secret_key=secret_key,
+                    )
+                else:
+
+                    subscription = Subscription(
+                        name=plan.plan.name,
+                        start_date=datetime.now(),
+                        total_amount=total_amount,
+                        price=price,
+                        service_plan_id=plan.id,
+                        duration_month=duration,
+                        promo_code_id=promo_code.id if promo_code else None,
+                        status="inactive",
+                        payment_status="unpaid",
+                        profile_id=profile.id,
+                    )
 
                 db.session.add(subscription)
                 db.session.flush()
