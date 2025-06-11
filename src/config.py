@@ -27,6 +27,7 @@ OAUTH_PROVIDERS = [
             "api_base_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect",
             "access_token_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token",
             "authorize_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/auth",
+            "redirect_uri": f"https://admin.deploily.cloud/oauth-authorized/keycloak",
             "client_kwargs": {"scope": "openid email profile roles"},
         },
     }
