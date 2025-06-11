@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from flask import request
 from flask_appbuilder.api import expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from sqlalchemy import or_
 
 from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
@@ -24,8 +26,15 @@ class ApiServiceModelApi(ServiceModelApi):
         """
         ---
         get:
-          summary: Get all API services (base fields + service_plans + medias)
+          summary: Get all API services
           description: Returns a list of ApiService with name, short_description, description, service_plans and medias
+          parameters:
+            - in: query
+              name: search_value
+              schema:
+                type: string
+              required: false
+              description: Filter categories by name or description (partial match)
           responses:
             200:
               description: List of ApiServices
@@ -55,7 +64,17 @@ class ApiServiceModelApi(ServiceModelApi):
             500:
               description: Internal server error
         """
-        services = db.session.query(ApiService).all()
+        search_value = request.args.get("search_value")
+        query = db.session.query(ApiService)
+        if search_value:
+            query = query.filter(
+                or_(
+                    ApiService.name.ilike(f"%{search_value}%"),
+                    ApiService.description.ilike(f"%{search_value}%"),
+                )
+            )
+
+        services = query.all()
 
         def serialize_service(service):
             return {
@@ -63,6 +82,7 @@ class ApiServiceModelApi(ServiceModelApi):
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
+                "documentation_url": service.documentation_url,
                 "specifications": service.specifications,
                 "service_plans": [
                     {
