@@ -52,7 +52,6 @@ def test_create_supprotticketresponse(client, test_user, app, appbuilder):
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        print(f"---------{response.text}")
         assert response.status_code == 201
         try:
             SupportTiketResponseResponse.model_validate_json(response.text)
@@ -105,7 +104,6 @@ def test_get_supportticket(client, test_user, app, appbuilder):
             "/api/v1/support-ticket-response/",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        print(f"---------{response.text}")
         assert response.status_code == 200
         try:
             SupportTiketListResponse.model_validate_json(response.text)
