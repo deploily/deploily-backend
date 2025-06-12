@@ -1,6 +1,6 @@
 import logging
 
-from flask_appbuilder.api import ModelRestApi, expose
+from flask_appbuilder.api import BaseApi, ModelRestApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
@@ -20,7 +20,14 @@ class RecommendationAppServiceModelApi(ModelRestApi):
     edit_columns = recommendation_display_columns
     exclude_route_methods = ("put", "post", "delete", "info")
 
-    @expose("/get/<int:id>", methods=["GET"])
+
+appbuilder.add_api(RecommendationAppServiceModelApi)
+
+
+class PublicRecommendationAppServiceModelApi(BaseApi):  # public version
+    resource_name = "public_recommendation"
+
+    @expose("/<int:id>", methods=["GET"])
     def get_recommendatin_app_services_by_id(self, id):
         """
         ---
@@ -111,9 +118,16 @@ class RecommendationAppServiceModelApi(ModelRestApi):
                     "service_plans": [
                         {
                             "id": plan.id,
-                            "name": plan.name,
                             "price": plan.price,
-                            "description": plan.description,
+                            "is_custom": plan.is_custom,
+                            "options": [
+                                {
+                                    "id": option.id,
+                                    "name": option.name,
+                                    "value": option.value,
+                                }
+                                for option in plan.options
+                            ],
                         }
                         for plan in app_service.service_plans
                     ],
@@ -141,4 +155,4 @@ class RecommendationAppServiceModelApi(ModelRestApi):
         return self.response(200, result=result)
 
 
-appbuilder.add_api(RecommendationAppServiceModelApi)
+appbuilder.add_api(PublicRecommendationAppServiceModelApi)
