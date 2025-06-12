@@ -99,7 +99,7 @@ appbuilder.add_api(AppServiceModelApi)
 
 
 class PublicAppServiceApi(BaseApi):  # public version
-    resource_name = "public_app_service"
+    resource_name = "public-app-service"
 
     @expose("/<int:id>", methods=["GET"])
     def get_app_service_by_id(self, id):  # <- Use the captured `id` parameter

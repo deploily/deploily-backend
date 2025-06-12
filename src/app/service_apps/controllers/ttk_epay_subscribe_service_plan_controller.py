@@ -8,22 +8,19 @@ from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
-from app.core.models import (
-    Payment,
-    PaymentProfile,
-    PromoCode,
-    ServicePlan,
-    Subscription,
-)
+from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
+from app.service_apps.models.ttk_epay_subscription_model import (
+    TtkEpaySubscriptionAppService,
+)
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
 
-class SubscriptionApi(BaseApi):
-    resource_name = "service-subscription"
+class TtkEpaySubscriptionApi(BaseApi):
+    resource_name = "app-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()
@@ -48,10 +45,7 @@ class SubscriptionApi(BaseApi):
                                 service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected service plan
-                                total_amount:
-                                    type: number
-                                    format: float
-                                    description: Total amount before applying promo codes
+
                                 promo_code:
                                     type: string
                                     nullable: true
@@ -65,6 +59,13 @@ class SubscriptionApi(BaseApi):
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
+
+                                ressource_service_plan_selected_id:
+                                    type: integer
+                                    description: ID of the selected ressource service plan
+                                recommendation_app_service_id:
+                                    type: integer
+                                    description: ID of the selected recommendation app service
 
 
 
@@ -87,8 +88,7 @@ class SubscriptionApi(BaseApi):
                                             start_date:
                                                 type: string
                                                 format: date-time
-                                            total_amount:
-                                                type: number
+
                                             price:
                                                 type: number
                                             status:
@@ -100,6 +100,13 @@ class SubscriptionApi(BaseApi):
                                             promo_code_id:
                                                 type: integer
                                                 nullable: true
+                                            ressource_service_plan_selected_id:
+                                                type: integer
+                                                description: ID of the selected ressource service plan
+                                            recommendation_app_service_id:
+                                                type: integer
+                                                description: ID of the selected recommendation app service
+
 
 
                                     order_id:
@@ -158,15 +165,22 @@ class SubscriptionApi(BaseApi):
 
             plan_id = data.get("service_plan_selected_id")
             plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
+            ressource_plan_id = data.get("ressource_service_plan_selected_id")
+            ressource_plan = db.session.query(ServicePlan).filter_by(id=ressource_plan_id).first()
 
+            if plan and plan.service:
+                plan.service.type
+
+            # todo add new logic here
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
             promo_code_str = data.get("promo_code")
-            data.get("access_url")
-            data.get("secret_key")
             duration = data.get("duration")
             total_amount = plan.price * duration
+            if ressource_plan:
+                total_amount += ressource_plan.price * duration
+
             # code promo verification
             promo_code_amount = 0
             promo_code = None
@@ -185,14 +199,16 @@ class SubscriptionApi(BaseApi):
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price >= 0:
+                # todo add new logic here
 
-                subscription = Subscription(
+                subscription = TtkEpaySubscriptionAppService(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
                     price=price,
                     service_plan_id=plan.id,
                     duration_month=duration,
+                    # application_status="processing",
                     promo_code_id=promo_code.id if promo_code else None,
                     status="active",
                     payment_status="paid",
@@ -215,7 +231,7 @@ class SubscriptionApi(BaseApi):
 
             else:  # Case2: unsufficient balance
 
-                subscription = Subscription(
+                subscription = TtkEpaySubscriptionAppService(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
@@ -224,6 +240,7 @@ class SubscriptionApi(BaseApi):
                     duration_month=duration,
                     promo_code_id=promo_code.id if promo_code else None,
                     status="inactive",
+                    # application_status="processing",
                     payment_status="unpaid",
                     profile_id=profile.id,
                 )
@@ -354,4 +371,4 @@ class SubscriptionApi(BaseApi):
             return self.response_500(message="Internal Server Error")
 
 
-appbuilder.add_api(SubscriptionApi)
+appbuilder.add_api(TtkEpaySubscriptionApi)

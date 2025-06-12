@@ -198,6 +198,7 @@ FAB_ROLES = {
         # ["ServiceRessouceCategoryModelApi", "can_delete"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
+        ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
         ["AccountFundingApi", "can_fund_balance"],
         ["SupportTicketResponseModelApi", "can_get"],
         ["SupportTicketResponseModelApi", "can_put"],

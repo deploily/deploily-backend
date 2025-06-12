@@ -6,11 +6,13 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from slugify import slugify
 
 from app import appbuilder, db
-from app.service_apps.models.subscription_app_services import SubscriptionAppService
+from app.service_apps.models.ttk_epay_subscription_model import (
+    TtkEpaySubscriptionAppService,
+)
 
 
-class SubscriptionAppServiceView(ModelView):
-    datamodel = SQLAInterface(SubscriptionAppService)
+class TtkEpatSubscriptionAppServiceView(ModelView):
+    datamodel = SQLAInterface(TtkEpaySubscriptionAppService)
 
     list_columns = [
         "id",
@@ -26,7 +28,6 @@ class SubscriptionAppServiceView(ModelView):
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show"]  # only allow viewing
 
     def post_add(self, item):
         item.service_slug = slugify(item.name)
@@ -34,8 +35,8 @@ class SubscriptionAppServiceView(ModelView):
 
 
 appbuilder.add_view(
-    SubscriptionAppServiceView,
-    "Subscription App Services",
+    TtkEpatSubscriptionAppServiceView,
+    "Subscription TTK Epay ",
     icon="fa-cogs",
-    category="Operations",
+    category="Application Subscription Services",
 )

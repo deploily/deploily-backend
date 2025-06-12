@@ -25,7 +25,7 @@ appbuilder.add_api(RecommendationAppServiceModelApi)
 
 
 class PublicRecommendationAppServiceModelApi(BaseApi):  # public version
-    resource_name = "public_recommendation"
+    resource_name = "public-recommendation"
 
     @expose("/<int:id>", methods=["GET"])
     def get_recommendatin_app_services_by_id(self, id):
