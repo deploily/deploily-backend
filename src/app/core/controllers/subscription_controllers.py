@@ -135,6 +135,7 @@ class SubscriptionModelApi(ModelRestApi):
                 api_key=api_key,
                 limit_count=limit_config,
                 labels={"service": service.service_slug},
+                group_id=service.apisix_group_id,
             )
             if not response:
                 _logger.error(f"Failed to create API consumer")
