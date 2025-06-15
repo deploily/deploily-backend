@@ -14,7 +14,7 @@ class ApiService(Service):
     __mapper_args__ = {
         "polymorphic_identity": "api_service",
     }
-
+    apisix_group_id = Column(String(255), nullable=False)
     curl_command = Column(Text)
     service_url = Column(String(255))
     api_playground_url = Column(String(255))
