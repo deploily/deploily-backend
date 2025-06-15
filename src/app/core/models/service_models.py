@@ -15,7 +15,6 @@ class Service(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     short_description = Column(String(255))
-    apisix_group_id = Column(String(255))
     description = Column(Text, nullable=False)
     specifications = Column(Text)
     documentation_url = Column(String(255), nullable=False)

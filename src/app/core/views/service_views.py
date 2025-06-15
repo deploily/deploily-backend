@@ -10,14 +10,7 @@ from app.core.models.service_models import Service
 class ServiceModelView(ModelView):
     route_base = "/admin/Service"
     datamodel = SQLAInterface(Service)
-    list_columns = [
-        "id",
-        "name",
-        "documentation_url",
-        "unit_price",
-        "is_in_favorite",
-        "apisix_group_id",
-    ]
+    list_columns = ["id", "name", "documentation_url", "unit_price", "is_in_favorite"]
 
     base_permissions = ["can_list", "can_show"]  # only allow viewing
 
