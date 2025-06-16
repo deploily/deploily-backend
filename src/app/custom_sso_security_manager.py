@@ -96,7 +96,7 @@ class CustomSsoSecurityManager(SecurityManager):
             user = self.add_user(
                 username=username,
                 first_name=jwt_data.get("family_name", ""),
-                last_name=jwt_data.get("last_name", ""),
+                last_name=jwt_data.get("given_name", ""),
                 email=jwt_data.get("email", ""),
                 role=self.find_role(self.auth_user_registration_role),
             )

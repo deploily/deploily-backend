@@ -13,7 +13,6 @@ REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -65,10 +64,16 @@ if IS_DEV:
     JWT_SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
     JWT_ALGORITHM = "HS256"
     AUTH_TYPE = AUTH_DB
+    LOGOUT_REDIRECT_URL = ""
 else:
     JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
     JWT_ALGORITHM = "RS256"
     AUTH_TYPE = AUTH_OAUTH
+    LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+
+
+RECAPTCHA_PUBLIC_KEY = ""
+RECAPTCHA_PRIVATE_KEY = ""
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
