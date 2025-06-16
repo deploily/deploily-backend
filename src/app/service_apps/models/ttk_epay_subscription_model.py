@@ -2,7 +2,9 @@
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Text
 
-from app.service_apps.models.subscription_app_services import SubscriptionAppService
+from app.service_apps.models.app_service_subscription_model import (
+    SubscriptionAppService,
+)
 
 
 class TtkEpaySubscriptionAppService(SubscriptionAppService):

@@ -6,7 +6,9 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from slugify import slugify
 
 from app import appbuilder, db
-from app.service_apps.models.subscription_app_services import SubscriptionAppService
+from app.service_apps.models.app_service_subscription_model import (
+    SubscriptionAppService,
+)
 
 
 class AppServiceSubscriptionView(ModelView):

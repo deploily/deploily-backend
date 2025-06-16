@@ -11,7 +11,7 @@ from app.service_apps.models.ttk_epay_subscription_model import (
 )
 
 
-class TtkEpatSubscriptionAppServiceView(ModelView):
+class TtkEpayAppServiceSubscriptionView(ModelView):
     datamodel = SQLAInterface(TtkEpaySubscriptionAppService)
 
     list_columns = [
@@ -35,8 +35,8 @@ class TtkEpatSubscriptionAppServiceView(ModelView):
 
 
 appbuilder.add_view(
-    TtkEpatSubscriptionAppServiceView,
-    "Subscription TTK Epay ",
+    TtkEpayAppServiceSubscriptionView,
+    "TTK Epay App Subscriptions ",
     icon="fa-cogs",
     category="Application Subscription Services",
 )

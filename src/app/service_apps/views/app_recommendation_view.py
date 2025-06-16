@@ -4,7 +4,7 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.service_apps.models.recommendation_app_services import RecommendationAppService
+from app.service_apps.models.app_recommendation_model import RecommendationAppService
 
 
 class AppRecommendationModelView(ModelView):

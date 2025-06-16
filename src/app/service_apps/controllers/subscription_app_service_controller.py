@@ -4,7 +4,9 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
 from app.core.controllers.subscription_controllers import SubscriptionModelApi
-from app.service_apps.models.subscription_app_services import SubscriptionAppService
+from app.service_apps.models.app_service_subscription_model import (
+    SubscriptionAppService,
+)
 
 api_columns = ["application_status"]
 
