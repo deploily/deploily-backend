@@ -30,7 +30,11 @@ class CustomSsoSecurityManager(SecurityManager):
         from app.core.models.payment_models import Payment
         from app.core.models.payment_profile_models import PaymentProfile
 
-        username = jwt_data["preferred_username"]
+        # username = jwt_data["preferred_username"]
+        username = jwt_data.get("preferred_username") or jwt_data.get("sub")
+        if not isinstance(username, str):
+            username = str(username)
+
         user = self.find_user(username=username)
         if user and user.is_active:
             # Set flask g.user to JWT user, we can't do it on before request
@@ -82,13 +86,21 @@ class CustomSsoSecurityManager(SecurityManager):
 
         if user is None and self.auth_user_registration:
 
+            # user = self.add_user(
+            #     username=username,
+            #     first_name=jwt_data["family_name"],
+            #     last_name=jwt_data["given_name"],
+            #     email=jwt_data["email"],
+            #     role=self.find_role(self.auth_user_registration_role),
+            # )
             user = self.add_user(
                 username=username,
-                first_name=jwt_data["family_name"],
-                last_name=jwt_data["given_name"],
-                email=jwt_data["email"],
+                first_name=jwt_data.get("family_name", ""),
+                last_name=jwt_data.get("last_name", ""),
+                email=jwt_data.get("email", ""),
                 role=self.find_role(self.auth_user_registration_role),
             )
+
             g.user = user
             return user
 
