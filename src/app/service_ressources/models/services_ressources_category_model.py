@@ -18,5 +18,19 @@ class ServiceRessouceCategory(Model):
     ressouce_services = relationship("RessourceService", back_populates="ressouce_category")
     medias = relationship("Media", back_populates="category", cascade="all, delete-orphan")
 
+    @property
+    def list_providers(self):
+        unique_providers = {}
+        for service in self.ressouce_services:
+            provider = service.provider
+            if provider and provider.id not in unique_providers:
+                unique_providers[provider.id] = {
+                    "name": provider.name,
+                    "website": provider.website,
+                    "logo": provider.logo,
+                    "price": provider.price,
+                }
+        return list(unique_providers.values())
+
     def __repr__(self):
         return self.name

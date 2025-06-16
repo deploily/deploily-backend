@@ -2,7 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Float, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -24,6 +24,7 @@ class ProvidersRessourceService(Model):
     mail_partnership = Column(String(255))
     phone_support = Column(String(50))
     phone_sales = Column(String(50))
+    price = Column(Float)
     phone_partnership = Column(String(50))
     ressource_services = relationship("RessourceService", back_populates="provider")
     affiliations = relationship("Affiliation", back_populates="provider")
