@@ -11,7 +11,7 @@ api_columns = ["ssh_access", "monitoring", "average_rating", "recommended_apps"]
 
 
 class AppServiceModelApi(ServiceModelApi):
-    resource_name = "apps-service"
+    resource_name = "app-service"
     datamodel = SQLAInterface(AppService)
 
     add_columns = ServiceModelApi.add_columns + api_columns
@@ -60,6 +60,7 @@ class AppServiceModelApi(ServiceModelApi):
         def serialize_service(service):
             return {
                 "name": service.name,
+                "unit_price": service.unit_price,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
@@ -99,7 +100,7 @@ appbuilder.add_api(AppServiceModelApi)
 
 
 class PublicAppServiceApi(BaseApi):  # public version
-    resource_name = "public-app-service"
+    resource_name = "app-service-public"
 
     @expose("/<int:id>", methods=["GET"])
     def get_app_service_by_id(self, id):  # <- Use the captured `id` parameter

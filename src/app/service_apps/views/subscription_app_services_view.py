@@ -9,7 +9,7 @@ from app import appbuilder, db
 from app.service_apps.models.subscription_app_services import SubscriptionAppService
 
 
-class SubscriptionAppServiceView(ModelView):
+class AppServiceSubscriptionView(ModelView):
     datamodel = SQLAInterface(SubscriptionAppService)
 
     list_columns = [
@@ -34,8 +34,8 @@ class SubscriptionAppServiceView(ModelView):
 
 
 appbuilder.add_view(
-    SubscriptionAppServiceView,
-    "Subscription App Services",
+    AppServiceSubscriptionView,
+    "App Service Subscriptions",
     icon="fa-cogs",
     category="Operations",
 )

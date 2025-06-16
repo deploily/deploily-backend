@@ -9,8 +9,8 @@ from app.service_apps.models.subscription_app_services import SubscriptionAppSer
 api_columns = ["application_status"]
 
 
-class SubscriptionAppServiceModelApi(SubscriptionModelApi):
-    resource_name = "subscription-app-service"
+class AppServiceSubscriptionModelApi(SubscriptionModelApi):
+    resource_name = "app-service-subscription"
     datamodel = SQLAInterface(SubscriptionAppService)
 
     add_columns = SubscriptionModelApi.add_columns + api_columns
@@ -19,4 +19,4 @@ class SubscriptionAppServiceModelApi(SubscriptionModelApi):
     edit_columns = SubscriptionModelApi.edit_columns + api_columns
 
 
-appbuilder.add_api(SubscriptionAppServiceModelApi)
+appbuilder.add_api(AppServiceSubscriptionModelApi)

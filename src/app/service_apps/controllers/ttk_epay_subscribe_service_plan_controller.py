@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 
 
 class TtkEpaySubscriptionApi(BaseApi):
-    resource_name = "app-service-subscription"
+    resource_name = "ttk-epay-app-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()

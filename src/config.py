@@ -222,10 +222,12 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
         ["UserModelApi", "can_get"],
-        # ["RecommendationAppServiceModelApi", "can_get"],
-        # ["TtkEpaySubscriptionAppServiceModelApi", "can_get"],
-        # ["TtkEpaySubscriptionAppServiceModelApi", "can_put"],
-        # ["TtkEpaySubscriptionAppServiceModelApi", "can_post"],
+        ["AppRecommendationModelApi", "can_get"],
+        ["AppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_put"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_post"],
+        ["TtkEpaySubscriptionApi", "can_post"],
     ]
 }
 
