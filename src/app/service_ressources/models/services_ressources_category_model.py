@@ -28,6 +28,7 @@ class ServiceRessouceCategory(Model):
                     "name": provider.name,
                     "website": provider.website,
                     "logo": provider.logo,
+                    "price": provider.price,
                 }
         return list(unique_providers.values())
 

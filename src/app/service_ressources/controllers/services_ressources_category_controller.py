@@ -110,7 +110,7 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "short_description": cat.short_description,
                     "logo": cat.logo,
                     "description": cat.description,
-                    "list_providers": cat.list_providers,
+                    "providers_list": cat.list_providers,
                     # "ressource_services": [
                     #     serialize_sqlalchemy_obj(s) for s in cat.ressouce_services
                     # ],
