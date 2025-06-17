@@ -23,6 +23,7 @@ _service_value_display_columns = [
     "service_details",
     "type",
     "medias",
+    "is_illigible",
 ]
 
 
