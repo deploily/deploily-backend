@@ -8,14 +8,9 @@ from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
-from app.core.models import (
-    Payment,
-    PaymentProfile,
-    PromoCode,
-    ServicePlan,
-    Subscription,
-)
+from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
+from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -23,7 +18,7 @@ _logger = logging.getLogger(__name__)
 
 
 class SubscriptionApi(BaseApi):
-    resource_name = "service-subscription"
+    resource_name = "api-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()
@@ -186,7 +181,7 @@ class SubscriptionApi(BaseApi):
             # Case1: Sufficient balance
             if profile.balance - price >= 0:
 
-                subscription = Subscription(
+                subscription = ApiServiceSubscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
@@ -215,7 +210,7 @@ class SubscriptionApi(BaseApi):
 
             else:  # Case2: unsufficient balance
 
-                subscription = Subscription(
+                subscription = ApiServiceSubscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
