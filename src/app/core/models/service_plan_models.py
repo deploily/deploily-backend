@@ -29,5 +29,20 @@ class ServicePlan(Model):
         order_by=ServicePlanOption.sequence,
     )
 
+    @property
+    def provider_info(self):
+        if (
+            self.service
+            and getattr(self.service, "provider", None)
+            and self.service.__class__.__name__ == "RessourceService"
+        ):
+            provider = self.service.provider
+            return {
+                "name": provider.name,
+                "website": provider.website,
+                "logo": provider.logo,
+            }
+        return None
+
     def __repr__(self):
         return f"{self.service} | {self.plan}"

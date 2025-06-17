@@ -24,11 +24,15 @@ class ServiceRessouceCategory(Model):
         for service in self.ressouce_services:
             provider = service.provider
             if provider and provider.id not in unique_providers:
+                min_price = min(
+                    (plan.price for plan in service.service_plans if plan.price is not None),
+                    default=None,
+                )
                 unique_providers[provider.id] = {
                     "name": provider.name,
                     "website": provider.website,
                     "logo": provider.logo,
-                    "price": provider.price,
+                    "min_price": min_price,
                 }
         return list(unique_providers.values())
 

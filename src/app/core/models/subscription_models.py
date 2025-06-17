@@ -129,5 +129,3 @@ def decrypt_data_on_load(target, context):
     """Decrypt api_key when loading the object from the database."""
     if target.api_key and target.is_encrypted:
         target.api_key = decrypt_api_key(target.api_key)
-        if target.api_key:
-            print(f"Decrypted api_key on load: {target.api_key}")
