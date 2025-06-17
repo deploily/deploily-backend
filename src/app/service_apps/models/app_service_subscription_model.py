@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, ForeignKey, Integer, Text
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 
 from app.core.models import Subscription
 
@@ -11,5 +11,8 @@ class SubscriptionAppService(Subscription):
     __mapper_args__ = {
         "polymorphic_identity": "subscription_app_service",
     }
-    access_url = Column(Text, nullable=True)
-    secret_key = Column(Text, nullable=True)
+    type = Column(String(50), default="subscribtion_app_service", nullable=False)
+    application_status = Column(
+        Enum("processing", "deployed", name="application_status"),
+        default="processing",
+    )
