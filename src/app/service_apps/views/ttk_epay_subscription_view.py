@@ -25,7 +25,7 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
         "duration_month",
     ]
     base_order = ("id", "desc")
-    _exclude_columns = ["created_on", "changed_on"]
+    _exclude_columns = ["created_on", "changed_on", "type"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
 
@@ -38,5 +38,5 @@ appbuilder.add_view(
     TtkEpayAppServiceSubscriptionView,
     "TTK Epay App Subscriptions ",
     icon="fa-cogs",
-    category="Application Subscription Services",
+    category="App Subscriptions",
 )
