@@ -12,10 +12,7 @@ from flask_jwt_extended import jwt_required
 from app import appbuilder, db
 from app.core.controllers.subscription_controllers import SubscriptionModelApi
 from app.core.models.service_plan_option_models import ServicePlanOption
-from app.core.models.subscription_models import Subscription
-from app.service_apps.models.app_service_subscription_model import (
-    SubscriptionAppService,
-)
+from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
@@ -27,7 +24,7 @@ _logger = logging.getLogger(__name__)
 
 class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
     resource_name = "api-service-subscription"
-    datamodel = SQLAInterface(SubscriptionAppService)
+    datamodel = SQLAInterface(ApiServiceSubscription)
 
     add_columns = SubscriptionModelApi.add_columns
     list_columns = SubscriptionModelApi.list_columns
@@ -69,7 +66,11 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
         user_name = user.username
         slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
 
-        subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
+        subscribe = (
+            db.session.query(ApiServiceSubscription)
+            .filter(ApiServiceSubscription.id == subscribe_id)
+            .first()
+        )
 
         if not subscribe or not subscribe.service_plan:
             return Response("Subscription or ServicePlan not found", status=400)
@@ -97,6 +98,7 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
                 )
                 .first()
             )
+
             if not service_plan_option:
                 _logger.error(
                     f"No service plan option found for service plan {subscribe.service_plan.id}"
