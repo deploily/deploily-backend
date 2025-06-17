@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Column, ForeignKey, Integer, Text, func
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -17,7 +17,6 @@ class AppService(Service):
 
     ssh_access = Column(Text)
     monitoring = Column(Text)
-    url_segment = Column(String, nullable=False, unique=True)
     # many-to-many relationship
     recommended_apps = relationship(
         "RecommendationAppService",

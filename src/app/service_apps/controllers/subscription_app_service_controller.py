@@ -8,7 +8,7 @@ from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
 
-api_columns = ["application_status"]
+api_columns = ["application_status", "url_segment"]
 
 
 class AppServiceSubscriptionModelApi(SubscriptionModelApi):

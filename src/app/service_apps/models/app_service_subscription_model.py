@@ -12,6 +12,8 @@ class SubscriptionAppService(Subscription):
         "polymorphic_identity": "subscription_app_service",
     }
     type = Column(String(50), default="subscribtion_app_service", nullable=False)
+    url_segment = Column(String, nullable=False, unique=True)
+
     application_status = Column(
         Enum("processing", "deployed", name="application_status"),
         default="processing",

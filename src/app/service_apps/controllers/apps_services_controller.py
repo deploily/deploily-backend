@@ -7,7 +7,7 @@ from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_apps.models.apps_services_model import AppService
 
-api_columns = ["ssh_access", "monitoring", "average_rating", "recommended_apps", "url_segment"]
+api_columns = ["ssh_access", "monitoring", "average_rating", "recommended_apps"]
 
 
 class AppServiceModelApi(ServiceModelApi):
