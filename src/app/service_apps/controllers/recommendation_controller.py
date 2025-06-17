@@ -1,18 +1,18 @@
 import logging
 
-from flask_appbuilder.api import BaseApi, ModelRestApi, expose
+from flask_appbuilder.api import ModelRestApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.service_apps.models.app_recommendation_model import RecommendationAppService
+from app.service_apps.models.recommendation import RecommendationAppService
 
 _logger = logging.getLogger(__name__)
 
 recommendation_display_columns = ["id", "app_services"]
 
 
-class AppRecommendationModelApi(ModelRestApi):
-    resource_name = "app-recommendation"
+class RecommendationAppServiceModelApi(ModelRestApi):
+    resource_name = "recommendation"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(RecommendationAppService)
     add_columns = recommendation_display_columns
@@ -20,14 +20,7 @@ class AppRecommendationModelApi(ModelRestApi):
     edit_columns = recommendation_display_columns
     exclude_route_methods = ("put", "post", "delete", "info")
 
-
-appbuilder.add_api(AppRecommendationModelApi)
-
-
-class PublicAppRecommendationModelApi(BaseApi):  # public version
-    resource_name = "app-recommendation-public"
-
-    @expose("/<int:id>", methods=["GET"])
+    @expose("/get/<int:id>", methods=["GET"])
     def get_recommendatin_app_services_by_id(self, id):
         """
         ---
@@ -118,16 +111,9 @@ class PublicAppRecommendationModelApi(BaseApi):  # public version
                     "service_plans": [
                         {
                             "id": plan.id,
+                            "name": plan.name,
                             "price": plan.price,
-                            "is_custom": plan.is_custom,
-                            "options": [
-                                {
-                                    "id": option.id,
-                                    "name": option.name,
-                                    "value": option.value,
-                                }
-                                for option in plan.options
-                            ],
+                            "description": plan.description,
                         }
                         for plan in app_service.service_plans
                     ],
@@ -155,4 +141,4 @@ class PublicAppRecommendationModelApi(BaseApi):  # public version
         return self.response(200, result=result)
 
 
-appbuilder.add_api(PublicAppRecommendationModelApi)
+appbuilder.add_api(RecommendationAppServiceModelApi)

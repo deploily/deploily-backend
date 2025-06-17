@@ -8,8 +8,6 @@ from app.core.models.service_plan_service_plan_option_association import (
     service_plan_option_association,
 )
 
-# from app.service_ressources.models.services_ressources_model import RessourceService
-
 
 class ServicePlan(Model):
     id = Column(Integer, primary_key=True)
@@ -30,21 +28,6 @@ class ServicePlan(Model):
         back_populates="service_plans",
         order_by=ServicePlanOption.sequence,
     )
-
-    @property
-    def provider_info(self):
-        if (
-            self.service
-            and getattr(self.service, "provider", None)
-            and self.service.__class__.__name__ == "RessourceService"
-        ):
-            provider = self.service.provider
-            return {
-                "name": provider.name,
-                "website": provider.website,
-                "logo": provider.logo,
-            }
-        return None
 
     def __repr__(self):
         return f"{self.service} | {self.plan}"

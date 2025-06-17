@@ -55,8 +55,6 @@ class Subscription(Model, AuditMixin):
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
-    type = Column(String(50), default="subscribtion")
-    __mapper_args__ = {"polymorphic_identity": "subscribtion", "polymorphic_on": type}
 
     @property
     def service_details(self):

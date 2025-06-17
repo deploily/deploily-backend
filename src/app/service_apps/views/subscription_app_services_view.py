@@ -6,13 +6,11 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from slugify import slugify
 
 from app import appbuilder, db
-from app.service_apps.models.ttk_epay_subscription_model import (
-    TtkEpaySubscriptionAppService,
-)
+from app.service_apps.models.subscription_app_services import SubscriptionAppService
 
 
-class TtkEpayAppServiceSubscriptionView(ModelView):
-    datamodel = SQLAInterface(TtkEpaySubscriptionAppService)
+class SubscriptionAppServiceView(ModelView):
+    datamodel = SQLAInterface(SubscriptionAppService)
 
     list_columns = [
         "id",
@@ -35,8 +33,8 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
 
 
 appbuilder.add_view(
-    TtkEpayAppServiceSubscriptionView,
-    "TTK Epay App Subscriptions ",
+    SubscriptionAppServiceView,
+    "Subscription App Services",
     icon="fa-cogs",
-    category="Application Subscription Services",
+    category="Operations",
 )

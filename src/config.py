@@ -3,7 +3,7 @@ import os
 import urllib.request
 from datetime import timedelta
 
-from flask_appbuilder.security.manager import AUTH_DB, AUTH_OAUTH
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,6 +13,7 @@ REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
+LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -52,28 +53,11 @@ def fetch_keycloak_rs256_public_cert():
     return cert_pem
 
 
+JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 FAB_ADD_SECURITY_API = False
 
 # Your App secret key
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
-
-IS_DEV = os.environ.get("FLASK_DEBUG")
-
-
-if IS_DEV:
-    JWT_SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
-    JWT_ALGORITHM = "HS256"
-    AUTH_TYPE = AUTH_DB
-    LOGOUT_REDIRECT_URL = ""
-else:
-    JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
-    JWT_ALGORITHM = "RS256"
-    AUTH_TYPE = AUTH_OAUTH
-    LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
-
-
-RECAPTCHA_PUBLIC_KEY = ""
-RECAPTCHA_PRIVATE_KEY = ""
 
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
@@ -87,7 +71,6 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
     {"url": "http://192.168.1.22:5000"},
     {"url": "http://192.168.1.21:5000"},
-    {"url": "http://192.168.1.15:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -118,8 +101,7 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
 # AUTH_DB : Is for database (username/password()
 # AUTH_LDAP : Is for LDAP
 # AUTH_REMOTE_USER : Is for using REMOTE_USER from web server
-
-# AUTH_TYPE = AUTH_OAUTH
+AUTH_TYPE = AUTH_OAUTH
 
 # Uncomment to setup Full admin role name
 # AUTH_ROLE_ADMIN = 'Admin'
@@ -216,7 +198,6 @@ FAB_ROLES = {
         # ["ServiceRessouceCategoryModelApi", "can_delete"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
-        ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
         ["AccountFundingApi", "can_fund_balance"],
         ["SupportTicketResponseModelApi", "can_get"],
         ["SupportTicketResponseModelApi", "can_put"],
@@ -227,12 +208,6 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
         ["UserModelApi", "can_get"],
-        ["AppRecommendationModelApi", "can_get"],
-        ["AppServiceSubscriptionModelApi", "can_get"],
-        ["TtkEpayAppServiceSubscriptionModelApi", "can_get"],
-        ["TtkEpayAppServiceSubscriptionModelApi", "can_put"],
-        ["TtkEpayAppServiceSubscriptionModelApi", "can_post"],
-        ["TtkEpaySubscriptionApi", "can_post"],
     ]
 }
 

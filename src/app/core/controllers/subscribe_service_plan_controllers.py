@@ -65,10 +65,6 @@ class SubscriptionApi(BaseApi):
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
-
-
-
-
             responses:
                 200:
                     description: Subscription successful
@@ -100,8 +96,6 @@ class SubscriptionApi(BaseApi):
                                             promo_code_id:
                                                 type: integer
                                                 nullable: true
-
-
                                     order_id:
                                         type: string
                                     form_url:
@@ -158,13 +152,10 @@ class SubscriptionApi(BaseApi):
 
             plan_id = data.get("service_plan_selected_id")
             plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
-
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
             promo_code_str = data.get("promo_code")
-            data.get("access_url")
-            data.get("secret_key")
             duration = data.get("duration")
             total_amount = plan.price * duration
             # code promo verification
@@ -185,7 +176,6 @@ class SubscriptionApi(BaseApi):
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price >= 0:
-
                 subscription = Subscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
@@ -214,7 +204,6 @@ class SubscriptionApi(BaseApi):
                 _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
 
             else:  # Case2: unsufficient balance
-
                 subscription = Subscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
