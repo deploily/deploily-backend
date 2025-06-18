@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from flask import request
 from flask_appbuilder.api import BaseApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from sqlalchemy import or_
 
 from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
@@ -26,6 +28,12 @@ class AppServiceModelApi(ServiceModelApi):
         get:
           summary: Get all APP services (base fields + service_plans + medias)
           description: Returns a list of AppService with name, short_description, description, service_plans and medias
+          parameters:
+            - in: query
+              name: search_value
+              schema:
+                type: string
+              required: false
           responses:
             200:
               description: List of AppServices
@@ -55,7 +63,19 @@ class AppServiceModelApi(ServiceModelApi):
             500:
               description: Internal server error
         """
-        services = db.session.query(AppService).all()
+        # services = db.session.query(AppService).all()
+
+        search_value = request.args.get("search_value")
+        query = db.session.query(AppService)
+        if search_value:
+            query = query.filter(
+                or_(
+                    AppService.name.ilike(f"%{search_value}%"),
+                    AppService.description.ilike(f"%{search_value}%"),
+                )
+            )
+
+        services = query.all()
 
         def serialize_service(service):
             return {
