@@ -23,7 +23,7 @@ class ServicePlan(Model):
 
     is_custom = Column(Boolean, default=False)
     subscription_category = Column(Enum("monthly", "yearly", name="subscription_category"))
-    type = Column(Enum("ressource", "app", "api", name="plan_type"))
+    service_plan_type = Column(Enum("ressource", "app", "api", name="plan_type"))
 
     options = relationship(
         "ServicePlanOption",
