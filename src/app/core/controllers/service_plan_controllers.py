@@ -19,7 +19,7 @@ _service_plan_value_display_columns = [
     "plan",
     "options",
     "is_custom",
-    "type",
+    "service_plan_type",
     "provider_info",
 ]
 
