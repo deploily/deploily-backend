@@ -4,9 +4,6 @@ from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token
 from pydantic import BaseModel, ValidationError
 
-from app import db
-from app.core.models.promo_code_models import PromoCode
-
 
 class PromoCodeValidResponse(BaseModel):
     rate: float
@@ -21,6 +18,9 @@ def test_valid_promo_code(client, test_user, app, appbuilder):
     token = create_access_token(test_user.id, expires_delta=False)
 
     with app.app_context():
+        from app import db
+        from app.core.models.promo_code_models import PromoCode
+
         promo = PromoCode(
             code="VALID2025",
             rate=20.0,
@@ -68,6 +68,9 @@ def test_expired_promo_code(client, test_user, app, appbuilder):
     token = create_access_token(test_user.id, expires_delta=False)
 
     with app.app_context():
+        from app import db
+        from app.core.models.promo_code_models import PromoCode
+
         promo = PromoCode(
             code="INVALID2025",
             rate=20.0,
