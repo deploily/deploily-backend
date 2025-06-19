@@ -20,7 +20,7 @@ class ApiTokensModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     ApiTokensModelView,
-    "Aoi Tokens",
+    "Api Tokens",
     icon="fa-solid fa-cogs",
     category="Billing",
 )

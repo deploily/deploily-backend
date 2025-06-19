@@ -1,11 +1,15 @@
 import logging
+import os
 import random
 import string
+from datetime import datetime
 
-from flask import request
+from dateutil.relativedelta import relativedelta  # Requires python-dateutil
+from flask import jsonify, request
 from flask_appbuilder.api import BaseApi, expose
 
 from app import appbuilder, db
+from app.core.models.promo_code_models import PromoCode
 from app.promo_code.models.api_tokens_model import ApiToken
 
 _logger = logging.getLogger(__name__)
@@ -24,6 +28,15 @@ class ClientPromoCodeApi(BaseApi):
             description: |
                 Checks the Authorization header for a valid token.
                 If valid, returns the associated promo code.
+            security:
+                - ApiKeyAuth: []
+            parameters:
+              - name: X-API-KEY
+                in: header
+                required: true
+                schema:
+                    type: string
+                description: API key to access this endpoint
 
             responses:
                 200:
@@ -58,36 +71,60 @@ class ClientPromoCodeApi(BaseApi):
                                     error:
                                         type: string
         """
+
         try:
-            token = request.headers.get("Authorization")
+            token = request.headers.get("X-API-KEY")
+
             if not token:
-                message = "Missing token in Authorization header"
-                return message
+                return (
+                    jsonify(
+                        {"error": "unauthorized", "message": "Missing token in X-API-KEY header"}
+                    ),
+                    401,
+                )
 
-            if token.startswith("Bearer "):
-                token = token[7:]
+            api_token = db.session.query(ApiToken).filter_by(token=token).first()
 
-            api_token = db.session.query(ApiToken).all()
-            for token_obj in api_token:
-                if token_obj.token == token:
-                    print(
-                        f"#################################Valid token found: {len(token_obj.token)}"
-                    )
-                    print(f"#################################Valid token found: {len(token)}")
-                    token_exists = True
-                    break
+            if not api_token:
+                return jsonify({"error": "unauthorized", "message": "Invalid token"}), 401
 
-            if not token_exists:
+            # Generate promo code
+            random_part = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            generated_code = f"{api_token.token_prefix}-{random_part}"
 
-                message = "Invalid token"
-                return message
+            # Get duration from env or default to 3 months
+            try:
+                months = int(os.environ.get("PROMO_CODE_DURATION_MONTHS", 3))
+            except ValueError:
+                _logger.warning("Invalid PROMO_CODE_DURATION_MONTHS env value. Falling back to 3.")
+                months = 3
 
-            generated_code = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            expiration_date = datetime.utcnow() + relativedelta(months=months)
 
-            result = {"promo_code": generated_code}
-            return result
+            promo_code = PromoCode(code=generated_code, expiration_date=expiration_date)
+
+            db.session.add(promo_code)
+            db.session.commit()
+
+            return (
+                jsonify(
+                    {"promo_code": generated_code, "expiration_date": expiration_date.isoformat()}
+                ),
+                200,
+            )
+
         except Exception as e:
-            return self.response_500(message="Server error", error=str(e))
+            _logger.exception("Failed to generate promo code")
+            return (
+                jsonify(
+                    {
+                        "error": "server_error",
+                        "message": "An unexpected error occurred",
+                        "details": str(e),
+                    }
+                ),
+                500,
+            )
 
 
 appbuilder.add_api(ClientPromoCodeApi)
