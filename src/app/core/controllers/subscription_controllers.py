@@ -13,6 +13,7 @@ from flask_jwt_extended import jwt_required
 from app import appbuilder, db
 from app.core.models.service_plan_option_models import ServicePlanOption
 from app.core.models.subscription_models import Subscription
+from app.service_api.models.api_services_model import ApiService
 from app.services.apisix_service import ApiSixService
 from app.utils.utils import get_user
 
@@ -89,10 +90,11 @@ class SubscriptionModelApi(ModelRestApi):
         if not subscribe or not subscribe.service_plan:
             return Response("Subscription or ServicePlan not found", status=400)
 
-        service = subscribe.service_plan.service
+        base_service = subscribe.service_plan.service
 
-        if not service:
+        if not base_service:
             return Response("Service not found", status=400)
+        service = db.session.query(ApiService).filter_by(id=base_service.id).first()
 
         if subscribe.api_key:
             api_key = subscribe.api_key
@@ -135,6 +137,7 @@ class SubscriptionModelApi(ModelRestApi):
                 api_key=api_key,
                 limit_count=limit_config,
                 labels={"service": service.service_slug},
+                group_id=service.apisix_group_id,
             )
             if not response:
                 _logger.error(f"Failed to create API consumer")
