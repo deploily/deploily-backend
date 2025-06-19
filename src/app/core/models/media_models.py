@@ -12,10 +12,10 @@ _logger = logging.getLogger(__name__)
 class Media(Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(255))
-    image = Column(ImageColumn(size=(500, 300, True), thumbnail_size=(30, 30, True)))
+    image = Column(ImageColumn(size=(1000, 500, True), thumbnail_size=(30, 30, True)))
 
-    horizontal_image = Column(ImageColumn(size=(1200, 628, True), thumbnail_size=(60, 31, True)))
-    vertical_image = Column(ImageColumn(size=(1080, 1350, True), thumbnail_size=(54, 68, True)))
+    horizontal_image = Column(ImageColumn(size=(500, 300, True), thumbnail_size=(60, 31, True)))
+    vertical_image = Column(ImageColumn(size=(400, 300, True), thumbnail_size=(54, 68, True)))
     square_image = Column(ImageColumn(size=(1080, 1080, True), thumbnail_size=(60, 60, True)))
 
     category_id = Column(Integer, ForeignKey("service_ressouce_category.id"))

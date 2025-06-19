@@ -97,6 +97,9 @@ class ApiServiceModelApi(ServiceModelApi):
                         "id": media.id,
                         "name": media.title,
                         "image": media.image,
+                        "horizontal_image": media.horizontal_image,
+                        "vertical_image": media.vertical_image,
+                        "square_image": media.square_image,
                     }
                     for media in service.medias
                 ],
