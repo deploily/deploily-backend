@@ -215,6 +215,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     status="active",
                     payment_status="paid",
                     profile_id=profile.id,
+                    url_segment="ttk-epay-app-service-subscription",
                 )
                 db.session.add(subscription)
                 db.session.commit()
@@ -245,6 +246,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     # application_status="processing",
                     payment_status="unpaid",
                     profile_id=profile.id,
+                    url_segment="ttk-epay-app-service-subscription",
                 )
 
                 db.session.add(subscription)
