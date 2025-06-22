@@ -101,7 +101,14 @@ class ClientPromoCodeApi(BaseApi):
 
             expiration_date = datetime.utcnow() + relativedelta(months=months)
 
-            promo_code = PromoCode(code=generated_code, expiration_date=expiration_date)
+            # Get rate from env or default to 100
+            try:
+                rate = int(os.environ.get("PROMO_CODE_RATE", 100))
+            except ValueError:
+                _logger.warning("Invalid PROMO_CODE_RATE env value. Falling back to 100.")
+                rate = 100
+
+            promo_code = PromoCode(code=generated_code, expiration_date=expiration_date, rate=rate)
 
             db.session.add(promo_code)
             db.session.commit()
