@@ -75,4 +75,5 @@ from .service_cicd import models, views, controllers
 from .service_apps import models, views, controllers
 from .service_api import models, views, controllers
 from .core import models, views, controllers
+from .promo_code import models, views, controllers
 from . import services, schedulers

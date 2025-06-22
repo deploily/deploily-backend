@@ -6,7 +6,6 @@ from . import (
     service_plan_views,
     plan_views,
     service_views,
-    promo_code_views,
     subscription_views,
     support_ticket_views,
     payment_views,
@@ -19,6 +18,7 @@ from . import (
     comment_views,
     rating_views,
     media_views,
+    promo_code_views,
 )
 
 appbuilder.add_link(
