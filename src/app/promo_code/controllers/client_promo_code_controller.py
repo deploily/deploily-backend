@@ -99,7 +99,7 @@ class ClientPromoCodeApi(BaseApi):
                 _logger.warning("Invalid PROMO_CODE_DURATION_MONTHS env value. Falling back to 3.")
                 months = 3
 
-            expiration_date = datetime.utcnow() + relativedelta(months=months)
+            expiration_date = datetime.now() + relativedelta(months=months)
 
             # Get rate from env or default to 100
             try:
@@ -108,14 +108,21 @@ class ClientPromoCodeApi(BaseApi):
                 _logger.warning("Invalid PROMO_CODE_RATE env value. Falling back to 100.")
                 rate = 100
 
-            promo_code = PromoCode(code=generated_code, expiration_date=expiration_date, rate=rate)
+            promo_code = PromoCode(
+                code=generated_code,
+                expiration_date=expiration_date.replace(microsecond=0),
+                rate=rate,
+            )
 
             db.session.add(promo_code)
             db.session.commit()
 
             return (
                 jsonify(
-                    {"promo_code": generated_code, "expiration_date": expiration_date.isoformat()}
+                    {
+                        "promo_code": generated_code,
+                        "expiration_date": expiration_date.replace(microsecond=0).isoformat(),
+                    }
                 ),
                 200,
             )
