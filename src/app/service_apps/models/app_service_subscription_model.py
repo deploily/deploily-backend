@@ -17,3 +17,4 @@ class SubscriptionAppService(Subscription):
         Enum("processing", "deployed", name="application_status"),
         default="processing",
     )
+    access_url = Column(String(100))

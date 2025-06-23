@@ -23,6 +23,7 @@ class AppServiceSubscriptionView(ModelView):
         "is_expired",
         "start_date",
         "duration_month",
+        "access_url",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
@@ -39,5 +40,5 @@ appbuilder.add_view(
     AppServiceSubscriptionView,
     "App Service Subscriptions",
     icon="fa-cogs",
-    category="App Subscriptions",
+    category="Operations",
 )

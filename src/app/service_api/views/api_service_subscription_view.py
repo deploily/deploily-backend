@@ -36,5 +36,5 @@ appbuilder.add_view(
     ApiServiceSubscriptionView,
     "Api Service Subscriptions",
     icon="fa-cogs",
-    category="Api Subscriptions",
+    category="Apis",
 )

@@ -38,5 +38,5 @@ appbuilder.add_view(
     TtkEpayAppServiceSubscriptionView,
     "TTK Epay App Subscriptions ",
     icon="fa-cogs",
-    category="App Subscriptions",
+    category="Applications",
 )

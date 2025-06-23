@@ -163,8 +163,8 @@ class SubscriptionApi(BaseApi):
                 )
 
             promo_code_str = data.get("promo_code")
-            data.get("access_url")
-            data.get("secret_key")
+            # data.get("access_url")
+            # data.get("secret_key")
             duration = data.get("duration")
             total_amount = plan.price * duration
             # code promo verification
