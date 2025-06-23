@@ -80,13 +80,9 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
         if not service:
             return Response("Service not found", status=400)
 
-        if subscribe.api_key:
-            api_key = subscribe.api_key
-        else:
-            api_key = uuid.uuid4().hex[:32]
-            # subscribe.api_key = api_key
-            # db.session.commit()
-
+    
+        api_key = uuid.uuid4().hex[:32]
+  
         try:
             consumer_username = f"{service.service_slug}_{slug_user_name}"
             apisix_service = ApiSixService()
@@ -94,7 +90,8 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
                 db.session.query(ServicePlanOption)
                 .filter(
                     ServicePlanOption.option_type == "request_limit",
-                    ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
+                    ServicePlanOption.service_plans.any(
+                        id=subscribe.service_plan.id),
                 )
                 .first()
             )
