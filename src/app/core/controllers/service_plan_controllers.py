@@ -21,6 +21,7 @@ _service_plan_value_display_columns = [
     "is_custom",
     "service_plan_type",
     "provider_info",
+    "preparation_time",
 ]
 
 

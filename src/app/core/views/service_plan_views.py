@@ -18,6 +18,7 @@ class ServicePlanModelView(ModelView):
         "subscription_category",
         "is_custom",
         "service_plan_type",
+        "preparation_time",
     ]
     base_order = ("id", "desc")
 
