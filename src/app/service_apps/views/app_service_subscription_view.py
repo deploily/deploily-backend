@@ -23,7 +23,6 @@ class AppServiceSubscriptionView(ModelView):
         "is_expired",
         "start_date",
         "duration_month",
-        "url_segment",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
