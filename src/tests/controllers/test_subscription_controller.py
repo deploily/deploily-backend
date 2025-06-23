@@ -3,6 +3,7 @@
 import json
 from datetime import datetime
 from typing import Optional, Union
+from unittest.mock import patch
 
 import pytest
 from flask_appbuilder.security.sqla.models import User
@@ -77,12 +78,22 @@ class SubscribeResponse(BaseModel):
     subscription: Subscription
 
 
-def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbuilder):
+@patch("app.core.celery_tasks.send_mail_task.send_mail.delay")
+@patch(
+    "app.service_api.controllers.subscribe_api_service_plan_controllers.render_template",
+    return_value="",
+)
+def test_create_subscribe_with_suffecient_balance(
+    mock_template, mock_send_mail, client, test_user, app, appbuilder
+):
+    # def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbuilder):
     access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
         from app import db
         from app.core.models.payment_profile_models import PaymentProfile
+
+        app.config["NOTIFICATION_EMAIL"] = "deploily40@gmail.com"
 
         user = db.session.get(User, test_user.id)
         payment_profile = PaymentProfile(
@@ -112,18 +123,16 @@ def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbui
         )
         db.session.add(plan)
         db.session.commit()
-        print("Plan created:", plan)
-        print("plan_id:", plan.id)
 
         service_plan = ServicePlan(
             id=1,
             price=100,
             plan_id=plan.id,
+            preparation_time=123,
+            service_id=1,
         )
         db.session.add(service_plan)
         db.session.commit()
-        print("Service Plan created:", service_plan)
-        print("Service Plan created:", service_plan.id)
 
         from app.service_api.controllers.subscribe_api_service_plan_controllers import (
             SubscriptionApi,
@@ -137,8 +146,6 @@ def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbui
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
         )
-        print("Response status code:", response.status_code)
-        print("Response text:", response.text)
 
         assert response.status_code == 200
 
