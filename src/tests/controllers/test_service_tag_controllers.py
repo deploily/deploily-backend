@@ -31,11 +31,10 @@ class ServiceTagListResponse(BaseModel):
 
 
 def test_create_service_tag(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -53,11 +52,10 @@ def test_create_service_tag(client, test_user, app, appbuilder):
 
 
 def test_update_service_tag(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -70,8 +68,7 @@ def test_update_service_tag(client, test_user, app, appbuilder):
 
         assert response.status_code == 200
         try:
-            updated_service = ServiceTagResponse.model_validate_json(
-                response.text)
+            updated_service = ServiceTagResponse.model_validate_json(response.text)
         except ValidationError as e:
             pytest.fail(f"ValidationError occurred on PUT Service Tag : {e}")
 
@@ -79,11 +76,10 @@ def test_update_service_tag(client, test_user, app, appbuilder):
 
 
 def test_get_service_tag(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -99,11 +95,10 @@ def test_get_service_tag(client, test_user, app, appbuilder):
 
 
 def test_delete_service_tag(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -116,11 +111,10 @@ def test_delete_service_tag(client, test_user, app, appbuilder):
 
 
 def test_authenticated_access(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -134,7 +128,7 @@ def test_authenticated_access(client, test_user, app, appbuilder):
 
 def test_unauthenticated_access(client, app, appbuilder):
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 
@@ -147,11 +141,10 @@ def test_unauthenticated_access(client, app, appbuilder):
 
 
 def test_token_expired(client, app, test_user, appbuilder):
-    expired_access_token = create_access_token(
-        test_user.id, expires_delta=timedelta(seconds=-1))
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
 
     with app.app_context():
-        from app.controllers.service_tag_controllers import ServiceTagModelApi
+        from app.core.controllers.service_tag_controllers import ServiceTagModelApi
 
         appbuilder.add_api(ServiceTagModelApi)
 

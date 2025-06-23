@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import json
+from datetime import datetime
+from typing import Optional, Union
 
+import pytest
+from flask_appbuilder.security.sqla.models import User
 from flask_jwt_extended import create_access_token
 from pydantic import BaseModel, ValidationError
 
@@ -21,9 +25,13 @@ from pydantic import BaseModel, ValidationError
   }
 """
 balance_sufficient_request = {
-    "duration": 5,
+    "captcha_token": "6Ldb_i8rAAAAAKHLinX4bNEs8M_kofYlLtDpYuRE",
+    "duration": 0,
+    "payment_method": "string",
     "profile_id": 1,
     "service_plan_selected_id": 1,
+    "total_amount": 0,
+    "start_date": "2025-06-11 14:52:26",
 }
 balance_non_sufficient_request = {
     "form_url": "",
@@ -45,21 +53,22 @@ class Subscription(BaseModel):
     duration_month: int
     id: int
     name: str
-    price: int
-    promo_code_id: int
+    price: float
+    promo_code_id: Optional[int]
     service_plan_id: int
-    start_date: int
-    status: int
-    total_amount: int
+    start_date: Union[str, datetime]
+    status: str
+    total_amount: float
 
 
 class SubscriptionRequest(BaseModel):
     duration: int
     payment_method: str
     profile_id: int
-    promo_code: str
+    promo_code_id: Optional[int]
     service_plan_selected_id: int
     total_amount: int
+    captcha_token: str
 
 
 class SubscribeResponse(BaseModel):
@@ -72,17 +81,62 @@ def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbui
     access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.subscribe_service_plan_controllers import SubscriptionApi
+        from app import db
+        from app.core.models.payment_profile_models import PaymentProfile
+
+        user = db.session.get(User, test_user.id)
+        payment_profile = PaymentProfile(
+            created_by=user,
+            name="Test Profile",
+            last_name="Test Last",
+            profile_type="default",
+            phone="0600000000",
+            is_company=False,
+            address="123 rue test",
+            city="Testville",
+            wilaya="Alger",
+            country="Algeria",
+            postal_code="16000",
+            changed_by_fk=1,
+        )
+        db.session.add(payment_profile)
+        db.session.commit()
+
+        from app.core.models.plan_models import Plan
+        from app.core.models.service_plan_models import ServicePlan
+
+        plan = Plan(
+            id=1,
+            name="Test Plan",
+            description="Plan de test",
+        )
+        db.session.add(plan)
+        db.session.commit()
+
+        service_plan = ServicePlan(
+            id=1,
+            price=100,
+            plan_id=plan.id,
+        )
+        db.session.add(service_plan)
+        db.session.commit()
+
+        from app.core.controllers.subscribe_service_plan_controllers import (
+            SubscriptionApi,
+        )
 
         appbuilder.add_api(SubscriptionApi)
+
         response = client.post(
             "/api/v1/service-subscription/subscribe",
             data=json.dumps(balance_sufficient_request),
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
         )
+
         assert response.status_code == 200
+
         try:
             SubscribeResponse.model_validate_json(response.text)
         except ValidationError as e:
-            pytest.fail(f"ValidationError occurred on POST myfavoriteresponse : {e}")
+            pytest.fail(f"ValidationError occurred on POST response: {e}")
