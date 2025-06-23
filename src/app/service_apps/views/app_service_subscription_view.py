@@ -24,6 +24,7 @@ class AppServiceSubscriptionView(ModelView):
         "duration_month",
         "access_url",
         "service_name",
+        "required_restart",
     ]
 
     base_order = ("id", "desc")

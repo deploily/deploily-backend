@@ -46,7 +46,7 @@ class TtkEpayAppServiceSubscriptionModelApi(AppServiceSubscriptionModelApi):
     add_columns = AppServiceSubscriptionModelApi.add_columns + api_columns
     list_columns = AppServiceSubscriptionModelApi.list_columns + api_columns
     show_columns = AppServiceSubscriptionModelApi.show_columns + api_columns
-    edit_columns = AppServiceSubscriptionModelApi.edit_columns + api_columns
+    edit_columns = api_columns
 
 
 appbuilder.add_api(TtkEpayAppServiceSubscriptionModelApi)

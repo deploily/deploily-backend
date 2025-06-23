@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String
 
 from app.core.models import Subscription
 
@@ -17,4 +17,5 @@ class SubscriptionAppService(Subscription):
         Enum("processing", "deployed", name="application_status"),
         default="processing",
     )
+    required_restart = Column(Boolean, default=False)
     access_url = Column(String(100))
