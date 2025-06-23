@@ -26,11 +26,11 @@ from pydantic import BaseModel, ValidationError
 """
 balance_sufficient_request = {
     "captcha_token": "6Ldb_i8rAAAAAKHLinX4bNEs8M_kofYlLtDpYuRE",
-    "duration": 0,
+    "duration": 1,
     "payment_method": "string",
     "profile_id": 1,
     "service_plan_selected_id": 1,
-    "total_amount": 0,
+    # "total_amount": 0,
     "start_date": "2025-06-11 14:52:26",
 }
 balance_non_sufficient_request = {
@@ -112,6 +112,8 @@ def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbui
         )
         db.session.add(plan)
         db.session.commit()
+        print("Plan created:", plan)
+        print("plan_id:", plan.id)
 
         service_plan = ServicePlan(
             id=1,
@@ -120,19 +122,23 @@ def test_create_subscribe_with_suffecient_balance(client, test_user, app, appbui
         )
         db.session.add(service_plan)
         db.session.commit()
+        print("Service Plan created:", service_plan)
+        print("Service Plan created:", service_plan.id)
 
-        from app.core.controllers.subscribe_service_plan_controllers import (
+        from app.service_api.controllers.subscribe_api_service_plan_controllers import (
             SubscriptionApi,
         )
 
         appbuilder.add_api(SubscriptionApi)
 
         response = client.post(
-            "/api/v1/service-subscription/subscribe",
+            "/api/v1/api-service-subscription/subscribe",
             data=json.dumps(balance_sufficient_request),
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
         )
+        print("Response status code:", response.status_code)
+        print("Response text:", response.text)
 
         assert response.status_code == 200
 
