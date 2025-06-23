@@ -95,13 +95,7 @@ class SubscriptionModelApi(ModelRestApi):
         if not base_service:
             return Response("Service not found", status=400)
         service = db.session.query(ApiService).filter_by(id=base_service.id).first()
-
-        if subscribe.api_key:
-            api_key = subscribe.api_key
-        else:
-            api_key = uuid.uuid4().hex[:32]
-            # subscribe.api_key = api_key
-            # db.session.commit()
+        api_key = uuid.uuid4().hex[:32]
 
         try:
             consumer_username = f"{service.service_slug}_{slug_user_name}"
