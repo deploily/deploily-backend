@@ -81,6 +81,8 @@ class ServicePlanRessourceModelApi(BaseApi):
                 result.append(
                     {
                         "id": plan.id,
+                        "plan_name": plan.plan.name,
+                        "service_name": plan.service.name,
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
                         "preparation_time": plan.preparation_time,
