@@ -9,6 +9,7 @@ from app.service_apps.models.app_service_subscription_model import (
 )
 
 api_columns = ["application_status", "access_url", "required_restart"]
+edit_columns = ["application_status"]
 
 
 class AppServiceSubscriptionModelApi(SubscriptionModelApi):
@@ -18,7 +19,7 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
     add_columns = SubscriptionModelApi.add_columns + api_columns
     list_columns = SubscriptionModelApi.list_columns + api_columns
     show_columns = SubscriptionModelApi.show_columns + api_columns
-    edit_columns = SubscriptionModelApi.edit_columns + api_columns
+    edit_columns = edit_columns
 
 
 appbuilder.add_api(AppServiceSubscriptionModelApi)

@@ -14,7 +14,7 @@ class SubscriptionAppService(Subscription):
     type = Column(String(50), default="subscription_app_service", nullable=False)
 
     application_status = Column(
-        Enum("processing", "deployed", name="application_status"),
+        Enum("processing", "deployed", "error", name="application_status"),
         default="processing",
     )
     required_restart = Column(Boolean, default=False)
