@@ -98,8 +98,19 @@ class AppServiceModelApi(ServiceModelApi):
                 "service_plans": [
                     {
                         "id": plan.id,
-                        "name": plan.plan.name,
                         "price": plan.price,
+                        "options": [
+                            {
+                                "id": option.id,
+                                "option_type": option.option_type,
+                                "option_value": option.option_value,
+                                "icon": option.icon,
+                                "html_content": option.html_content,
+                                "sequence": option.sequence,
+                            }
+                            for option in plan.options
+                        ],
+                        "preparation_time": plan.preparation_time,
                     }
                     for plan in service.service_plans
                 ],
@@ -184,8 +195,19 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "service_plans": [
                     {
                         "id": plan.id,
-                        "name": plan.plan.name,
                         "price": plan.price,
+                        "options": [
+                            {
+                                "id": option.id,
+                                "option_type": option.option_type,
+                                "option_value": option.option_value,
+                                "icon": option.icon,
+                                "html_content": option.html_content,
+                                "sequence": option.sequence,
+                            }
+                            for option in plan.options
+                        ],
+                        "preparation_time": plan.preparation_time,
                     }
                     for plan in service.service_plans
                 ],
