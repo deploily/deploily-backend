@@ -79,6 +79,7 @@ class AppServiceModelApi(ServiceModelApi):
 
         def serialize_service(service):
             return {
+                "id": service.id,
                 "name": service.name,
                 "unit_price": service.unit_price,
                 "short_description": service.short_description,
