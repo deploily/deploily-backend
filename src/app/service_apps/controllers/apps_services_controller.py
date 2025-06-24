@@ -99,6 +99,7 @@ class AppServiceModelApi(ServiceModelApi):
                     {
                         "id": plan.id,
                         "price": plan.price,
+                        "name": plan.plan.name,
                         "options": [
                             {
                                 "id": option.id,
@@ -196,6 +197,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                     {
                         "id": plan.id,
                         "price": plan.price,
+                        "name": plan.plan.name,
                         "options": [
                             {
                                 "id": option.id,
