@@ -16,6 +16,10 @@ api_columns = [
     "recommended_apps",
     "app_slug",
     "min_apps_price",
+    "minimal_cpu",
+    "minimal_ram",
+    "minimal_disk",
+
 ]
 
 
@@ -86,6 +90,7 @@ class AppServiceModelApi(ServiceModelApi):
 
         def serialize_service(service):
             return {
+                "id": service.id,
                 "name": service.name,
                 "unit_price": service.unit_price,
                 "short_description": service.short_description,
@@ -95,6 +100,9 @@ class AppServiceModelApi(ServiceModelApi):
                 "ssh_access": service.ssh_access,
                 "monitoring": service.monitoring,
                 "min_apps_price": service.min_apps_price,
+                "minimal_cpu": service.minimal_cpu,
+                "minimal_ram": service.minimal_ram,
+                "minimal_disk": service.minimal_disk,
                 "average_rating": service.average_rating,
                 "recommended_apps": [
                     {
@@ -105,8 +113,20 @@ class AppServiceModelApi(ServiceModelApi):
                 "service_plans": [
                     {
                         "id": plan.id,
-                        "name": plan.plan.name,
                         "price": plan.price,
+                        "name": plan.plan.name,
+                        "options": [
+                            {
+                                "id": option.id,
+                                "option_type": option.option_type,
+                                "option_value": option.option_value,
+                                "icon": option.icon,
+                                "html_content": option.html_content,
+                                "sequence": option.sequence,
+                            }
+                            for option in plan.options
+                        ],
+                        "preparation_time": plan.preparation_time,
                     }
                     for plan in service.service_plans
                 ],
@@ -183,15 +203,28 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "description": service.description,
                 "image_service": service.image_service,
                 "specifications": service.specifications,
-                "ssh_access": service.ssh_access,
-                "monitoring": service.monitoring,
+                "minimal_cpu": service.minimal_cpu,
+                "minimal_ram": service.minimal_ram,
+                "minimal_disk": service.minimal_disk,
                 "average_rating": service.average_rating,
                 "recommended_apps": [{"id": app.id} for app in service.recommended_apps],
                 "service_plans": [
                     {
                         "id": plan.id,
-                        "name": plan.plan.name,
                         "price": plan.price,
+                        "name": plan.plan.name,
+                        "options": [
+                            {
+                                "id": option.id,
+                                "option_type": option.option_type,
+                                "option_value": option.option_value,
+                                "icon": option.icon,
+                                "html_content": option.html_content,
+                                "sequence": option.sequence,
+                            }
+                            for option in plan.options
+                        ],
+                        "preparation_time": plan.preparation_time,
                     }
                     for plan in service.service_plans
                 ],

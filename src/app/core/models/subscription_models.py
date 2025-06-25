@@ -88,6 +88,11 @@ class Subscription(Model, AuditMixin):
             return {}
 
     @property
+    def service_name(self):
+        details = self.service_details
+        return details.get("name") if isinstance(details, dict) else None
+
+    @property
     def is_expired(self):
         is_subscription_expired = False
         if self.start_date + relativedelta(months=self.duration_month) < datetime.now():

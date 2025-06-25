@@ -3,9 +3,8 @@
 
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from slugify import slugify
 
-from app import appbuilder, db
+from app import appbuilder
 from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
 
 
@@ -27,14 +26,10 @@ class ApiServiceSubscriptionView(ModelView):
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
 
-    def post_add(self, item):
-        item.service_slug = slugify(item.name)
-        db.session.commit()
-
 
 appbuilder.add_view(
     ApiServiceSubscriptionView,
     "Api Service Subscriptions",
     icon="fa-cogs",
-    category="Api Subscriptions",
+    category="Apis",
 )

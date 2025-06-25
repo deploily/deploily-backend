@@ -3,7 +3,7 @@ import os
 import urllib.request
 from datetime import timedelta
 
-from flask_appbuilder.security.manager import AUTH_DB, AUTH_OAUTH
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -57,19 +57,11 @@ FAB_ADD_SECURITY_API = False
 # Your App secret key
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
-IS_DEV = os.environ.get("FLASK_DEBUG")
 
-
-if IS_DEV:
-    JWT_SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
-    JWT_ALGORITHM = "HS256"
-    AUTH_TYPE = AUTH_DB
-    LOGOUT_REDIRECT_URL = ""
-else:
-    JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
-    JWT_ALGORITHM = "RS256"
-    AUTH_TYPE = AUTH_OAUTH
-    LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+JWT_ALGORITHM = "RS256"
+AUTH_TYPE = AUTH_OAUTH
+LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 
 RECAPTCHA_PUBLIC_KEY = ""
