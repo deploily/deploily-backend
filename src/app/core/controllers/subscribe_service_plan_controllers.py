@@ -162,7 +162,9 @@ class SubscriptionApi(BaseApi):
             promo_code_amount = 0
             promo_code = None
             if promo_code_str:
-                promo_code = db.session.query(PromoCode).filter_by(code=promo_code_str).first()
+                promo_code = (
+                    db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
+                )
                 if promo_code:
                     promo_code_amount = (total_amount * promo_code.rate) / 100
 
@@ -219,6 +221,11 @@ class SubscriptionApi(BaseApi):
 
                 db.session.add(subscription)
                 db.session.flush()
+
+                if promo_code:
+                    promo_code.active = False
+                    promo_code.subscription_id = subscription.id
+                    db.session.commit()
 
                 payment = Payment(
                     amount=price,

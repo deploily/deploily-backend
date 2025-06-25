@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import date
+from datetime import date, datetime
 
 from flask_appbuilder import Model
 from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String
@@ -16,6 +16,7 @@ class PromoCode(Model):
         Enum("single_use", "multiple_use", name="promo_usage_type"), default="single_use"
     )
     subscriptions = relationship("Subscription", back_populates="promo_code")
+    create_date = Column(DateTime, default=lambda: datetime.now().replace(microsecond=0))
 
     @property
     def is_valid(self):

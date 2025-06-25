@@ -93,7 +93,8 @@ class Subscription(Model, AuditMixin):
         return is_subscription_expired
 
     def __repr__(self):
-        return str(self.id)
+        # return str(self.id)
+        return f"Subscription/{self.service_plan}/{self.created_by}"
 
 
 def encrypt_api_key(api_key):
