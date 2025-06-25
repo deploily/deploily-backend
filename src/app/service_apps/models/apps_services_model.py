@@ -32,6 +32,11 @@ class AppService(Service):
     )
 
     @property
+    def min_apps_price(self):
+        prices = [plan.price for plan in self.service_plans if plan.price is not None]
+        return min(prices) if prices else None
+
+    @property
     def average_rating(self):
         result = (
             db.session.query(func.avg(Score.rating)).filter(Score.service_id == self.id).scalar()

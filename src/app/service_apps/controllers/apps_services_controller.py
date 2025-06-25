@@ -10,12 +10,16 @@ from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_apps.models.apps_services_model import AppService
 
 api_columns = [
+    "ssh_access",
+    "monitoring",
     "average_rating",
     "recommended_apps",
-    "app_versions",
+    "app_slug",
+    "min_apps_price",
     "minimal_cpu",
     "minimal_ram",
     "minimal_disk",
+
 ]
 
 
@@ -93,6 +97,9 @@ class AppServiceModelApi(ServiceModelApi):
                 "description": service.description,
                 "image_service": service.image_service,
                 "specifications": service.specifications,
+                "ssh_access": service.ssh_access,
+                "monitoring": service.monitoring,
+                "min_apps_price": service.min_apps_price,
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,

@@ -9,7 +9,13 @@ from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_api.models.api_services_model import ApiService
 
-api_columns = ["curl_command", "service_url", "api_playground_url", "average_rating"]
+api_columns = [
+    "curl_command",
+    "service_url",
+    "api_playground_url",
+    "average_rating",
+    "min_appi_price",
+]
 
 
 class ApiServiceModelApi(ServiceModelApi):
@@ -83,6 +89,7 @@ class ApiServiceModelApi(ServiceModelApi):
                 "description": service.description,
                 "image_service": service.image_service,
                 "documentation_url": service.documentation_url,
+                "min_appi_price": service.min_appi_price,
                 "specifications": service.specifications,
                 "service_plans": [
                     {
