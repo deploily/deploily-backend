@@ -19,4 +19,4 @@ class SubscriptionAppService(Subscription):
     )
     required_restart = Column(Boolean, default=False)
     access_url = Column(String(100))
-    error = Column(Text())
+    deployment_error = Column("error", Text())
