@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from flask import current_app, render_template
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, event
+from sqlalchemy.orm import Session as SASession
 from sqlalchemy.orm import object_session
 
 from app import db
+from app.core.celery_tasks.send_mail_task import send_mail
+from app.core.models.mail_models import Mail
 from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
@@ -46,7 +50,7 @@ _pending_deployed_apps = {}
 
 @event.listens_for(TtkEpaySubscriptionAppService, "after_update")
 def mark_for_email(mapper, connection, target):
-    if target.application_status == "deployed":
+    if target.application_status in ["deployed", "error"]:
         session = object_session(target)
         if session:
             session_id = id(session)
@@ -61,62 +65,46 @@ def send_deployed_app_emails(session):
     if not targets:
         return
 
-    # New session to avoid "already flushing" error
-    from flask import current_app, render_template
-    from sqlalchemy.orm import Session
-
-    from app.core.celery_tasks.send_mail_task import send_mail
-    from app.core.models.mail_models import Mail
-
+    # Use a new session for email creation
+    new_session = SASession(bind=db.engine)
     notify_email = current_app.config.get("NOTIFICATION_EMAIL")
-    new_session = Session(bind=db.engine)
 
     try:
         for target in targets:
+            # Skip if user email is missing
+            if not getattr(target.created_by, "email", None):
+                print(f"[WARN] User {target.created_by.id} has no email.")
+                continue
+
             if target.application_status == "deployed":
+                template = "emails/user_application_deployed.html"
+                title = "Your application has been deployed"
+                message = ""
+            else:
+                template = "emails/user_application_failed.html"
+                title = "Your application has failed"
+                message = target.deployment_error
 
-                user_body = render_template(
-                    "emails/user_application_deployed.html",
-                    user=target.created_by,
-                    application=target.name,
-                )
+            # Render email body
+            user_body = render_template(
+                template, user=target.created_by, application=target.name, message=message
+            )
 
-                user_email = Mail(
-                    title="Your application has been deployed",
-                    body=user_body,
-                    email_to=target.created_by.email,
-                    email_from=notify_email,
-                    mail_state="outGoing",
-                )
+            # Create Mail object
+            user_email = Mail(
+                title=title,
+                body=user_body,
+                email_to=target.created_by.email,
+                email_from=notify_email,
+                mail_state="outGoing",
+            )
 
-                new_session.add(user_email)
+            new_session.add(user_email)
+            new_session.flush()  # Assign ID
+            email_id = user_email.id
 
-                new_session.flush()  # Ensure email ID exists
-                send_mail.delay(user_email.id)
-
-                new_session.commit()
-            elif target.application_status == "error":
-
-                user_body = render_template(
-                    "emails/user_application_failed.html",
-                    user=target.created_by,
-                    application=target.name,
-                )
-
-                user_email = Mail(
-                    title="Your application has been failed",
-                    body=user_body,
-                    email_to=target.created_by.email,
-                    email_from=notify_email,
-                    mail_state="outGoing",
-                )
-
-                new_session.add(user_email)
-
-                new_session.flush()  # Ensure email ID exists
-                send_mail.delay(user_email.id)
-
-                new_session.commit()
+            new_session.commit()  # Commit before sending
+            send_mail.delay(email_id)  # Queue for sending
 
     except Exception as e:
         new_session.rollback()

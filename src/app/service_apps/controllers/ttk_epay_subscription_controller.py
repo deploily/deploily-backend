@@ -57,7 +57,7 @@ class TtkEpayAppServiceSubscriptionModelApi(AppServiceSubscriptionModelApi):
         notify_email = current_app.config.get("NOTIFICATION_EMAIL")
 
         # Check if a restart is required but hasn't been flagged yet
-        if not item.required_restart and item.application_status == "deployed":
+        if not item.required_restart and item.application_status in ["deployed", "error"]:
             item.required_restart = True
             db.session.commit()
 
