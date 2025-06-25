@@ -18,12 +18,12 @@ _logger = logging.getLogger(__name__)
 class ClientPromoCodeApi(BaseApi):
     resource_name = "client"
 
-    @expose("/promo-code", methods=["GET"])
+    @expose("/promo-code", methods=["POST"])
     def get_promo_code(self):
         """
         Retrieves a promo code based on the token provided in the Authorization header.
         ---
-        get:
+        post:
             summary: Retrieve promo code using API token
             description: |
                 Checks the Authorization header for a valid token.
