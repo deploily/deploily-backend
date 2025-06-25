@@ -3,9 +3,8 @@
 
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from slugify import slugify
 
-from app import appbuilder, db
+from app import appbuilder
 from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
@@ -23,22 +22,21 @@ class AppServiceSubscriptionView(ModelView):
         "is_expired",
         "start_date",
         "duration_month",
-        "url_segment",
+        "access_url",
+        "service_name",
+        "required_restart",
     ]
+
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
     base_permissions = ["can_list", "can_show"]  # only allow viewing
 
-    def post_add(self, item):
-        item.service_slug = slugify(item.name)
-        db.session.commit()
-
 
 appbuilder.add_view(
     AppServiceSubscriptionView,
     "App Service Subscriptions",
     icon="fa-cogs",
-    category="App Subscriptions",
+    category="Operations",
 )

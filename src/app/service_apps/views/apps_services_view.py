@@ -27,12 +27,13 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "ssh_access",
-        "monitoring",
+        "minimal_cpu",
+        "minimal_ram",
+        "minimal_disk",
         "ratings",
         "recommended_apps",
         "is_illigible",
-        "app_slug",
+        "app_versions",
     ]
     edit_columns = [
         # "category",
@@ -48,12 +49,13 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "ssh_access",
-        "monitoring",
+        "minimal_cpu",
+        "minimal_ram",
+        "minimal_disk",
         "ratings",
         "recommended_apps",
         "is_illigible",
-        "app_slug",
+        "app_versions",
     ]
     show_columns = [
         # "category",
@@ -69,13 +71,13 @@ class AppServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
-        "ssh_access",
-        "monitoring",
+        "minimal_cpu",
+        "minimal_ram",
+        "minimal_disk",
         "ratings",
         "average_rating",
         "recommended_apps",
-        "is_illigible",
-        "app_slug",
+        "app_versions" "is_illigible",
     ]
 
     def post_add(self, item):

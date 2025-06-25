@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text
 
 from app.core.models import Subscription
 
@@ -12,9 +12,11 @@ class SubscriptionAppService(Subscription):
         "polymorphic_identity": "subscription_app_service",
     }
     type = Column(String(50), default="subscription_app_service", nullable=False)
-    url_segment = Column(String, nullable=False)
 
     application_status = Column(
-        Enum("processing", "deployed", name="application_status"),
+        Enum("processing", "deployed", "error", name="application_status"),
         default="processing",
     )
+    required_restart = Column(Boolean, default=False)
+    access_url = Column(String(100))
+    deployment_error = Column("error", Text())

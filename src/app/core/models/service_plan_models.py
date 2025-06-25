@@ -14,6 +14,7 @@ from app.core.models.service_plan_service_plan_option_association import (
 class ServicePlan(Model):
     id = Column(Integer, primary_key=True)
     price = Column(Float)
+    preparation_time = Column(Integer, nullable=False)
 
     service_id = Column(Integer, ForeignKey("service.id"))
     service = relationship("Service")

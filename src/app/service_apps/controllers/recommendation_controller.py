@@ -88,10 +88,13 @@ class PublicAppRecommendationModelApi(BaseApi):  # public version
                                 type: string
                               specifications:
                                 type: string
-                              ssh_access:
-                                type: string
-                              monitoring:
-                                type: string
+                              minimal_cpu:
+                                type: integer
+                              minimal_disk:
+                                type: integer
+                              minimal_ram:
+                                type: integer
+
                               average_rating:
                                 type: number
                               name:
@@ -136,8 +139,9 @@ class PublicAppRecommendationModelApi(BaseApi):  # public version
                     "description": app_service.description,
                     "image_service": app_service.image_service,
                     "specifications": app_service.specifications,
-                    "ssh_access": app_service.ssh_access,
-                    "monitoring": app_service.monitoring,
+                    "minimal_cpu": app_service.minimal_cpu,
+                    "minimal_ram": app_service.minimal_ram,
+                    "minimal_disk": app_service.minimal_disk,
                     "average_rating": app_service.average_rating,
                     "medias": [
                         {
