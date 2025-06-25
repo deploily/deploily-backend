@@ -36,5 +36,14 @@ class ServiceRessouceCategory(Model):
                 }
         return list(unique_providers.values())
 
+    @property
+    def min_category_price(self):
+        for service in self.ressouce_services:
+            min_price = min(
+                (plan.price for plan in service.service_plans if plan.price is not None),
+                default=None,
+            )
+            return min_price if min_price is not None else None
+
     def __repr__(self):
         return self.name
