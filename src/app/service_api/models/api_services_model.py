@@ -26,5 +26,10 @@ class ApiService(Service):
         )
         return round(result, 2) if result is not None else 0.0
 
+    @property
+    def min_appi_price(self):
+        prices = [plan.price for plan in self.service_plans if plan.price is not None]
+        return min(prices) if prices else None
+
     def __repr__(self):
         return f"{self.name} "
