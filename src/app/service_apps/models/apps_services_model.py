@@ -25,6 +25,12 @@ class AppService(Service):
         back_populates="app_services",
     )
 
+    app_versions = relationship(
+        "Version",
+        secondary="app_service_version",
+        back_populates="app_services",
+    )
+
     @property
     def average_rating(self):
         result = (

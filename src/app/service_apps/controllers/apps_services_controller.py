@@ -9,7 +9,14 @@ from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_apps.models.apps_services_model import AppService
 
-api_columns = ["average_rating", "recommended_apps", "minimal_cpu", "minimal_ram", "minimal_disk"]
+api_columns = [
+    "average_rating",
+    "recommended_apps",
+    "app_versions",
+    "minimal_cpu",
+    "minimal_ram",
+    "minimal_disk",
+]
 
 
 class AppServiceModelApi(ServiceModelApi):
