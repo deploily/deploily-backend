@@ -2,7 +2,7 @@
 from datetime import date, datetime
 
 from flask_appbuilder import Model
-from sqlalchemy import Boolean, Column, DateTime, Enum, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -17,6 +17,8 @@ class PromoCode(Model):
     )
     subscriptions = relationship("Subscription", back_populates="promo_code")
     create_date = Column(DateTime, default=lambda: datetime.now().replace(microsecond=0))
+    token_api_id = Column(Integer, ForeignKey("api_token.id"))
+    token_api = relationship("ApiToken")
 
     @property
     def is_valid(self):

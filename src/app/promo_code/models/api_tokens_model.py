@@ -14,4 +14,4 @@ class ApiToken(Model):
     rate = Column(Integer, nullable=False)
 
     def __repr__(self):
-        return f"ApiToken(id={self.id})"
+        return f"{self.token}"

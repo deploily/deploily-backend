@@ -105,6 +105,7 @@ class ClientPromoCodeApi(BaseApi):
                 code=generated_code,
                 expiration_date=expiration_date.replace(microsecond=0),
                 rate=api_token.rate,
+                token_api_id=api_token.id,
             )
 
             db.session.add(promo_code)

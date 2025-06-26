@@ -187,7 +187,11 @@ class TtkEpaySubscriptionApi(BaseApi):
             promo_code_amount = 0
             promo_code = None
             if promo_code_str:
-                promo_code = db.session.query(PromoCode).filter_by(code=promo_code_str).first()
+                promo_code = (
+                    db.session.query(PromoCode)
+                    .filter_by(code=promo_code_str, is_valid=True, active=True)
+                    .first()
+                )
                 if promo_code:
                     promo_code_amount = (total_amount * promo_code.rate) / 100
 
@@ -328,6 +332,15 @@ class TtkEpaySubscriptionApi(BaseApi):
 
                     payment.satim_order_id = satim_order_id
 
+                    db.session.commit()
+
+            if promo_code:
+                if promo_code.usage_type == "single_use":
+                    promo_code.active = False
+                    promo_code.subscription = subscription.id
+                    db.session.commit()
+                else:
+                    promo_code.subscription = subscription.id
                     db.session.commit()
 
             # Email to user
