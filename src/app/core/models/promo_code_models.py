@@ -5,6 +5,8 @@ from flask_appbuilder import Model
 from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
+from app.promo_code.models.api_tokens_model import ApiToken  # noqa: F401
+
 
 class PromoCode(Model):
     id = Column(Integer, primary_key=True)
