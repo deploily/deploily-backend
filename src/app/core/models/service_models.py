@@ -30,7 +30,7 @@ class Service(Model):
     service_slug = Column(String(255), default="temp-slug")
     type = Column(String(50), default="service", nullable=False)
     medias = relationship("Media", back_populates="service", cascade="all, delete-orphan")
-    is_illigible = Column("is_illigible", Boolean, default=True, server_default="1")
+    is_eligible = Column("is_eligible", Boolean, default=True, server_default="1")
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
 
     @property

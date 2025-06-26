@@ -168,10 +168,12 @@ class TtkEpaySubscriptionApi(BaseApi):
             ressource_plan_id = data.get("ressource_service_plan_selected_id")
             ressource_plan = db.session.query(ServicePlan).filter_by(id=ressource_plan_id).first()
 
-            if plan and plan.service and not plan.service.is_illigible:
-                return self.response_400(
-                    message="This service plan is not eligible for subscription"
-                )
+            if profile.profile_type == "default":
+
+                if plan and plan.service and not plan.service.is_eligible:
+                    return self.response_400(
+                        message="This service plan is not eligible for subscription"
+                    )
 
             # todo add new logic here
             if not plan:

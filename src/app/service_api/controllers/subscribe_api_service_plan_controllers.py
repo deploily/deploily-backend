@@ -150,10 +150,12 @@ class SubscriptionApi(BaseApi):
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
-            if plan and plan.service and not plan.service.is_illigible:
-                return self.response_400(
-                    message="This service plan is not eligible for subscription"
-                )
+            if profile.profile_type == "default":
+
+                if plan and plan.service and not plan.service.is_eligible:
+                    return self.response_400(
+                        message="This service plan is not eligible for subscription"
+                    )
 
             promo_code_str = data.get("promo_code")
 

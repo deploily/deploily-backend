@@ -32,7 +32,7 @@ class AppServiceView(ModelView):
         "minimal_disk",
         "ratings",
         "recommended_apps",
-        "is_illigible",
+        "is_eligible",
         "app_versions",
     ]
     edit_columns = [
@@ -54,7 +54,7 @@ class AppServiceView(ModelView):
         "minimal_disk",
         "ratings",
         "recommended_apps",
-        "is_illigible",
+        "is_eligible",
         "app_versions",
     ]
     show_columns = [
@@ -77,7 +77,7 @@ class AppServiceView(ModelView):
         "ratings",
         "average_rating",
         "recommended_apps",
-        "app_versions" "is_illigible",
+        "app_versions" "is_eligible",
     ]
 
     def post_add(self, item):
