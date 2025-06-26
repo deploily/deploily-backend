@@ -1,10 +1,10 @@
 import logging
 
-from flask_appbuilder.api import ModelRestApi, expose
+from flask_appbuilder.api import BaseApi, ModelRestApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.service_apps.models.recommendation import RecommendationAppService
+from app.service_apps.models.app_recommendation_model import RecommendationAppService
 
 _logger = logging.getLogger(__name__)
 
@@ -20,7 +20,14 @@ class RecommendationAppServiceModelApi(ModelRestApi):
     edit_columns = recommendation_display_columns
     exclude_route_methods = ("put", "post", "delete", "info")
 
-    @expose("/get/<int:id>", methods=["GET"])
+
+appbuilder.add_api(RecommendationAppServiceModelApi)
+
+
+class PublicAppRecommendationModelApi(BaseApi):  # public version
+    resource_name = "app-recommendation-public"
+
+    @expose("/<int:id>", methods=["GET"])
     def get_recommendatin_app_services_by_id(self, id):
         """
         ---
@@ -81,10 +88,13 @@ class RecommendationAppServiceModelApi(ModelRestApi):
                                 type: string
                               specifications:
                                 type: string
-                              ssh_access:
-                                type: string
-                              monitoring:
-                                type: string
+                              minimal_cpu:
+                                type: integer
+                              minimal_disk:
+                                type: integer
+                              minimal_ram:
+                                type: integer
+
                               average_rating:
                                 type: number
                               name:
@@ -111,9 +121,16 @@ class RecommendationAppServiceModelApi(ModelRestApi):
                     "service_plans": [
                         {
                             "id": plan.id,
-                            "name": plan.name,
                             "price": plan.price,
-                            "description": plan.description,
+                            "is_custom": plan.is_custom,
+                            "options": [
+                                {
+                                    "id": option.id,
+                                    "name": option.name,
+                                    "value": option.value,
+                                }
+                                for option in plan.options
+                            ],
                         }
                         for plan in app_service.service_plans
                     ],
@@ -122,8 +139,9 @@ class RecommendationAppServiceModelApi(ModelRestApi):
                     "description": app_service.description,
                     "image_service": app_service.image_service,
                     "specifications": app_service.specifications,
-                    "ssh_access": app_service.ssh_access,
-                    "monitoring": app_service.monitoring,
+                    "minimal_cpu": app_service.minimal_cpu,
+                    "minimal_ram": app_service.minimal_ram,
+                    "minimal_disk": app_service.minimal_disk,
                     "average_rating": app_service.average_rating,
                     "medias": [
                         {
@@ -141,4 +159,4 @@ class RecommendationAppServiceModelApi(ModelRestApi):
         return self.response(200, result=result)
 
 
-appbuilder.add_api(RecommendationAppServiceModelApi)
+appbuilder.add_api(PublicAppRecommendationModelApi)

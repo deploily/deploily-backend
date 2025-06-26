@@ -31,6 +31,7 @@ class ApiServiceView(ModelView):
         "api_playground_url",
         "service_slug",
         "ratings",
+        "is_illigible",
     ]
     edit_columns = [
         # "category",
@@ -51,6 +52,7 @@ class ApiServiceView(ModelView):
         "api_playground_url",
         "service_url",
         "ratings",
+        "is_illigible",
     ]
     show_columns = [
         # "category",
@@ -71,6 +73,7 @@ class ApiServiceView(ModelView):
         "api_playground_url",
         "service_slug",
         "ratings",
+        "is_illigible",
     ]
 
     def post_add(self, item):

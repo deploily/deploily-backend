@@ -1,3 +1,5 @@
 from . import apps_services_view
-from . import recommendation_view
-from . import subscription_app_services_view
+from . import app_recommendation_view
+from . import app_service_subscription_view
+from . import ttk_epay_subscription_view
+from . import app_version_view

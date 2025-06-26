@@ -55,6 +55,8 @@ class Subscription(Model, AuditMixin):
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
+    type = Column(String(50), default="subscription")
+    __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 
     @property
     def service_details(self):
@@ -84,6 +86,11 @@ class Subscription(Model, AuditMixin):
         else:
             _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
             return {}
+
+    @property
+    def service_name(self):
+        details = self.service_details
+        return details.get("name") if isinstance(details, dict) else None
 
     @property
     def is_expired(self):
