@@ -9,7 +9,8 @@ from app import appbuilder, db
 from app.core.controllers.service_controllers import ServiceModelApi
 from app.service_api.models.api_services_model import ApiService
 
-api_columns = ["curl_command", "service_url", "api_playground_url", "average_rating"]
+api_columns = ["curl_command", "service_url",
+               "api_playground_url", "average_rating", "is_subscribed"]
 
 
 class ApiServiceModelApi(ServiceModelApi):
