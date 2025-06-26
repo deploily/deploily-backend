@@ -106,7 +106,7 @@ class AppServiceModelApi(ServiceModelApi):
                     for app in service.recommended_apps
                 ],
                 "app_versions": [
-                    {"version": app.name, "description": app.description}
+                    {"id": app.id, "version": app.name, "description": app.description}
                     for app in service.app_versions
                 ],
                 "service_plans": [
@@ -206,7 +206,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
                 "app_versions": [
-                    {"version": app.version, "description": app.description}
+                    {"id": app.id, "version": app.name, "description": app.description}
                     for app in service.app_versions
                 ],
                 "average_rating": service.average_rating,
