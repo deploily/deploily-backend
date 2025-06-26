@@ -8,7 +8,13 @@ from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
 
-api_columns = ["application_status", "access_url", "required_restart", "deployment_error"]
+api_columns = [
+    "application_status",
+    "access_url",
+    "required_restart",
+    "deployment_error",
+    "version",
+]
 edit_columns = ["application_status"]
 
 

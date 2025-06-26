@@ -15,6 +15,7 @@ class Version(Model):
     app_services = relationship(
         "AppService", secondary="app_service_version", back_populates="app_versions"
     )
+    app_subscriptions = relationship("SubscriptionAppService", back_populates="version")
 
     def __repr__(self):
         return f"{self.name}"

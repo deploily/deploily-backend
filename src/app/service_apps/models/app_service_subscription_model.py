@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import Boolean, Column, Enum, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
 
 from app.core.models import Subscription
 
@@ -20,3 +21,6 @@ class SubscriptionAppService(Subscription):
     required_restart = Column(Boolean, default=False)
     access_url = Column(String(100))
     deployment_error = Column("error", Text())
+
+    version_id = Column(Integer, ForeignKey("version.id"))
+    version = relationship("Version", back_populates="app_subscriptions")

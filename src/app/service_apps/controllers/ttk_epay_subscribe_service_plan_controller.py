@@ -10,6 +10,7 @@ from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
+from app.service_apps.models.app_version_model import Version
 from app.service_apps.models.ttk_epay_subscription_model import (
     TtkEpaySubscriptionAppService,
 )
@@ -66,6 +67,11 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
+                                version_selected_id:
+                                    type: integer
+                                    description: ID of the selected version app service
+
+
 
 
 
@@ -106,6 +112,10 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
+                                            version_selected_id:
+                                                type: integer
+                                                description: ID of the selected version app service
+
 
 
 
@@ -154,11 +164,19 @@ class TtkEpaySubscriptionApi(BaseApi):
             profile_id = data.get("profile_id")
             if not profile_id:
                 return self.response_404(message="Profile id is required")
+            version_id = data.get("version_selected_id")
+            if not version_id:
+                return self.response_404(message="Version id is required")
+
             profile = (
                 db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
             )
             if not profile:
                 return self.response_400(message="PaymentProfile not found")
+
+            version = db.session.query(Version).filter_by(id=version_id).first()
+            if not version:
+                return self.response_400(message="Version not found")
 
             if profile.balance is None:
                 return self.response_404(message="Insufficient balance")
@@ -221,6 +239,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     status="active",
                     payment_status="paid",
                     profile_id=profile.id,
+                    version_id=version.id,
                 )
                 db.session.add(subscription)
                 db.session.commit()
@@ -251,6 +270,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     # application_status="processing",
                     payment_status="unpaid",
                     profile_id=profile.id,
+                    version_id=version.id,
                 )
 
                 db.session.add(subscription)
