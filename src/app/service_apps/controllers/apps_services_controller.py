@@ -16,6 +16,7 @@ api_columns = [
     "minimal_cpu",
     "minimal_ram",
     "minimal_disk",
+    "app_versions",
 ]
 
 
