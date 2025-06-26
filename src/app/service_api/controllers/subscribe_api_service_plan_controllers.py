@@ -164,11 +164,9 @@ class SubscriptionApi(BaseApi):
             promo_code = None
             if promo_code_str:
                 promo_code = (
-                    db.session.query(PromoCode)
-                    .filter_by(code=promo_code_str, is_valid=True, active=True)
-                    .first()
+                    db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
                 )
-                if promo_code:
+                if promo_code and promo_code.is_valid:
                     promo_code_amount = (total_amount * promo_code.rate) / 100
 
             price = total_amount - promo_code_amount

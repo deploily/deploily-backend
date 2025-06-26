@@ -229,6 +229,7 @@ FAB_ROLES = {
         ["ApiServiceSubscriptionModelApi", "can_post"],
         ["ApiServiceSubscriptionModelApi", "can_delete"],
         ["ApiServiceSubscriptionModelApi", "can_create_my_service_consumer"],
+        ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
     ]
 }
 
