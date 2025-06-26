@@ -39,12 +39,13 @@ class ApiService(Service):
             db.session.query(Subscription)
             .filter(
                 Subscription.service_plan.has(service_id=self.id),
-                Subscription.created_by_fk == user.id
+                Subscription.created_by_fk == user.id,
+                Subscription.status == "active",
             )
             .first()
         )
 
-        return subscription is not None
+        return subscription is not None and subscription.is_expired==False
 
     def __repr__(self):
         return f"{self.name} "
