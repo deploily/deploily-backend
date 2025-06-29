@@ -10,7 +10,7 @@ api_columns = ["cicd_field", "average_rating"]
 
 
 class CicdServiceModelApi(ServiceModelApi):
-    resource_name = "cicd_service"
+    resource_name = "cicd-service"
     datamodel = SQLAInterface(CicdService)
 
     add_columns = ServiceModelApi.add_columns + api_columns

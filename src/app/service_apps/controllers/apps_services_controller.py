@@ -21,7 +21,7 @@ api_columns = [
 
 
 class AppServiceModelApi(ServiceModelApi):
-    resource_name = "apps_service"
+    resource_name = "app-service"
     datamodel = SQLAInterface(AppService)
 
     add_columns = ServiceModelApi.add_columns + api_columns
