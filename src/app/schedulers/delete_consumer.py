@@ -1,9 +1,9 @@
 import logging
-
+import re
 from app import app, db, scheduler
 from app.core.models import Subscription
 from app.services.apisix_service import ApiSixService
-
+from flask_appbuilder.security.sqla.models import User
 logger = logging.getLogger(__name__)
 
 
@@ -19,18 +19,29 @@ def delete_expired_consumers():
             print(f"Cannot initialize APISIX client: {e}")
             return
 
-        subscriptions = db.session.query(Subscription).all()
+        subscriptions = db.session.query(Subscription).filter(
+            Subscription.created_by_fk != None).all()
+
+        deleted_usernames = set()
         for sub in subscriptions:
             if sub.is_expired:
-                deleted_usernames = set()
 
                 user = sub.created_by
-
+                if not user.id:
+                    user = db.session.query(User).filter_by(
+                        username=user.username).first()
+                    if not user or not user.id:
+                        logger.error(
+                            f"User ID not found for subscription ID {sub.id}")
+                        continue
+                user_name = user.username
+                slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
+                service_slug = sub.service_plan.service.service_slug
+                consumer_username = f"{service_slug}_{slug_user_name}"
                 if not user:
-                    logger.warning(f"No user found for subscription ID {sub.id}")
+                    logger.warning(
+                        f"No user found for subscription ID {sub.id}")
                     continue
-
-                consumer_username = user.username
 
                 if consumer_username in deleted_usernames:
                     continue
@@ -38,6 +49,5 @@ def delete_expired_consumers():
                 apisix.delete_consumer(username=consumer_username)
                 print(f"[CRON] Deleted consumer: {consumer_username}")
                 deleted_usernames.add(consumer_username)
-
             else:
                 print("[CRON] No expired subscriptions found.")
