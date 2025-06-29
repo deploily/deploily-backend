@@ -24,3 +24,4 @@ class SubscriptionAppService(Subscription):
 
     version_id = Column(Integer, ForeignKey("version.id"))
     version = relationship("Version", back_populates="app_subscriptions")
+    console_url = Column(String)
