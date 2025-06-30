@@ -22,7 +22,8 @@ from sqlalchemy.orm import relationship
 
 # from app.core.models.service_models import Service
 
-FERNET_KEY = os.getenv("FERNET_KEY", "QkqrpIbcUuQ_5Ho25VEv5oPFN4IVuOYojOMwneVbZNQ=")
+FERNET_KEY = os.getenv(
+    "FERNET_KEY", "QkqrpIbcUuQ_5Ho25VEv5oPFN4IVuOYojOMwneVbZNQ=")
 
 encryptor = Fernet(FERNET_KEY)
 
@@ -52,7 +53,8 @@ class Subscription(Model, AuditMixin):
     promo_code = relationship("PromoCode", back_populates="subscriptions")
     api_key = Column("api_key", String(255))
     is_encrypted = Column(Boolean, default=False)
-    payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
+    payments = relationship(
+        "Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
 
@@ -82,7 +84,8 @@ class Subscription(Model, AuditMixin):
 
             return service_json
         else:
-            _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
+            _logger.warning(
+                "Service or service_plan is None for MyService ID %d", self.id)
             return {}
 
     @property

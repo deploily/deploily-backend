@@ -42,7 +42,8 @@ class SubscriptionModelApi(ModelRestApi):
     add_columns = _subscribe_display_columns
     list_columns = _subscribe_display_columns
     show_columns = _subscribe_display_columns
-    edit_columns = [col for col in _subscribe_display_columns if col != "is_expired"]
+    edit_columns = [
+        col for col in _subscribe_display_columns if col != "is_expired"]
     _exclude_columns = [
         "created_on",
         "changed_on",
@@ -85,7 +86,8 @@ class SubscriptionModelApi(ModelRestApi):
         user_name = user.username
         slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
 
-        subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
+        subscribe = db.session.query(Subscription).filter(
+            Subscription.id == subscribe_id).first()
 
         if not subscribe or not subscribe.service_plan:
             return Response("Subscription or ServicePlan not found", status=400)
@@ -94,17 +96,21 @@ class SubscriptionModelApi(ModelRestApi):
 
         if not base_service:
             return Response("Service not found", status=400)
-        service = db.session.query(ApiService).filter_by(id=base_service.id).first()
+        service = db.session.query(ApiService).filter_by(
+            id=base_service.id).first()
         api_key = uuid.uuid4().hex[:32]
+        plan_name = re.sub(r"[^a-zA-Z0-9]", "",
+                           subscribe.service_plan.plan.name.lower())
 
         try:
-            consumer_username = f"{service.service_slug}_{slug_user_name}"
+            consumer_username = f"{service.service_slug}_{plan_name}_{slug_user_name}"
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
                 .filter(
                     ServicePlanOption.option_type == "request_limit",
-                    ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
+                    ServicePlanOption.service_plans.any(
+                        id=subscribe.service_plan.id),
                 )
                 .first()
             )
