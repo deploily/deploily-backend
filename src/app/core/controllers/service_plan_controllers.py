@@ -66,37 +66,15 @@ class ServicePlanRessourceModelApi(BaseApi):
         """
         try:
 
-            # ressources_services = (
-            #     db.session.query(RessourceService)
-            #     .join(RessourceService.ressouce_category)
-            #     .filter(
-            #         RessourceService.type == "ressource_service",
-            #         ServiceRessouceCategory.category_type == "vps",
-            #     )
-            #     .all()
-            # )
-
             ressources_services = (
                 db.session.query(RessourceService)
+                .join(RessourceService.ressouce_category)
                 .filter(
                     RessourceService.type == "ressource_service",
-                )
-                .all()
-            )
-
-            print("####################################")
-            print(ressources_services)
-
-            ressources_services_category = (
-                db.session.query(ServiceRessouceCategory)
-                .filter(
                     ServiceRessouceCategory.category_type == "vps",
                 )
                 .all()
             )
-
-            print("####################################")
-            print(ressources_services_category)
 
             if not ressources_services:
                 return self.response(200, result=[])
@@ -108,8 +86,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                 )
                 .all()
             )
-            print("####################################")
-            print(vps_ressources_plans)
+
             if not vps_ressources_plans:
                 return self.response(200, result=[])
 
