@@ -73,6 +73,8 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .all()
             )
 
+            _logger.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            _logger.info(vps_ressources)
             if not vps_ressources:
                 return self.response(200, result="no vps resources are found")
 
