@@ -7,6 +7,10 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
 from app.core.models.service_plan_models import ServicePlan
+from app.service_ressources.models.services_ressources_category_model import (
+    ServiceRessouceCategory,
+)
+from app.service_ressources.models.services_ressources_model import RessourceService
 
 _logger = logging.getLogger(__name__)
 
@@ -39,7 +43,7 @@ appbuilder.add_api(ServicePlanModelApi)
 
 
 class ServicePlanRessourceModelApi(BaseApi):
-    resource_name = "service-plan-ressource"
+    resource_name = "service-plan-ressource-vps"
 
     @expose("/all", methods=["GET"])
     def get_all_ressource_plan(self):
@@ -61,10 +65,24 @@ class ServicePlanRessourceModelApi(BaseApi):
                     description: Internal server error
         """
         try:
-            query = db.session.query(ServicePlan).filter(
-                ServicePlan.service_plan_type == "ressource"
+
+            vps_ressources = (
+                db.session.query(RessourceService)
+                .join(RessourceService.ressouce_category)
+                .filter(ServiceRessouceCategory.category_type == "vps")
+                .all()
             )
-            plans = query.all()
+
+            if not vps_ressources:
+                return self.response(200, result="no vps resources are found")
+
+            vps_ressources_plans = (
+                db.session.query(ServicePlan)
+                .filter(ServicePlan.service_id.in_([ressource.id for ressource in vps_ressources]))
+                .all()
+            )
+            if not vps_ressources_plans:
+                return self.response(200, result="no vps ressouce plans are found")
 
             def serialize_option(option):
                 return {
@@ -77,7 +95,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                 }
 
             result = []
-            for plan in plans:
+            for plan in vps_ressources_plans:
                 result.append(
                     {
                         "id": plan.id,
