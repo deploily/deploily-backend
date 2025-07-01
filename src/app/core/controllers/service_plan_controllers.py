@@ -66,21 +66,21 @@ class ServicePlanRessourceModelApi(BaseApi):
         """
         try:
 
-            vps_ressources = (
+            ressources_services = (
                 db.session.query(RessourceService)
                 .join(RessourceService.ressouce_category)
-                .filter(ServiceRessouceCategory.category_type == "vps")
+                .filter(
+                    RessourceService.type == "ressource_service",
+                    ServiceRessouceCategory.category_type == "vps",
+                )
                 .all()
             )
 
-            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            print(vps_ressources)
-            if not vps_ressources:
-                return self.response(200, result=[])
-
             vps_ressources_plans = (
                 db.session.query(ServicePlan)
-                .filter(ServicePlan.service_id.in_([ressource.id for ressource in vps_ressources]))
+                .filter(
+                    ServicePlan.service_id.in_([ressource.id for ressource in ressources_services])
+                )
                 .all()
             )
             if not vps_ressources_plans:
