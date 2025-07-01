@@ -73,10 +73,10 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .all()
             )
 
-            _logger.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            _logger.info(vps_ressources)
+            print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            print(vps_ressources)
             if not vps_ressources:
-                return self.response(200, result="no vps resources are found")
+                return self.response(200, result=[])
 
             vps_ressources_plans = (
                 db.session.query(ServicePlan)
