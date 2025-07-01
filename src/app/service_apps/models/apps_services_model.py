@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, ForeignKey, Integer, Text, func
+from sqlalchemy import Column, ForeignKey, Integer, func
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -15,14 +15,26 @@ class AppService(Service):
         "polymorphic_identity": "app_service",
     }
 
-    ssh_access = Column(Text)
-    monitoring = Column(Text)
+    minimal_cpu = Column(Integer, nullable=False)
+    minimal_ram = Column(Integer, nullable=False)
+    minimal_disk = Column(Integer, nullable=False)
     # many-to-many relationship
     recommended_apps = relationship(
         "RecommendationAppService",
         secondary="app_service_recommendation",
         back_populates="app_services",
     )
+
+    app_versions = relationship(
+        "Version",
+        secondary="app_service_version",
+        back_populates="app_services",
+    )
+
+    @property
+    def min_app_price(self):
+        prices = [plan.price for plan in self.service_plans if plan.price is not None]
+        return min(prices) if prices else None
 
     @property
     def average_rating(self):

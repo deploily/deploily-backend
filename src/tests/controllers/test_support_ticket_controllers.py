@@ -11,19 +11,16 @@ supprot_ticket_data = {
     "title": "Test SupportTiket",
     "description": "This is a test of support ticket",
     "status": "open",
-    "cart_line_id": 1,
     "support_ticket_responses": [{"message": "ss1"}, {"message": "ss2"}],
 }
 
-updated_support_ticket_data = {
-    "title": "Updated SupportTiket", "status": "closed"}
+updated_support_ticket_data = {"title": "Updated SupportTiket", "status": "closed"}
 
 
 class SupportTiket(BaseModel):
     title: str
     description: str
     status: str
-    cart_line_id: Optional[int] = None
     image: Optional[str] = None
     support_ticket_responses: Optional[list] = []
 
@@ -39,16 +36,17 @@ class SupportTiketListResponse(BaseModel):
 
 
 def test_create_supprotticket(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.post(
-            "/api/v1/supportticket/",
+            "/api/v1/support-ticket/",
             data=json.dumps(supprot_ticket_data),
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
@@ -61,16 +59,17 @@ def test_create_supprotticket(client, test_user, app, appbuilder):
 
 
 def test_update_supportticket(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.put(
-            f"/api/v1/supportticket/{1}",
+            f"/api/v1/support-ticket/{1}",
             data=json.dumps(updated_support_ticket_data),
             content_type="application/json",
             headers={"Authorization": f"Bearer {access_token}"},
@@ -78,8 +77,7 @@ def test_update_supportticket(client, test_user, app, appbuilder):
 
         assert response.status_code == 200
         try:
-            updated_service = SupportTiketResponse.model_validate_json(
-                response.text)
+            updated_service = SupportTiketResponse.model_validate_json(response.text)
         except ValidationError as e:
             pytest.fail(f"ValidationError occurred on PUT Service : {e}")
 
@@ -87,16 +85,17 @@ def test_update_supportticket(client, test_user, app, appbuilder):
 
 
 def test_get_supportticket(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.get(
-            "/api/v1/supportticket/",
+            "/api/v1/support-ticket/",
             headers={"Authorization": f"Bearer {access_token}"},
         )
         assert response.status_code == 200
@@ -107,16 +106,17 @@ def test_get_supportticket(client, test_user, app, appbuilder):
 
 
 def test_delete_supportticket(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.delete(
-            f"/api/v1/supportticket/{1}",
+            f"/api/v1/support-ticket/{1}",
             headers={"Authorization": f"Bearer {access_token}"},
         )
 
@@ -124,16 +124,17 @@ def test_delete_supportticket(client, test_user, app, appbuilder):
 
 
 def test_authenticated_access(client, test_user, app, appbuilder):
-    access_token = create_access_token(
-        test_user.id, expires_delta=False, fresh=True)
+    access_token = create_access_token(test_user.id, expires_delta=False, fresh=True)
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.get(
-            "/api/v1/supportticket/",
+            "/api/v1/support-ticket/",
             headers={"Authorization": f"Bearer {access_token}"},
         )
 
@@ -142,12 +143,14 @@ def test_authenticated_access(client, test_user, app, appbuilder):
 
 def test_unauthenticated_access(client, app, appbuilder):
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.get(
-            "/api/v1/supportticket/",
+            "/api/v1/support-ticket/",
             headers={},
         )
 
@@ -155,16 +158,17 @@ def test_unauthenticated_access(client, app, appbuilder):
 
 
 def test_token_expired(client, app, test_user, appbuilder):
-    expired_access_token = create_access_token(
-        test_user.id, expires_delta=timedelta(seconds=-1))
+    expired_access_token = create_access_token(test_user.id, expires_delta=timedelta(seconds=-1))
 
     with app.app_context():
-        from app.controllers.supprot_ticket_controllers import SupportTicketModelApi
+        from app.core.controllers.supprot_ticket_controllers import (
+            SupportTicketModelApi,
+        )
 
         appbuilder.add_api(SupportTicketModelApi)
 
         response = client.get(
-            "/api/v1/supportticket/",
+            "/api/v1/support-ticket/",
             headers={"Authorization": f"Bearer {expired_access_token}"},
         )
 

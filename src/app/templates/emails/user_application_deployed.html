@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Affiliation confirmée</title>
+    <title>Déploiement de l'application</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,42 +77,29 @@
     </div>
 
     <div class="email-body">
-        <h2>Bonjour {{ user.first_name }},</h2>
-        <p>Notre équipe vous contactera dans les plus brefs délais.<br>
-            Vous pouvez également nous joindre au <strong>(+213) 043-78-84-69</strong> ou au <strong>(+213) 0661-55-77-30</strong> pour toute question ou information complémentaire.</p>
-        <ul>
-            <li><strong>Fournisseur :</strong> {{ provider.name }}</li>
-            <li><strong>Site Web :</strong> <a href="{{ provider.website }}">{{ provider.website }}</a></li>
-            <li><strong>Email Support :</strong> {{ provider.mail_support }}</li>
-            <li><strong>Email Commercial :</strong> {{ provider.mail_sales }}</li>
-            <li><strong>Téléphone :</strong> {{ provider.phone_support }}</li>
-            <li><strong>Montant total :</strong> {{ total_price }} DA</li>
-
-
-        </ul>
-
-        {% if provider.subscription_url %}
-    <div style="margin: 30px 0; padding: 20px; background-color: #f8f9fa; border-left: 5px solid #0d6efd; border-radius: 6px;">
-        <p style="font-size: 16px; margin: 0;">
-            🙏 <strong>Prière d’utiliser le lien ci-dessous pour créer votre compte et bénéficier d’une remise de 5 %.</strong>
+        <h2>Déploiement de l'application terminé</h2>
+        <p>
+            Bonjour <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }}),
         </p>
-        <p style="margin-top: 10px;">
-            <a href="{{ provider.subscription_url }}" style="color: white; background-color: #0d6efd; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
-                👉 Je crée mon compte et bénéficie de 5 %
-            </a>
+        <p>
+            Nous sommes heureux de vous informer que l'application <strong>{{ application }}</strong> a été déployée avec succès et est maintenant en ligne.
         </p>
-    </div>
-{% endif %}
-
-
-        <p>Nous restons à votre disposition pour toute assistance complémentaire.</p>
-        <p>Merci pour votre confiance.</p>
+        <p>
+            Vous pouvez accéder à votre application et commencer à l'utiliser immédiatement.
+        </p>
+        <p>
+            Notre équipe reste à votre disposition en cas de besoin ou si une action complémentaire est nécessaire.
+        </p>
+        <p>
+            Merci pour votre confiance.<br>
+            — L’équipe Deploily
+        </p>
     </div>
 
     <div class="email-footer">
         <p><strong>Deploily</strong> – Deploy to sovereign infrastructure</p>
         <p>📧 <a href="mailto:deploily@transformatek.dz">deploily@transformatek.dz</a> | 🌐 <a href="https://console.deploily.cloud">https://console.deploily.cloud</a></p>
-        <p>📍 N°21, Bloc E3, Ilot 10, Cité 220 logments CNEP, Ain Témouchent, Algérie</p>
+        <p>📍 N°21, Bloc E3, Ilot 10, Cité 220 logements CNEP, Ain Témouchent, Algérie</p>
 
         <div class="social-icons">
             <a href="https://www.facebook.com/deploily" target="_blank">

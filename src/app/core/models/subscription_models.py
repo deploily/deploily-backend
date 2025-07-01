@@ -55,6 +55,8 @@ class Subscription(Model, AuditMixin):
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
+    type = Column(String(50), default="subscription")
+    __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 
     @property
     def service_details(self):
@@ -86,6 +88,11 @@ class Subscription(Model, AuditMixin):
             return {}
 
     @property
+    def service_name(self):
+        details = self.service_details
+        return details.get("name") if isinstance(details, dict) else None
+
+    @property
     def is_expired(self):
         is_subscription_expired = False
         if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
@@ -93,7 +100,8 @@ class Subscription(Model, AuditMixin):
         return is_subscription_expired
 
     def __repr__(self):
-        return str(self.id)
+        # return str(self.id)
+        return f"Subscription/{self.service_plan}/{self.created_by}"
 
 
 def encrypt_api_key(api_key):

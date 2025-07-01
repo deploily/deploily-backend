@@ -77,6 +77,8 @@ class PromoCodeApi(BaseApi):
 
         if not promo:
             return jsonify({"error": "Invalid promo code"}), 404
+        if not promo.active:
+            return jsonify({"error": "Inactive promo code"}), 400
 
         if not promo.is_valid:
             return jsonify({"error": "Expired promo code"}), 400

@@ -59,6 +59,16 @@ FAB_ADD_SECURITY_API = False
 # Your App secret key
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
+
+JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+JWT_ALGORITHM = "RS256"
+AUTH_TYPE = AUTH_OAUTH
+LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+
+
+RECAPTCHA_PUBLIC_KEY = ""
+RECAPTCHA_PRIVATE_KEY = ""
+
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
@@ -71,6 +81,7 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
     {"url": "http://192.168.1.22:5000"},
     {"url": "http://192.168.1.21:5000"},
+    {"url": "http://192.168.1.15:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -208,6 +219,19 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
         ["UserModelApi", "can_get"],
+        ["AppRecommendationModelApi", "can_get"],
+        ["AppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_put"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_post"],
+        ["TtkEpaySubscriptionApi", "can_post"],
+        ["ApiServiceSubscriptionModelApi", "can_get"],
+        ["ApiServiceSubscriptionModelApi", "can_put"],
+        ["ApiServiceSubscriptionModelApi", "can_post"],
+        ["ApiServiceSubscriptionModelApi", "can_delete"],
+        ["ApiServiceSubscriptionModelApi", "can_create_my_service_consumer"],
+        ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
+        ["PromoCodeApi", "can_check_promo_code"],
     ]
 }
 

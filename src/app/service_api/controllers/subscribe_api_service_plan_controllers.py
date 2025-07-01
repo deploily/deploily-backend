@@ -8,14 +8,9 @@ from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
-from app.core.models import (
-    Payment,
-    PaymentProfile,
-    PromoCode,
-    ServicePlan,
-    Subscription,
-)
+from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
+from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
 from app.services.payment_service import PaymentService
 from app.utils.utils import get_user
 
@@ -23,7 +18,7 @@ _logger = logging.getLogger(__name__)
 
 
 class SubscriptionApi(BaseApi):
-    resource_name = "service-subscription"
+    resource_name = "api-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()
@@ -155,15 +150,25 @@ class SubscriptionApi(BaseApi):
             if not plan:
                 return self.response_400(message="Service Plan not found")
 
+            if profile.profile_type == "default":
+
+                if plan and plan.service and not plan.service.is_eligible:
+                    return self.response_400(
+                        message="This service plan is not eligible for subscription"
+                    )
+
             promo_code_str = data.get("promo_code")
+
             duration = data.get("duration")
             total_amount = plan.price * duration
             # code promo verification
             promo_code_amount = 0
             promo_code = None
             if promo_code_str:
-                promo_code = db.session.query(PromoCode).filter_by(code=promo_code_str).first()
-                if promo_code:
+                promo_code = (
+                    db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
+                )
+                if promo_code and promo_code.is_valid:
                     promo_code_amount = (total_amount * promo_code.rate) / 100
 
             price = total_amount - promo_code_amount
@@ -176,7 +181,7 @@ class SubscriptionApi(BaseApi):
             # Balance verification
             # Case1: Sufficient balance
             if profile.balance - price >= 0:
-                subscription = Subscription(
+                subscription = ApiServiceSubscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
@@ -204,7 +209,8 @@ class SubscriptionApi(BaseApi):
                 _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
 
             else:  # Case2: unsufficient balance
-                subscription = Subscription(
+
+                subscription = ApiServiceSubscription(
                     name=plan.plan.name,
                     start_date=datetime.now(),
                     total_amount=total_amount,
@@ -298,6 +304,14 @@ class SubscriptionApi(BaseApi):
 
                     payment.satim_order_id = satim_order_id
 
+                    db.session.commit()
+            if promo_code:
+                if promo_code.usage_type == "single_use":
+                    promo_code.active = False
+                    promo_code.subscription = subscription.id
+                    db.session.commit()
+                else:
+                    promo_code.subscription = subscription.id
                     db.session.commit()
 
             # Email to user

@@ -4,20 +4,20 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.service_apps.models.recommendation import RecommendationAppService
+from app.service_apps.models.app_version_model import Version
 
 
-class RecommendationModelView(ModelView):
-    route_base = "/admin/recommendation"
-    datamodel = SQLAInterface(RecommendationAppService)
+class AppVersionModelView(ModelView):
+    route_base = "/admin/app-version"
+    datamodel = SQLAInterface(Version)
     list_columns = ["id", "app_services"]
     base_order = ("id", "desc")
 
 
 db.create_all()
 appbuilder.add_view(
-    RecommendationModelView,
-    "Recommendation",
+    AppVersionModelView,
+    "App Version",
     icon="fa-solid fa-cogs",
     category="Operations",
 )

@@ -15,7 +15,7 @@ api_columns = [
 
 
 class RessourcesServiceModelApi(ServiceModelApi):
-    resource_name = "ressource_service"
+    resource_name = "ressource-service"
     datamodel = SQLAInterface(RessourceService)
 
     add_columns = ServiceModelApi.add_columns + api_columns

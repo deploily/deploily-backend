@@ -73,33 +73,33 @@ class AccountFundingApi(BaseApi):
                 return self.response_400(message="User not found")
 
             data = request.get_json(silent=True)
+            payment_method = data.get("payment_method", "card")
             if not data:
                 return self.response_400(message="Invalid request data")
+            if payment_method == "card":
+                # ✅ reCAPTCHA Verification
+                captcha_token = data.get("captcha_token")
+                if not captcha_token:
+                    return self.response_400(message="Missing CAPTCHA token")
 
-            # ✅ reCAPTCHA Verification
-            captcha_token = data.get("captcha_token")
-            if not captcha_token:
-                return self.response_400(message="Missing CAPTCHA token")
+                verify_url = "https://www.google.com/recaptcha/api/siteverify"
+                payload = {
+                    "secret": current_app.config["CAPTCHA_SECRET_KEY"],
+                    "response": captcha_token,
+                }
 
-            verify_url = "https://www.google.com/recaptcha/api/siteverify"
-            payload = {
-                "secret": current_app.config["CAPTCHA_SECRET_KEY"],
-                "response": captcha_token,
-            }
+                try:
+                    captcha_response = requests.post(verify_url, data=payload)
+                    captcha_result = captcha_response.json()
+                except Exception:
+                    _logger.error("Failed to contact reCAPTCHA", exc_info=True)
+                    return self.response_500(message="CAPTCHA verification error")
 
-            try:
-                captcha_response = requests.post(verify_url, data=payload)
-                captcha_result = captcha_response.json()
-            except Exception:
-                _logger.error("Failed to contact reCAPTCHA", exc_info=True)
-                return self.response_500(message="CAPTCHA verification error")
-
-            if not captcha_result.get("success"):
-                return self.response_400(message="CAPTCHA verification failed")
+                if not captcha_result.get("success"):
+                    return self.response_400(message="CAPTCHA verification failed")
 
             profile_id = data.get("profile_id")
             total_amount = data.get("total_amount")
-            payment_method = data.get("payment_method", "card")
 
             if not profile_id:
                 return self.response_400(message="Profile ID is required")

@@ -10,7 +10,7 @@ from app.promo_code.models.api_tokens_model import ApiToken
 class ApiTokensModelView(ModelView):
     route_base = "/admin/api-tokens"
     datamodel = SQLAInterface(ApiToken)
-    list_columns = ["id", "partner", "token"]
+    list_columns = ["id", "partner", "token", "rate"]
     base_order = ("id", "desc")
 
 

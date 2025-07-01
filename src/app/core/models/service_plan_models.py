@@ -12,6 +12,7 @@ from app.core.models.service_plan_service_plan_option_association import (
 class ServicePlan(Model):
     id = Column(Integer, primary_key=True)
     price = Column(Float)
+    preparation_time = Column(Integer, nullable=False)
 
     service_id = Column(Integer, ForeignKey("service.id"))
     service = relationship("Service")
@@ -21,6 +22,7 @@ class ServicePlan(Model):
 
     is_custom = Column(Boolean, default=False)
     subscription_category = Column(Enum("monthly", "yearly", name="subscription_category"))
+    service_plan_type = Column(Enum("ressource", "app", "api", name="plan_type"))
 
     options = relationship(
         "ServicePlanOption",

@@ -10,7 +10,6 @@ from . import (
     service_controllers,
     service_plan_controllers,
     service_tag_controllers,
-    subscribe_service_plan_controllers,
     subscription_controllers,
     support_ticket_response_controllers,
     supprot_ticket_controllers,

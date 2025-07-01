@@ -25,6 +25,7 @@ class ProvidersRessourceService(Model):
     phone_support = Column(String(50))
     phone_sales = Column(String(50))
     phone_partnership = Column(String(50))
+    subscription_url = Column(String(255))
     ressource_services = relationship("RessourceService", back_populates="provider")
     affiliations = relationship("Affiliation", back_populates="provider")
 

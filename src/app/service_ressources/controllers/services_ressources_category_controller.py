@@ -22,6 +22,7 @@ _service_category_value_display_columns = [
     "ressouce_services",
     "list_providers",
     "logo",
+    "min_category_price",
 ]
 
 
@@ -109,6 +110,7 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "name": cat.name,
                     "short_description": cat.short_description,
                     "logo": cat.logo,
+                    "min_category_price": cat.min_category_price,
                     "description": cat.description,
                     "providers_list": cat.list_providers,
                     # "ressource_services": [
@@ -117,7 +119,6 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "medias": [serialize_sqlalchemy_obj(m) for m in cat.medias],
                 }
             )
-
         return self.response(200, result=result)
 
 
