@@ -75,6 +75,10 @@ class ServicePlanRessourceModelApi(BaseApi):
                 )
                 .all()
             )
+            print("####################################")
+            print(ressources_services)
+            if not ressources_services:
+                return self.response(200, result=[])
 
             vps_ressources_plans = (
                 db.session.query(ServicePlan)
@@ -83,8 +87,10 @@ class ServicePlanRessourceModelApi(BaseApi):
                 )
                 .all()
             )
+            print("####################################")
+            print(vps_ressources_plans)
             if not vps_ressources_plans:
-                return self.response(200, result="no vps ressouce plans are found")
+                return self.response(200, result=[])
 
             def serialize_option(option):
                 return {
