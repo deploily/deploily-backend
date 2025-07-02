@@ -55,6 +55,8 @@ class Subscription(Model, AuditMixin):
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
+    is_upgrade = Column(Boolean, default=False)
+    is_renew = Column(Boolean, default=False)
     type = Column(String(50), default="subscription")
     __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 

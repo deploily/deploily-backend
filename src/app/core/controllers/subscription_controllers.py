@@ -59,101 +59,118 @@ class SubscriptionModelApi(ModelRestApi):
 
     # @protect()
     # @jwt_required()
-    # @expose("/<int:subscribe_id>/token", methods=["POST"])
-    # def create_my_service_consumer(self, subscribe_id):
-    #     """
-    #     Creates an API consumer for a given Subscription ID and returns an API key.
+    # @expose("/upgrade", methods=["POST"])
+    # def upgrade_subscription(self):
+
+    #     """Subscription a user to a service plan.
     #     ---
     #     post:
-    #       parameters:
-    #         - in: path
-    #           name: subscribe_id
-    #           required: true
-    #           schema:
-    #             type: integer
-    #           description: ID of the Subscription to associate with the API consumer
-    #       responses:
-    #         200:
-    #           description: API consumer created successfully
-    #           content:
-    #             application/json:
-    #               schema:
-    #                 type: object
-    #                 properties:
-    #                   auth-key:
-    #                     type: string
-    #                     description: Generated API key
-    #         400:
-    #           description: Subscription not found
-    #         500:
-    #           description: Internal server error
+    #         summary: Subscription a user to a service plan
+    #         description: Creates a new subscription for the authenticated user.
+    #         requestBody:
+    #             required: true
+    #             content:
+    #                 application/json:
+    #                     schema:
+    #                         type: object
+    #                         properties:
+    #                             subscription_id:
+    #                                 type: integer
+    #                                 description: ID of the user's profile
+    #                             service_plan_selected_id:
+    #                                 type: integer
+    #                                 description: ID of the selected service plan
+
+    #                             promo_code:
+    #                                 type: string
+    #                                 nullable: true
+    #                                 description: Promo code (if applicable)
+    #                             duration:
+    #                                 type: integer
+    #                                 description: Duration of the subscription in months
+    #                             payment_method:
+    #                                 type: string
+    #                                 description: Payment method (e.g., "card", "paypal")
+    #                             captcha_token:
+    #                                 type: string
+    #                                 description: Google reCAPTCHA token
+    #                             profile_id:
+    #                                 type: integer
+    #                                 description: ID of the user's profile
+    #         responses:
+    #             200:
+    #                 description: Subscription upgraded successfully
+    #             400:
+    #                 description: Bad request
+    #             500:
+    #                 description: Internal server error
+
     #     """
-    #     user = get_user()
-    #     user_name = user.username
-    #     slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
-
-    #     subscribe = db.session.query(Subscription).filter(Subscription.id == subscribe_id).first()
-
-    #     if not subscribe or not subscribe.service_plan:
-    #         return Response("Subscription or ServicePlan not found", status=400)
-
-    #     service = subscribe.service_plan.service
-
-    #     if not service:
-    #         return Response("Service not found", status=400)
-
-    #     if subscribe.api_key:
-    #         api_key = subscribe.api_key
-    #     else:
-    #         api_key = uuid.uuid4().hex[:32]
-    #         # subscribe.api_key = api_key
-    #         # db.session.commit()
-
     #     try:
-    #         consumer_username = f"{service.service_slug}_{slug_user_name}"
-    #         apisix_service = ApiSixService()
-    #         service_plan_option = (
-    #             db.session.query(ServicePlanOption)
-    #             .filter(
-    #                 ServicePlanOption.option_type == "request_limit",
-    #                 ServicePlanOption.service_plans.any(id=subscribe.service_plan.id),
-    #             )
-    #             .first()
+    #         user = get_user()
+    #         if not user:
+    #             return self.response_400(message="User not found")
+    #         data = request.get_json(silent=True)
+    #         if not data:
+    #             return self.response_400(message="Invalid request data")
+    #         subscription_id = data.get("subscription_id")
+    #         if not subscription_id:
+    #             return self.response_404(message="subscription_id is required")
+    #         profile_id = data.get("profile_id")
+    #         if not profile_id:
+    #             return self.response_404(message="Profile id is required")
+    #         profile = (
+    #             db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
     #         )
-    #         if not service_plan_option:
-    #             _logger.error(
-    #                 f"No service plan option found for service plan {subscribe.service_plan.id}"
+    #         if not profile:
+    #             return self.response_400(message="PaymentProfile not found")
+
+    #         if profile.balance is None:
+    #             return self.response_404(message="Insufficient balance")
+
+    #         if profile.profile_type == "default":
+
+    #             if plan and plan.service and not plan.service.is_eligible:
+    #                 return self.response_400(
+    #                     message="This service plan is not eligible for subscription"
+    #                 )
+
+    #         service_plan_selected_id = data.get("service_plan_selected_id")
+    #         if not service_plan_selected_id:
+    #             return self.response_404(message="service_plan_selected_id is required")
+
+    #         plan_id = data.get("service_plan_selected_id")
+    #         plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
+    #         if not plan:
+    #             return self.response_400(message="Service Plan not found")
+
+    #         promo_code_str = data.get("promo_code")
+    #         duration = data.get("duration")
+    #         total_amount = plan.price * duration
+
+    #         promo_code_amount = 0
+    #         promo_code = None
+    #         if promo_code_str:
+    #             promo_code = (
+    #                 db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
     #             )
-    #             return Response("Service plan option not found", status=400)
-    #         rate = service_plan_option.option_value
-    #         if not rate or not isinstance(rate, int) or rate <= 0:
-    #             _logger.error(
-    #                 f"Invalid rate value for service plan option {service_plan_option.id}: {rate}"
-    #             )
-    #             return Response("Invalid rate value", status=400)
-    #         limit_config = {
-    #             "count": rate,
-    #             "time_window": 1,
-    #             "rejected_code": 429,
-    #             "key": "consumer_name",
-    #             "policy": "local",
-    #         }
-    #         response = apisix_service.create_consumer(
-    #             username=consumer_username,
-    #             api_key=api_key,
-    #             limit_count=limit_config,
-    #             labels={"service": service.service_slug},
-    #         )
-    #         if not response:
-    #             _logger.error(f"Failed to create API consumer")
-    #             return Response("Failed to create API consumer", status=500)
-    #         subscribe.api_key = api_key
-    #         db.session.commit()
-    #         return jsonify({"auth-key": api_key}), 200
+
+    #             if promo_code and promo_code.is_valid:
+    #                 promo_code_amount = (total_amount * promo_code.rate) / 100
+
+    #         # price = total_amount - promo_code_amount
+    #         price = total_amount - promo_code_amount
+    #         #TODO New logic
+
+    #         old_subscription=  db.session.query(Subscription).filter_by(id=subscription_id).first()
+    #         api_key=old_subscription.api_key
+    #         old_subscription.is_expired=True
+    #         db.commit
+
+    #         #Todo create new consumer
 
     #     except Exception as e:
-    #         _logger.error(f"Error creating API consumer: {e}", exc_info=True)
-    #         return Response("Internal Server Error", status=500)
+    #         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
 
 appbuilder.add_api(SubscriptionModelApi)
