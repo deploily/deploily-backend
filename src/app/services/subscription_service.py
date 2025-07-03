@@ -1,0 +1,253 @@
+import logging
+
+import requests
+from flask import current_app, render_template
+
+from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
+from app.core.models.mail_models import Mail
+from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
+from app.services.payment_service import PaymentService
+
+_logger = logging.getLogger(__name__)
+import json
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional, Tuple
+
+import requests
+
+from app.core.celery_tasks.send_mail_task import send_mail
+
+
+@dataclass
+class SubscriptionRequest:
+    """Data class for subscription request validation"""
+
+    profile_id: int
+    service_plan_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+
+
+class SubscriptionService:
+
+    def __init__(self, db_session, logger):
+        self.db = db_session
+        self.logger = logger
+
+    def validate_request_data(self, data: dict) -> Tuple[bool, str, Optional[SubscriptionRequest]]:
+        """Validate and parse request data"""
+        if not data:
+            return False, "Invalid request data", None
+
+        required_fields = ["profile_id", "service_plan_selected_id", "duration", "payment_method"]
+        for field in required_fields:
+            if field not in data:
+                return False, f"{field} is required", None
+
+        try:
+            request_data = SubscriptionRequest(
+                profile_id=int(data["profile_id"]),
+                service_plan_selected_id=int(data["service_plan_selected_id"]),
+                total_amount=float(data.get("total_amount", 0)),
+                duration=int(data["duration"]),
+                payment_method=data["payment_method"],
+                promo_code=data.get("promo_code"),
+                captcha_token=data.get("captcha_token"),
+            )
+            return True, "", request_data
+        except (ValueError, TypeError) as e:
+            return False, f"Invalid data format: {str(e)}", None
+
+    def validate_profile(self, user, profile_id: int) -> Tuple[bool, str, Optional[object]]:
+        """Validate user profile"""
+        profile = self.db.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
+
+        if not profile:
+            return False, "PaymentProfile not found", None
+
+        if profile.balance is None:
+            return False, "Profile balance not initialized", None
+
+        return True, "", profile
+
+    def validate_service_plan(self, plan_id: int, profile) -> Tuple[bool, str, Optional[object]]:
+        """Validate service plan eligibility"""
+        plan = self.db.query(ServicePlan).filter_by(id=plan_id).first()
+
+        if not plan:
+            return False, "Service Plan not found", None
+
+        if profile.profile_type == "default" and plan.service and not plan.service.is_eligible:
+            return False, "This service plan is not eligible for subscription", None
+
+        return True, "", plan
+
+    def validate_promo_code(
+        self, promo_code_str: str, total_amount: float
+    ) -> Tuple[Optional[object], float]:
+        """Validate and apply promo code"""
+        if not promo_code_str:
+            return None, 0
+
+        promo_code = self.db.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
+
+        if promo_code and promo_code.is_valid:
+            discount_amount = (total_amount * promo_code.rate) / 100
+            return promo_code, discount_amount
+
+        return None, 0
+
+    def verify_captcha(self, captcha_token: str) -> Tuple[bool, str]:
+        """Verify Google reCAPTCHA token"""
+        if not captcha_token:
+            return False, "Missing CAPTCHA token"
+
+        verify_url = "https://www.google.com/recaptcha/api/siteverify"
+        payload = {
+            "secret": current_app.config["CAPTCHA_SECRET_KEY"],
+            "response": captcha_token,
+        }
+
+        try:
+            response = requests.post(verify_url, data=payload, timeout=10)
+            result = response.json()
+
+            if not result.get("success"):
+                return False, "CAPTCHA verification failed"
+
+            return True, ""
+        except Exception as e:
+            self.logger.error(f"Failed to contact reCAPTCHA: {e}", exc_info=True)
+            return False, "CAPTCHA verification error"
+
+    def create_subscription(
+        self,
+        plan,
+        duration: int,
+        total_amount: float,
+        price: float,
+        promo_code,
+        profile_id: int,
+        status: str,
+    ) -> object:
+        """Create subscription record"""
+        subscription = ApiServiceSubscription(
+            name=plan.plan.name,
+            start_date=datetime.now(),
+            total_amount=total_amount,
+            price=price,
+            service_plan_id=plan.id,
+            duration_month=duration,
+            promo_code_id=promo_code.id if promo_code else None,
+            status=status,
+            payment_status="paid" if status == "active" else "unpaid",
+            profile_id=profile_id,
+        )
+
+        self.db.add(subscription)
+        self.db.flush()
+        return subscription
+
+    def create_payment(
+        self, price: float, payment_method: str, subscription_id: int, profile_id: int
+    ) -> object:
+        """Create payment record"""
+        payment = Payment(
+            amount=price,
+            payment_method=payment_method,
+            subscription_id=subscription_id,
+            profile_id=profile_id,
+            status="pending",
+        )
+
+        self.db.add(payment)
+        self.db.flush()
+        return payment
+
+    def process_payment(self, payment, total_amount: float) -> Tuple[bool, str, dict]:
+        """Process payment through external service"""
+        payment.order_id = "PAY" + str(payment.id)
+        self.db.commit()
+
+        try:
+            payment_service = PaymentService()
+            payment_response = payment_service.post_payement(payment.order_id, total_amount)[0]
+
+            # Parse response if it's a string
+            if isinstance(payment_response, str):
+                try:
+                    payment_response = json.loads(payment_response)
+                except json.JSONDecodeError:
+                    return False, "Invalid payment service response format", {}
+
+            if not isinstance(payment_response, dict):
+                return False, "Invalid payment service response", {}
+
+            if "ERROR_CODE" in payment_response and payment_response["ERROR_CODE"] != "0":
+                error_msg = payment_response.get("ERROR_MESSAGE", "Unknown error")
+                return False, f"Payment failed: {error_msg}", {}
+
+            # Update payment with external order ID
+            payment.satim_order_id = payment_response.get("ORDER_ID")
+            self.db.commit()
+
+            return True, "", payment_response
+
+        except Exception as e:
+            self.logger.error(f"Payment processing error: {e}", exc_info=True)
+            return False, "Payment processing failed", {}
+
+    def update_promo_code_usage(self, promo_code, subscription_id: int):
+        """Update promo code usage after successful subscription"""
+        if not promo_code:
+            return
+
+        if promo_code.usage_type == "single_use":
+            promo_code.active = False
+
+        promo_code.subscription = subscription_id
+        self.db.commit()
+
+    def send_notification_emails(self, user, plan, total_amount: float, subscription):
+        """Send notification emails to admin and user"""
+        # Admin notification
+        admin_template = render_template(
+            "emails/deploily_subscription.html", user_name=user.username, plan=plan
+        )
+
+        admin_email = Mail(
+            title=f"New Subscription Created by {user.username}",
+            body=admin_template,
+            email_to=current_app.config["NOTIFICATION_EMAIL"],
+            email_from=current_app.config["NOTIFICATION_EMAIL"],
+            mail_state="outGoing",
+        )
+
+        # User notification
+        user_template = render_template(
+            "emails/user_subscription.html",
+            user=user,
+            service_name=plan.plan.name,
+            total_price=total_amount,
+        )
+
+        user_email = Mail(
+            title="Nouvelle souscription à deploily.cloud",
+            body=user_template,
+            email_to=user.email,
+            email_from=current_app.config["NOTIFICATION_EMAIL"],
+            mail_state="outGoing",
+        )
+
+        # Add to database and send
+        self.db.add_all([admin_email, user_email])
+        self.db.commit()
+
+        send_mail.delay(admin_email.id)
+        send_mail.delay(user_email.id)
+
+        self.logger.info(f"Notification emails sent for subscription {subscription.id}")

@@ -412,7 +412,7 @@ class TtkEpaySubscriptionApi(BaseApi):
     @protect()
     @rison()
     @jwt_required()
-    def upgrade_subscription(self, **kwargs):
+    def upgrade_app_subscription(self, **kwargs):
         """Subscription a user to a service plan.
         ---
         post:
@@ -649,7 +649,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                     payment_status="paid",
                     profile_id=profile.id,
                     version_id=version.id,
-                    api_key=old_subscription.api_key,
                 )
                 db.session.add(subscription)
                 db.session.commit()
@@ -681,7 +680,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                     payment_status="unpaid",
                     profile_id=profile.id,
                     version_id=version.id,
-                    api_key=old_subscription.api_key,
                 )
 
                 db.session.add(subscription)
