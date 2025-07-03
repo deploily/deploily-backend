@@ -67,6 +67,7 @@ class Service(Model):
                 service_json[key] = getattr(self, key)
             except Exception:
                 service_json[key] = None
+            # Add extra computed fields
 
         return service_json
 
