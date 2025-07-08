@@ -1,6 +1,7 @@
 import logging
 
 import requests
+from dateutil.relativedelta import relativedelta
 from flask import current_app, render_template
 
 from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
@@ -12,7 +13,7 @@ _logger = logging.getLogger(__name__)
 import json
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Type, TypeVar
 
 import requests
 
@@ -32,24 +33,86 @@ class SubscriptionRequest:
     captcha_token: Optional[str] = None
 
 
+@dataclass
+class UpgradeSubscriptionRequest:
+    """Data class for upgrade subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    service_plan_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+
+
+T = TypeVar("T")
+
+
 class SubscriptionService:
 
     def __init__(self, db_session, logger):
         self.db = db_session
         self.logger = logger
 
-    def validate_request_data(self, data: dict) -> Tuple[bool, str, Optional[SubscriptionRequest]]:
-        """Validate and parse request data"""
+    # def validate_request_data(self, data: dict) -> Tuple[bool, str, Optional[SubscriptionRequest]]:
+    #     """Validate and parse request data"""
+    #     if not data:
+    #         return False, "Invalid request data", None
+
+    #     required_fields = ["profile_id", "service_plan_selected_id", "duration", "payment_method"]
+    #     for field in required_fields:
+    #         if field not in data:
+    #             return False, f"{field} is required", None
+
+    #     try:
+    #         request_data = SubscriptionRequest(
+    #             profile_id=int(data["profile_id"]),
+    #             service_plan_selected_id=int(data["service_plan_selected_id"]),
+    #             total_amount=float(data.get("total_amount", 0)),
+    #             duration=int(data["duration"]),
+    #             payment_method=data["payment_method"],
+    #             promo_code=data.get("promo_code"),
+    #             captcha_token=data.get("captcha_token"),
+    #         )
+    #         return True, "", request_data
+    #     except (ValueError, TypeError) as e:
+    #         return False, f"Invalid data format: {str(e)}", None
+
+    def validate_request_data(
+        self, data: dict, request_type: Type[T]
+    ) -> Tuple[bool, str, Optional[T]]:
+        """Generic validation function for both subscription types"""
         if not data:
             return False, "Invalid request data", None
 
-        required_fields = ["profile_id", "service_plan_selected_id", "duration", "payment_method"]
+        # Define required fields for each request type
+        required_fields_map = {
+            SubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+            ],
+            UpgradeSubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "old_subscription_id",
+            ],
+        }
+
+        required_fields = required_fields_map.get(request_type, [])
+
         for field in required_fields:
             if field not in data:
                 return False, f"{field} is required", None
 
         try:
-            request_data = SubscriptionRequest(
+            # Create instance of the specified request type
+            request_data = request_type(
                 profile_id=int(data["profile_id"]),
                 service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
@@ -57,10 +120,28 @@ class SubscriptionService:
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 captcha_token=data.get("captcha_token"),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == UpgradeSubscriptionRequest
+                    else {}
+                ),
             )
             return True, "", request_data
         except (ValueError, TypeError) as e:
             return False, f"Invalid data format: {str(e)}", None
+
+    # Convenience methods for specific validation
+    def validate_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[SubscriptionRequest]]:
+        """Validate new subscription request"""
+        return self.validate_request_data(data, SubscriptionRequest)
+
+    def validate_upgrade_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[UpgradeSubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, UpgradeSubscriptionRequest)
 
     def validate_profile(self, user, profile_id: int) -> Tuple[bool, str, Optional[object]]:
         """Validate user profile"""
@@ -70,7 +151,7 @@ class SubscriptionService:
             return False, "PaymentProfile not found", None
 
         if profile.balance is None:
-            return False, "Profile balance not initialized", None
+            return False, "Insufficient balance", None
 
         return True, "", profile
 
@@ -100,6 +181,14 @@ class SubscriptionService:
             return promo_code, discount_amount
 
         return None, 0
+
+    def validate_old_subscription(self, old_subscription_id: int):
+        old_subscription = (
+            self.db.query(ApiServiceSubscription).filter_by(id=old_subscription_id).first()
+        )
+        if not old_subscription:
+            return False, "Old Subscription not found"
+        return True, "", old_subscription
 
     def verify_captcha(self, captcha_token: str) -> Tuple[bool, str]:
         """Verify Google reCAPTCHA token"""
@@ -133,6 +222,7 @@ class SubscriptionService:
         promo_code,
         profile_id: int,
         status: str,
+        api_key: str,
     ) -> object:
         """Create subscription record"""
         subscription = ApiServiceSubscription(
@@ -146,6 +236,7 @@ class SubscriptionService:
             status=status,
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
+            api_key=api_key,
         )
 
         self.db.add(subscription)
@@ -251,3 +342,36 @@ class SubscriptionService:
         send_mail.delay(user_email.id)
 
         self.logger.info(f"Notification emails sent for subscription {subscription.id}")
+
+    def update_old_subscription(self, old_subscription):
+        """Update old subscrption  after successful Upgrade subscription"""
+
+        old_subscription.start_date = datetime.now() - relativedelta(
+            months=old_subscription.duration_month + 1
+        )
+        old_subscription.status = "inactive"
+        old_subscription.is_upgrade = True
+
+        self.db.commit()
+
+    def get_remaining_value(self, old_subscription):
+        total_price = old_subscription.price
+        start_date = old_subscription.start_date
+        duration_month = old_subscription.duration_month
+
+        end_date = start_date + relativedelta(months=duration_month)
+        today = datetime.now()
+
+        # Ensure today is not beyond the end date
+        if today > end_date:
+            return 0.0
+
+        total_days = (end_date - start_date).days
+        used_days = (today - start_date).days
+        remaining_days = total_days - used_days
+
+        if total_days == 0:
+            return 0.0
+
+        remaining_value = (remaining_days / total_days) * total_price
+        return round(remaining_value, 2)
