@@ -274,6 +274,7 @@ class SubscriptionApi(BaseApi):
                     payment.order_id = "PAY" + str(payment.id)
                     db.session.commit()
                     payment_service = PaymentService()
+                    # TODO avoid using static index [0]
                     payment_response = payment_service.post_payement(
                         payment.order_id, total_amount
                     )[0]
