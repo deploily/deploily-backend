@@ -97,6 +97,7 @@ class AppServiceModelApi(ServiceModelApi):
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
+                "service_slug": service.service_slug,
                 "average_rating": service.average_rating,
                 "recommended_apps": [
                     {
@@ -204,6 +205,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
+                "service_slug": service.service_slug,
                 "app_versions": [
                     {"id": app.id, "version": app.name, "description": app.description}
                     for app in service.app_versions
