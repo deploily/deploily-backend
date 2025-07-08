@@ -65,10 +65,14 @@ class Subscription(Model, AuditMixin):
 
     @property
     def is_subscribed(self):
-
         user = get_user()
         if not user.is_authenticated:
             return False
+
+        # When the subscription is just created and still linked to this object
+        if self.status == "active" and not self.is_expired:
+            return True
+
         subscription = (
             db.session.query(Subscription)
             .filter(
@@ -79,7 +83,7 @@ class Subscription(Model, AuditMixin):
             .first()
         )
 
-        return subscription is not None and subscription.is_expired == False
+        return subscription is not None and not subscription.is_expired
 
     @property
     def service_details(self):
