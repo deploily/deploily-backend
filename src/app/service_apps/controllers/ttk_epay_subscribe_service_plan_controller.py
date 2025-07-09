@@ -477,8 +477,10 @@ class TtkEpaySubscriptionApi(BaseApi):
             final_price = total_amount - discount_amount
 
             # Validate old subscription
-            is_valid, error_msg, old_subscription = subscription_service.validate_old_subscription(
-                request_data.old_subscription_id,
+            is_valid, error_msg, old_subscription = (
+                subscription_service.validate_old_ttk_epay_subscription(
+                    request_data.old_subscription_id,
+                )
             )
             if not is_valid:
                 return self.response_400(message=error_msg)

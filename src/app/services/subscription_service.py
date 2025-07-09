@@ -271,6 +271,14 @@ class SubscriptionService:
             return False, "Old Subscription not found"
         return True, "", old_subscription
 
+    def validate_old_ttk_epay_subscription(self, old_subscription_id: int):
+        old_subscription = (
+            self.db.query(TtkEpaySubscriptionAppService).filter_by(id=old_subscription_id).first()
+        )
+        if not old_subscription:
+            return False, "Old Subscription not found"
+        return True, "", old_subscription
+
     def verify_captcha(self, captcha_token: str) -> Tuple[bool, str]:
         """Verify Google reCAPTCHA token"""
         if not captcha_token:
