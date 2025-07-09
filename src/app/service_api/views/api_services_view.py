@@ -86,7 +86,7 @@ class ApiServiceView(ModelView):
 
 appbuilder.add_view(
     ApiServiceView,
-    "Apis",
+    "Api Services",
     icon="fa-cogs",
     category="Master",
 )
