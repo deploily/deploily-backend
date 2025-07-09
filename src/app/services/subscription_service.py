@@ -7,6 +7,10 @@ from flask import current_app, render_template
 from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
 from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
+from app.service_apps.models.app_version_model import Version
+from app.service_apps.models.ttk_epay_subscription_model import (
+    TtkEpaySubscriptionAppService,
+)
 from app.services.payment_service import PaymentService
 
 _logger = logging.getLogger(__name__)
@@ -34,12 +38,43 @@ class SubscriptionRequest:
 
 
 @dataclass
+class TtkEpaySubscriptionRequest:
+    """Data class for subscription request validation"""
+
+    profile_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+
+
+@dataclass
 class UpgradeSubscriptionRequest:
     """Data class for upgrade subscription request validation"""
 
     profile_id: int
     old_subscription_id: int
     service_plan_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+
+
+@dataclass
+class UpgradeTtkEpaySubscriptionRequest:
+    """Data class for upgrade subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
     total_amount: float
     duration: int
     payment_method: str
@@ -56,30 +91,6 @@ class SubscriptionService:
         self.db = db_session
         self.logger = logger
 
-    # def validate_request_data(self, data: dict) -> Tuple[bool, str, Optional[SubscriptionRequest]]:
-    #     """Validate and parse request data"""
-    #     if not data:
-    #         return False, "Invalid request data", None
-
-    #     required_fields = ["profile_id", "service_plan_selected_id", "duration", "payment_method"]
-    #     for field in required_fields:
-    #         if field not in data:
-    #             return False, f"{field} is required", None
-
-    #     try:
-    #         request_data = SubscriptionRequest(
-    #             profile_id=int(data["profile_id"]),
-    #             service_plan_selected_id=int(data["service_plan_selected_id"]),
-    #             total_amount=float(data.get("total_amount", 0)),
-    #             duration=int(data["duration"]),
-    #             payment_method=data["payment_method"],
-    #             promo_code=data.get("promo_code"),
-    #             captcha_token=data.get("captcha_token"),
-    #         )
-    #         return True, "", request_data
-    #     except (ValueError, TypeError) as e:
-    #         return False, f"Invalid data format: {str(e)}", None
-
     def validate_request_data(
         self, data: dict, request_type: Type[T]
     ) -> Tuple[bool, str, Optional[T]]:
@@ -95,12 +106,28 @@ class SubscriptionService:
                 "duration",
                 "payment_method",
             ],
+            TtkEpaySubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id",
+            ],
             UpgradeSubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
                 "old_subscription_id",
+            ],
+            UpgradeTtkEpaySubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id" "old_subscription_id",
             ],
         }
 
@@ -125,6 +152,27 @@ class SubscriptionService:
                     if request_type == UpgradeSubscriptionRequest
                     else {}
                 ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
+                    }
+                    if request_type == TtkEpaySubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
+                        "old_subscription_id": int(data["old_subscription_id"]),
+                    }
+                    if request_type == UpgradeTtkEpaySubscriptionRequest
+                    else {}
+                ),
             )
             return True, "", request_data
         except (ValueError, TypeError) as e:
@@ -142,6 +190,18 @@ class SubscriptionService:
     ) -> Tuple[bool, str, Optional[UpgradeSubscriptionRequest]]:
         """Validate upgrade subscription request"""
         return self.validate_request_data(data, UpgradeSubscriptionRequest)
+
+    def validate_ttk_epay_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[TtkEpaySubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, TtkEpaySubscriptionRequest)
+
+    def validate_upgrade_ttk_epay_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[UpgradeTtkEpaySubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, UpgradeTtkEpaySubscriptionRequest)
 
     def validate_profile(self, user, profile_id: int) -> Tuple[bool, str, Optional[object]]:
         """Validate user profile"""
@@ -166,6 +226,27 @@ class SubscriptionService:
             return False, "This service plan is not eligible for subscription", None
 
         return True, "", plan
+
+    def validate_ressource_service_plan(
+        self, ressource_service_plan_id: int
+    ) -> Tuple[bool, str, Optional[object]]:
+        """Validate ressource service plan"""
+        ressource_service_plan = (
+            self.db.query(ServicePlan).filter_by(id=ressource_service_plan_id).first()
+        )
+
+        if not ressource_service_plan:
+            return False, "Ressource Service Plan not found", None
+
+        return True, "", ressource_service_plan
+
+    def validate_version(self, version_id: int) -> Tuple[bool, str, Optional[object]]:
+        """Validate version"""
+        version = self.db.query(Version).filter_by(id=version_id).first()
+        if not version:
+            return self.response_400(message="Version not found")
+
+        return True, "", version
 
     def validate_promo_code(
         self, promo_code_str: str, total_amount: float
@@ -213,7 +294,7 @@ class SubscriptionService:
             self.logger.error(f"Failed to contact reCAPTCHA: {e}", exc_info=True)
             return False, "CAPTCHA verification error"
 
-    def create_subscription(
+    def create_api_subscription(
         self,
         plan,
         duration: int,
@@ -224,7 +305,7 @@ class SubscriptionService:
         status: str,
         api_key: str,
     ) -> object:
-        """Create subscription record"""
+        """Create api subscription record"""
         subscription = ApiServiceSubscription(
             name=plan.plan.name,
             start_date=datetime.now(),
@@ -237,6 +318,36 @@ class SubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             api_key=api_key,
+        )
+
+        self.db.add(subscription)
+        self.db.flush()
+        return subscription
+
+    def create_ttk_epay_subscription(
+        self,
+        plan,
+        duration: int,
+        total_amount: float,
+        price: float,
+        promo_code,
+        profile_id: int,
+        status: str,
+        version_id: int,
+    ) -> object:
+        """Create ttk epay subscription record"""
+        subscription = TtkEpaySubscriptionAppService(
+            name=plan.plan.name,
+            start_date=datetime.now(),
+            total_amount=total_amount,
+            price=price,
+            service_plan_id=plan.id,
+            duration_month=duration,
+            promo_code_id=promo_code.id if promo_code else None,
+            status=status,
+            payment_status="paid" if status == "active" else "unpaid",
+            profile_id=profile_id,
+            version_id=version_id,
         )
 
         self.db.add(subscription)

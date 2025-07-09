@@ -163,7 +163,7 @@ class SubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_service.create_subscription(
+            subscription = subscription_service.create_api_subscription(
                 plan=plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
@@ -402,7 +402,7 @@ class SubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_service.create_subscription(
+            subscription = subscription_service.create_api_subscription(
                 plan=plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
