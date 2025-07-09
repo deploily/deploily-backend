@@ -10,13 +10,7 @@ from app.service_ressources.models.services_ressources_model import RessourceSer
 class RessourceServiceView(ModelView):
     datamodel = SQLAInterface(RessourceService)
 
-    list_columns = [
-        "name",
-        "provider",
-        "unit_price",
-        "discount",
-        "tags",
-    ]
+    list_columns = ["name", "provider", "unit_price", "discount", "tags", "is_published"]
     add_columns = [
         # "category",
         "tags",
@@ -33,6 +27,7 @@ class RessourceServiceView(ModelView):
         "discount",
         "service_slug",
         "ressource_field",
+        "is_published",
     ]
     edit_columns = [
         # "category",
@@ -50,6 +45,7 @@ class RessourceServiceView(ModelView):
         "discount",
         "service_slug",
         "ressource_field",
+        "is_published",
     ]
     show_columns = [
         # "category",
@@ -67,6 +63,7 @@ class RessourceServiceView(ModelView):
         "discount",
         "service_slug",
         "ressource_field",
+        "is_published",
     ]
 
     def post_add(self, item):

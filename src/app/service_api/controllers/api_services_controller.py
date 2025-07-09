@@ -81,7 +81,8 @@ class ApiServiceModelApi(ServiceModelApi):
                 )
             )
 
-        services = query.all()
+        # services = query.all()
+        services = query.filter(ApiService.is_published.is_(True)).all()
 
         def serialize_service(service):
             return {

@@ -3,7 +3,7 @@ import logging
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, Enum, Integer, String, Text
+from sqlalchemy import Boolean, Column, Enum, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 _logger = logging.getLogger(__name__)
@@ -17,6 +17,8 @@ class ServiceRessouceCategory(Model):
     logo = Column(ImageColumn)
     ressouce_services = relationship("RessourceService", back_populates="ressouce_category")
     medias = relationship("Media", back_populates="category", cascade="all, delete-orphan")
+    is_published = Column(Boolean, default=False)
+
     category_type = Column(
         Enum(
             "vps",

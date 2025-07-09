@@ -3,6 +3,7 @@
 import logging
 
 from flask_appbuilder.api import ModelRestApi
+from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
@@ -41,6 +42,9 @@ class ServiceModelApi(ModelRestApi):
         "created_by",
         "changed_by",
     ]
+
+    # Apply base filters to always return only published services
+    base_filters = [["is_published", FilterEqual, True]]
 
 
 appbuilder.add_api(ServiceModelApi)

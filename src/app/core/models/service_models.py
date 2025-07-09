@@ -32,6 +32,7 @@ class Service(Model):
     medias = relationship("Media", back_populates="service", cascade="all, delete-orphan")
     is_eligible = Column("is_eligible", Boolean, default=True, server_default="1")
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
+    is_published = Column(Boolean, default=False)
 
     @property
     def is_in_favorite(self):
