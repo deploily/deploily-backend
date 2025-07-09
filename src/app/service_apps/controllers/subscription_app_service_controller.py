@@ -14,6 +14,8 @@ api_columns = [
     "required_restart",
     "deployment_error",
     "version",
+    "demo_url",
+    "console_url",
 ]
 edit_columns = ["application_status"]
 
