@@ -76,7 +76,7 @@ class CicdServiceView(ModelView):
 
 appbuilder.add_view(
     CicdServiceView,
-    "Cicd Services",
+    "Cicd",
     icon="fa-cogs",
     category="Master",
 )
