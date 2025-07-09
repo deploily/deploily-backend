@@ -209,6 +209,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_service.create_ttk_epay_subscription(
                 plan=plan,
+                ressource_service_plan=ressource_plan.id,
                 duration=request_data.duration,
                 total_amount=total_amount,
                 price=final_price,
@@ -503,6 +504,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                 profile_id=profile.id,
                 status=subscription_status,
                 version_id=version.id,
+                ressource_service_plan=ressource_plan.id,
             )
 
             # Initialize payment response variables
