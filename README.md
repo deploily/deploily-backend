@@ -67,7 +67,7 @@ pre-commit run --all-files
 Realm settings -> Token -> Default Signature Algorithm = HS256
 
 ```bash
-curl -d 'client_id=deploily'      -d 'username=admin'      -d 'password=admin'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW'      'https://auth.dev.deploily.cloud/realms/myrealm/protocol/openid-connect/token'
+curl -d 'client_id=deploily'      -d 'username=nesrine'      -d 'password=nesrine'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW'      'https://auth.deploily-staging.xyz/realms/myrealm/protocol/openid-connect/token'
 ```
 
 ## Get Keycloack login token using localhost

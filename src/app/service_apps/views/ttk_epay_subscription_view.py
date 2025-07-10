@@ -22,6 +22,8 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
         "is_expired",
         "start_date",
         "duration_month",
+        "is_upgrade",
+        "is_renew",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on", "type"]

@@ -17,6 +17,7 @@ class ServiceModelView(ModelView):
         "unit_price",
         "is_in_favorite",
         "is_eligible",
+        "is_published",
     ]
 
     base_permissions = ["can_list", "can_show"]  # only allow viewing

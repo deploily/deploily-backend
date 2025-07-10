@@ -3,6 +3,7 @@
 import logging
 
 from flask_appbuilder.api import BaseApi, ModelRestApi, expose
+from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
@@ -38,6 +39,8 @@ class ServicePlanModelApi(ModelRestApi):
     show_columns = _service_plan_value_display_columns
     edit_columns = _service_plan_value_display_columns
 
+    base_filters = [["is_published", FilterEqual, True]]
+
 
 appbuilder.add_api(ServicePlanModelApi)
 
@@ -71,6 +74,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .join(RessourceService.ressouce_category)
                 .filter(
                     RessourceService.type == "ressource_service",
+                    RessourceService.is_published.is_(True),
                     ServiceRessouceCategory.category_type == "vps",
                 )
                 .all()
@@ -82,8 +86,11 @@ class ServicePlanRessourceModelApi(BaseApi):
             vps_ressources_plans = (
                 db.session.query(ServicePlan)
                 .filter(
-                    ServicePlan.service_id.in_([ressource.id for ressource in ressources_services])
+                    ServicePlan.service_id.in_([ressource.id for ressource in ressources_services]),
+                    ServicePlan.is_published.is_(True),
+                    ServicePlan.is_custom.is_(False),
                 )
+                .order_by(ServicePlan.price.asc())  # Order from min to max
                 .all()
             )
 

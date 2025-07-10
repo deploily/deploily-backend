@@ -82,9 +82,19 @@
             Merci pour votre confiance !<br>
             Vous pouvez également nous joindre au <strong>(+213) 043-78-84-69</strong> ou au <strong>(+213) 0661-55-77-30</strong> pour toute question ou information complémentaire.</p>
         <ul>
-            <li><strong>Nom du service :</strong> {{ service_name }}</li>
+            <li><strong>Nom du service :</strong> {{ service_name }}/{{plan_name}}</li>
             <li><strong>Montant total :</strong> {{ total_price }} DA</li>
         </ul>
+        {% if payment_method == "bank_transfer" %}
+            <h4>Bank Transfer Instructions:</h4>
+            <ul>
+                <li><strong>Bank:</strong> {{ bank }}</li>
+                <li><strong>Agency:</strong> {{ agency }}</li>
+                <li><strong>Address:</strong> {{ address }}</li>
+                <li><strong>Bank Account Number:</strong> {{ bank_account_number }}</li>
+            </ul>
+            <p>Please include your username <strong>{{ user.username }}</strong> in the transfer reference.</p>
+        {% endif %}
 
         <p>Nous restons à votre disposition pour toute assistance complémentaire.</p>
         <p>Merci pour votre confiance.</p>

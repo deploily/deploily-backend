@@ -4,6 +4,7 @@ import logging
 
 from flask import request
 from flask_appbuilder.api import ModelRestApi, expose
+from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from sqlalchemy import or_
 
@@ -35,6 +36,8 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
     edit_columns = _service_category_value_display_columns
     exclude_route_methods = ["get", "put", "post", "get_list"]
     search_columns = ["name", "description"]
+
+    base_filters = [["is_published", FilterEqual, True]]
 
     @expose("/all", methods=["GET"])
     def get_all_categories(self):
@@ -92,7 +95,8 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                 )
             )
 
-        categories = query.all()
+        # categories = query.all()
+        categories = query.filter(ServiceRessouceCategory.is_published.is_(True)).all()
 
         def serialize_sqlalchemy_obj(obj):
             result = {}

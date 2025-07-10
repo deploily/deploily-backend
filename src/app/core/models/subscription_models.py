@@ -20,6 +20,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
+from app import db
+from app.utils.utils import get_user
+
 # from app.core.models.service_models import Service
 
 FERNET_KEY = os.getenv("FERNET_KEY", "QkqrpIbcUuQ_5Ho25VEv5oPFN4IVuOYojOMwneVbZNQ=")
@@ -55,8 +58,32 @@ class Subscription(Model, AuditMixin):
     payments = relationship("Payment", back_populates="subscription", overlaps="subscription")
     profile_id = Column(Integer, ForeignKey("payment_profile.id"))
     profile = relationship("PaymentProfile")
+    is_upgrade = Column(Boolean, default=False)
+    is_renew = Column(Boolean, default=False)
     type = Column(String(50), default="subscription")
     __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
+
+    @property
+    def is_subscribed(self):
+        user = get_user()
+        if not user.is_authenticated:
+            return False
+
+        # When the subscription is just created and still linked to this object
+        if self.status == "active" and not self.is_expired:
+            return True
+
+        subscription = (
+            db.session.query(Subscription)
+            .filter(
+                Subscription.service_plan.has(service_id=self.id),
+                Subscription.created_by_fk == user.id,
+                Subscription.status == "active",
+            )
+            .first()
+        )
+
+        return subscription is not None and not subscription.is_expired
 
     @property
     def service_details(self):
@@ -81,8 +108,10 @@ class Subscription(Model, AuditMixin):
             # for key, value in service.__dict__.items():
             #     if not key.startswith("_"):
             #         service_json[key] = value
+            service_json["is_subscribed"] = self.is_subscribed
 
             return service_json
+
         else:
             _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
             return {}

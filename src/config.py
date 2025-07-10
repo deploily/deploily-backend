@@ -232,6 +232,9 @@ FAB_ROLES = {
         ["ApiServiceSubscriptionModelApi", "can_create_my_service_consumer"],
         ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
         ["PromoCodeApi", "can_check_promo_code"],
+        ["TtkEpaySubscriptionApi", "can_upgrade_app_subscription"],
+        ["SubscriptionApi", "can_upgrade_api_subscription"],
+        ["SubscriptionApi", "can_renew_api_subscription"],
     ]
 }
 

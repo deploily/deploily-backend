@@ -12,7 +12,7 @@ from app.service_apps.models.apps_services_model import AppService
 class AppServiceView(ModelView):
     datamodel = SQLAInterface(AppService)
 
-    list_columns = ["tags", "name", "unit_price", "average_rating"]
+    list_columns = ["tags", "name", "unit_price", "average_rating", "is_published"]
     add_columns = [
         # "category",
         "medias",
@@ -34,6 +34,7 @@ class AppServiceView(ModelView):
         "recommended_apps",
         "is_eligible",
         "app_versions",
+        "is_published",
     ]
     edit_columns = [
         # "category",
@@ -56,6 +57,7 @@ class AppServiceView(ModelView):
         "recommended_apps",
         "is_eligible",
         "app_versions",
+        "is_published",
     ]
     show_columns = [
         # "category",
@@ -77,7 +79,9 @@ class AppServiceView(ModelView):
         "ratings",
         "average_rating",
         "recommended_apps",
-        "app_versions" "is_eligible",
+        "app_versions",
+        "is_eligible",
+        "is_published",
     ]
 
     def post_add(self, item):
@@ -87,7 +91,7 @@ class AppServiceView(ModelView):
 
 appbuilder.add_view(
     AppServiceView,
-    "App Services",
+    "Application Services",
     icon="fa-cogs",
     category="Master",
 )
