@@ -1,4 +1,6 @@
 import logging
+import os
+import uuid
 
 from flask import request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
@@ -192,10 +194,16 @@ class TtkEpaySubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
+            print(f"#############################{plan.price }")
+            print(f"#############################{ request_data.duration }")
+
             # Calculate pricing
             total_amount = plan.price * request_data.duration
+            print(f"#############################{total_amount }")
+
             if ressource_plan:
                 total_amount += ressource_plan.price * request_data.duration
+                print(f"#############################{total_amount }")
 
             promo_code, discount_amount = subscription_service.validate_promo_code(
                 request_data.promo_code, total_amount
@@ -205,6 +213,10 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Determine subscription status based on balance
             has_sufficient_balance = profile.balance >= final_price
             subscription_status = "active" if has_sufficient_balance else "inactive"
+            api_secret_key = uuid.uuid4().hex[:32]
+            user = get_user()
+            user_name = user.username
+            client_site_url = f"https://{user_name}-ttkepay.apps.depoloily.cloud"
 
             # Create subscription
             subscription = subscription_service.create_ttk_epay_subscription(
@@ -217,6 +229,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                 profile_id=profile.id,
                 status=subscription_status,
                 version_id=version.id,
+                ttk_epay_api_secret_key=api_secret_key,
+                ttk_epay_client_site_url=client_site_url,
+                ttk_epay_satim_currency=os.getenv("TTK_EPAY_SATIM_CURRENCY", ""),
+                ttk_epay_mvc_satim_server_url=os.getenv("TTK_EPAY_MVC_SATIM_SERVER_URL", ""),
+                ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
+                ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
             )
 
             # Initialize payment response variables
@@ -505,6 +523,13 @@ class TtkEpaySubscriptionApi(BaseApi):
                 status=subscription_status,
                 version_id=version.id,
                 ressource_service_plan=ressource_plan.id,
+                is_upgrade=True,
+                ttk_epay_api_secret_key=old_subscription.ttk_epay_api_secret_key,
+                ttk_epay_client_site_url=old_subscription.ttk_epay_client_site_url,
+                ttk_epay_satim_currency=old_subscription.ttk_epay_satim_currency,
+                ttk_epay_mvc_satim_server_url=old_subscription.ttk_epay_mvc_satim_server_url,
+                ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
+                ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
             )
 
             # Initialize payment response variables
@@ -541,7 +566,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     form_url = payment_response.get("FORM_URL", "")
 
             # Update old subscrption
-            subscription_service.update_old_subscription(old_subscription)
+            subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
 
             # Update promo code usage
             subscription_service.update_promo_code_usage(promo_code, subscription.id)

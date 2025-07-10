@@ -234,6 +234,7 @@ FAB_ROLES = {
         ["PromoCodeApi", "can_check_promo_code"],
         ["TtkEpaySubscriptionApi", "can_upgrade_app_subscription"],
         ["SubscriptionApi", "can_upgrade_api_subscription"],
+        ["SubscriptionApi", "can_renew_api_subscription"],
     ]
 }
 

@@ -82,6 +82,18 @@ class UpgradeTtkEpaySubscriptionRequest:
     captcha_token: Optional[str] = None
 
 
+@dataclass
+class RenewSubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+
+
 T = TypeVar("T")
 
 
@@ -121,6 +133,12 @@ class SubscriptionService:
                 "payment_method",
                 "old_subscription_id",
             ],
+            RenewSubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
             UpgradeTtkEpaySubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
@@ -141,15 +159,23 @@ class SubscriptionService:
             # Create instance of the specified request type
             request_data = request_type(
                 profile_id=int(data["profile_id"]),
-                service_plan_selected_id=int(data["service_plan_selected_id"]),
+                # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 captcha_token=data.get("captcha_token"),
                 **(
-                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    {
+                        "old_subscription_id": int(data["old_subscription_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
                     if request_type == UpgradeSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewSubscriptionRequest
                     else {}
                 ),
                 **(
@@ -158,6 +184,7 @@ class SubscriptionService:
                             data["ressource_service_plan_selected_id"]
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
                     }
                     if request_type == TtkEpaySubscriptionRequest
                     else {}
@@ -169,6 +196,7 @@ class SubscriptionService:
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
                     }
                     if request_type == UpgradeTtkEpaySubscriptionRequest
                     else {}
@@ -190,6 +218,12 @@ class SubscriptionService:
     ) -> Tuple[bool, str, Optional[UpgradeSubscriptionRequest]]:
         """Validate upgrade subscription request"""
         return self.validate_request_data(data, UpgradeSubscriptionRequest)
+
+    def validate_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewSubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewSubscriptionRequest)
 
     def validate_ttk_epay_subscription_request(
         self, data: dict
@@ -268,7 +302,7 @@ class SubscriptionService:
             self.db.query(ApiServiceSubscription).filter_by(id=old_subscription_id).first()
         )
         if not old_subscription:
-            return False, "Old Subscription not found"
+            return False, "Old Subscription not found", None
         return True, "", old_subscription
 
     def validate_old_ttk_epay_subscription(self, old_subscription_id: int):
@@ -312,6 +346,8 @@ class SubscriptionService:
         profile_id: int,
         status: str,
         api_key: str,
+        is_upgrade: bool = False,
+        is_renew: bool = False,
     ) -> object:
         """Create api subscription record"""
         subscription = ApiServiceSubscription(
@@ -327,6 +363,10 @@ class SubscriptionService:
             profile_id=profile_id,
             api_key=api_key,
         )
+        if is_upgrade:
+            subscription.is_upgrade = True
+        if is_renew:
+            subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -342,6 +382,15 @@ class SubscriptionService:
         profile_id: int,
         status: str,
         version_id: int,
+        ttk_epay_api_secret_key: str,
+        ttk_epay_client_site_url: str,
+        ttk_epay_satim_currency: str,
+        ttk_epay_mvc_satim_server_url: str,
+        ttk_epay_mvc_satim_fail_url: str,
+        ttk_epay_mvc_satim_confirm_url: str,
+        ressource_service_plan,
+        is_upgrade: bool = False,
+        is_renew: bool = False,
     ) -> object:
         """Create ttk epay subscription record"""
         subscription = TtkEpaySubscriptionAppService(
@@ -356,7 +405,18 @@ class SubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
+            ressource_service_plan_id=ressource_service_plan,
+            ttk_epay_api_secret_key=ttk_epay_api_secret_key,
+            ttk_epay_client_site_url=ttk_epay_client_site_url,
+            ttk_epay_satim_currency=ttk_epay_satim_currency,
+            ttk_epay_mvc_satim_server_url=ttk_epay_mvc_satim_server_url,
+            ttk_epay_mvc_satim_fail_url=ttk_epay_mvc_satim_fail_url,
+            ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
         )
+        if is_upgrade:
+            subscription["is_upgrade"] = True
+        if is_renew:
+            subscription["is_renew"] = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -462,14 +522,33 @@ class SubscriptionService:
 
         self.logger.info(f"Notification emails sent for subscription {subscription.id}")
 
-    def update_old_subscription(self, old_subscription):
-        """Update old subscrption  after successful Upgrade subscription"""
+    # def update_old_subscription(self, old_subscription,):
+    #     """Update old subscrption  after successful Upgrade subscription"""
 
+    #     old_subscription.start_date = datetime.now() - relativedelta(
+    #         months=old_subscription.duration_month + 1
+    #     )
+    #     old_subscription.status = "inactive"
+    #     old_subscription.is_upgrade = True
+
+    #     self.db.commit()
+
+    def update_old_subscription(
+        self, old_subscription, is_renew: bool = False, is_upgrade: bool = False
+    ):
+        """Update old subscription after successful upgrade or renewal"""
+
+        # Mark the subscription as expired by shifting the start date far in the past
         old_subscription.start_date = datetime.now() - relativedelta(
             months=old_subscription.duration_month + 1
         )
         old_subscription.status = "inactive"
-        old_subscription.is_upgrade = True
+
+        # Set the correct flag
+        if is_renew:
+            old_subscription.is_renew = True
+        if is_upgrade:
+            old_subscription.is_upgrade = True
 
         self.db.commit()
 
