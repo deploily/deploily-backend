@@ -202,6 +202,11 @@ class SubscriptionService:
                     if request_type == UpgradeTtkEpaySubscriptionRequest
                     else {}
                 ),
+                **(
+                    {"service_plan_selected_id": int(data["service_plan_selected_id"])}
+                    if request_type == SubscriptionRequest
+                    else {}
+                ),
             )
             return True, "", request_data
         except (ValueError, TypeError) as e:
