@@ -16,6 +16,7 @@ api_columns = [
     "version",
     "demo_url",
     "console_url",
+]
 
 edit_columns = ["application_status"]
 
