@@ -88,7 +88,9 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .filter(
                     ServicePlan.service_id.in_([ressource.id for ressource in ressources_services]),
                     ServicePlan.is_published.is_(True),
+                    ServicePlan.is_custom.is_(False),
                 )
+                .order_by(ServicePlan.price.asc())  # Order from min to max
                 .all()
             )
 
