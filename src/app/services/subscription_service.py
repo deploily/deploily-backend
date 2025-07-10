@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 from dateutil.relativedelta import relativedelta
@@ -482,12 +483,24 @@ class SubscriptionService:
         promo_code.subscription = subscription_id
         self.db.commit()
 
-    def send_notification_emails(self, user, plan, total_amount: float, subscription):
+    def send_notification_emails(
+        self, user, plan, total_amount: float, subscription, payment_method
+    ):
         """Send notification emails to admin and user"""
         # Admin notification
         admin_template = render_template(
             "emails/deploily_subscription.html", user_name=user.username, plan=plan
         )
+        bank = agency = address = bank_account_number = None
+
+        if payment_method == "bank_transfer":
+            print("Bank transfer payment method selected")
+            bank = os.getenv("BANK", "Société Générale Algérie")
+            agency = os.getenv("AGENCY", "Ain Temcouchent")
+            address = os.getenv(
+                "ADDRESS", "N° 21 Entrée 03, Cité 220 Logements CNEP Ain Temouchent"
+            )
+            bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "00021 00675 1130070572-79")
 
         admin_email = Mail(
             title=f"New Subscription Created by {user.username}",
@@ -501,8 +514,14 @@ class SubscriptionService:
         user_template = render_template(
             "emails/user_subscription.html",
             user=user,
-            service_name=plan.plan.name,
+            service_name=plan.service.name,
+            plan_name=plan.plan.name,
             total_price=total_amount,
+            payment_method=payment_method,
+            bank=bank,
+            agency=agency,
+            address=address,
+            bank_account_number=bank_account_number,
         )
 
         user_email = Mail(

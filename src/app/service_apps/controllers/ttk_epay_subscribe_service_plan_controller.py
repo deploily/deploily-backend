@@ -274,7 +274,9 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription_service.update_promo_code_usage(promo_code, subscription.id)
 
             # Send notification emails
-            subscription_service.send_notification_emails(user, plan, total_amount, subscription)
+            subscription_service.send_notification_emails(
+                user, plan, total_amount, subscription, request_data.payment_method
+            )
 
             # Commit transaction
             db.session.commit()
@@ -572,7 +574,9 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription_service.update_promo_code_usage(promo_code, subscription.id)
 
             # Send notification emails
-            subscription_service.send_notification_emails(user, plan, total_amount, subscription)
+            subscription_service.send_notification_emails(
+                user, plan, total_amount, subscription, request_data.payment_method
+            )
 
             # Commit transaction
             db.session.commit()
