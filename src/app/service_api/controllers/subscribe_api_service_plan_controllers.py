@@ -54,6 +54,12 @@ class SubscriptionApi(BaseApi):
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
+                                client_confirm_url:
+                                    type: string
+                                    description: URL to redirect after confirmation
+                                client_fail_url:
+                                    type: string
+                                    description: URL to redirect after failure
             responses:
                 200:
                     description: Subscription successful
@@ -198,8 +204,12 @@ class SubscriptionApi(BaseApi):
                         return self.response_400(message=error_msg)
 
                     # Process payment
+                    is_mvc_call = False
+                    client_confirm_url = request_data.client_confirm_url
+                    client_fail_url = request_data.client_fail_url
+
                     success, error_msg, payment_response = subscription_service.process_payment(
-                        payment, total_amount
+                        payment, total_amount, is_mvc_call, client_confirm_url, client_fail_url
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -286,6 +296,12 @@ class SubscriptionApi(BaseApi):
                                 old_subscription_id:
                                     type: integer
                                     description: ID of the selected version app service
+                                client_confirm_url:
+                                    type: string
+                                    description: URL to redirect after confirmation
+                                client_fail_url:
+                                    type: string
+                                    description: URL to redirect after failure
             responses:
                 200:
                     description: Subscription successful
@@ -440,8 +456,12 @@ class SubscriptionApi(BaseApi):
                         return self.response_400(message=error_msg)
 
                     # Process payment
+                    is_mvc_call = False
+                    client_confirm_url = request_data.client_confirm_url
+                    client_fail_url = request_data.client_fail_url
+
                     success, error_msg, payment_response = subscription_service.process_payment(
-                        payment, total_amount
+                        payment, total_amount, is_mvc_call, client_confirm_url, client_fail_url
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -524,6 +544,13 @@ class SubscriptionApi(BaseApi):
                                 old_subscription_id:
                                     type: integer
                                     description: ID of the selected version app service
+
+                                client_confirm_url:
+                                    type: string
+                                    description: URL to redirect after confirmation
+                                client_fail_url:
+                                    type: string
+                                    description: URL to redirect after failure
             responses:
                 200:
                     description: Subscription successful
@@ -671,8 +698,12 @@ class SubscriptionApi(BaseApi):
                         return self.response_400(message=error_msg)
 
                     # Process payment
+                    is_mvc_call = False
+                    client_confirm_url = request_data.client_confirm_url
+                    client_fail_url = request_data.client_fail_url
+
                     success, error_msg, payment_response = subscription_service.process_payment(
-                        payment, total_amount
+                        payment, total_amount, is_mvc_call, client_confirm_url, client_fail_url
                     )
                     if not success:
                         return self.response_400(message=error_msg)

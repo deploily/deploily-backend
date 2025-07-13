@@ -15,8 +15,16 @@ class PaymentService:
         self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
 
-    def post_payement(self, payment_id, total_amount):
-        payload = {"ORDER_ID": payment_id, "NET_AMOUNT": int(total_amount)}
+    def post_payement(
+        self, payment_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+    ):
+        payload = {
+            "ORDER_ID": payment_id,
+            "NET_AMOUNT": int(total_amount),
+            "IS_MVC_CALL": is_mvc_call,
+            "CLIENT_CONFIRM_URL": client_confirm_url,
+            "CLIENT_FAIL_URL": client_fail_url,
+        }
         headers = {"Content-Type": "application/json"}
 
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")

@@ -63,6 +63,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 version_selected_id:
                                     type: integer
                                     description: ID of the selected version app service
+                                client_confirm_url:
+                                    type: string
+                                    description: URL to redirect after confirmation
+                                client_fail_url:
+                                    type: string
+                                    description: URL to redirect after failure
 
 
 
@@ -194,16 +200,11 @@ class TtkEpaySubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            print(f"#############################{plan.price }")
-            print(f"#############################{ request_data.duration }")
-
             # Calculate pricing
             total_amount = plan.price * request_data.duration
-            print(f"#############################{total_amount }")
 
             if ressource_plan:
                 total_amount += ressource_plan.price * request_data.duration
-                print(f"#############################{total_amount }")
 
             promo_code, discount_amount = subscription_service.validate_promo_code(
                 request_data.promo_code, total_amount
@@ -261,8 +262,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                         return self.response_400(message=error_msg)
 
                     # Process payment
+                    is_mvc_call = False
+                    client_confirm_url = request_data.client_confirm_url
+                    client_fail_url = request_data.client_fail_url
+
                     success, error_msg, payment_response = subscription_service.process_payment(
-                        payment, total_amount
+                        payment, total_amount, is_mvc_call, client_confirm_url, client_fail_url
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -356,6 +361,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 old_subscription_id:
                                     type: integer
                                     description: ID of the selected version app service
+                                client_confirm_url:
+                                    type: string
+                                    description: URL to redirect after confirmation
+                                client_fail_url:
+                                    type: string
+                                    description: URL to redirect after failure
 
 
 
@@ -558,8 +569,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                         return self.response_400(message=error_msg)
 
                     # Process payment
+                    is_mvc_call = False
+                    client_confirm_url = request_data.client_confirm_url
+                    client_fail_url = request_data.client_fail_url
+
                     success, error_msg, payment_response = subscription_service.process_payment(
-                        payment, total_amount
+                        payment, total_amount, is_mvc_call, client_confirm_url, client_fail_url
                     )
                     if not success:
                         return self.response_400(message=error_msg)

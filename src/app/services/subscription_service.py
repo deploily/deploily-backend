@@ -36,6 +36,8 @@ class SubscriptionRequest:
     payment_method: str
     promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
 
 
 @dataclass
@@ -51,6 +53,8 @@ class TtkEpaySubscriptionRequest:
     payment_method: str
     promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
 
 
 @dataclass
@@ -65,6 +69,8 @@ class UpgradeSubscriptionRequest:
     payment_method: str
     promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
 
 
 @dataclass
@@ -81,6 +87,8 @@ class UpgradeTtkEpaySubscriptionRequest:
     payment_method: str
     promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
 
 
 @dataclass
@@ -93,6 +101,8 @@ class RenewSubscriptionRequest:
     payment_method: str
     promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -165,6 +175,8 @@ class SubscriptionService:
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
+                client_confirm_url=data.get("client_confirm_url"),
+                client_fail_url=data.get("client_fail_url"),
                 captcha_token=data.get("captcha_token"),
                 **(
                     {
@@ -444,14 +456,18 @@ class SubscriptionService:
         self.db.flush()
         return payment
 
-    def process_payment(self, payment, total_amount: float) -> Tuple[bool, str, dict]:
+    def process_payment(
+        self, payment, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
+    ) -> Tuple[bool, str, dict]:
         """Process payment through external service"""
         payment.order_id = "PAY" + str(payment.id)
         self.db.commit()
 
         try:
             payment_service = PaymentService()
-            payment_response = payment_service.post_payement(payment.order_id, total_amount)[0]
+            payment_response = payment_service.post_payement(
+                payment.order_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+            )[0]
 
             # Parse response if it's a string
             if isinstance(payment_response, str):
