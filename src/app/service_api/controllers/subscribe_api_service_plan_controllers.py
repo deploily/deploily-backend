@@ -932,7 +932,6 @@ class SubscriptionApi(BaseApi):
     #         remaining_money = self.get_remaining_value(old_subscription)
     #         if remaining_money:
     #             price = price - remaining_money
-    #             print("#################################################")
     #             print(price)
     #         # Balance verification
     #         # Case1: Sufficient balance
@@ -1136,7 +1135,6 @@ class SubscriptionApi(BaseApi):
 
     #     total_days = (end_date - start_date).days
     #     used_days = (today - start_date).days
-    #     print(f"######################################")
     #     print(used_days)
     #     remaining_days = total_days - used_days
     #     print(remaining_days)
