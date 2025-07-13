@@ -499,13 +499,10 @@ class SubscriptionService:
         bank = agency = address = bank_account_number = None
 
         if payment_method == "bank_transfer":
-            print("Bank transfer payment method selected")
-            bank = os.getenv("BANK", "Société Générale Algérie")
-            agency = os.getenv("AGENCY", "Ain Temcouchent")
-            address = os.getenv(
-                "ADDRESS", "N° 21 Entrée 03, Cité 220 Logements CNEP Ain Temouchent"
-            )
-            bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "00021 00675 1130070572-79")
+            bank = os.getenv("BANK", "")
+            agency = os.getenv("AGENCY", "")
+            address = os.getenv("ADDRESS", "")
+            bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
 
         admin_email = Mail(
             title=f"New Subscription Created by {user.username}",
