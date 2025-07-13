@@ -5,13 +5,13 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
-from app.service_apps.models.ttk_epay_subscription_model import (
-    TtkEpaySubscriptionAppService,
+from app.service_apps.models.supabase_subscription_model import (
+    SupabaseSubscriptionAppService,
 )
 
 
-class TtkEpayAppServiceSubscriptionView(ModelView):
-    datamodel = SQLAInterface(TtkEpaySubscriptionAppService)
+class SupabaseAppServiceSubscriptionView(ModelView):
+    datamodel = SQLAInterface(SupabaseSubscriptionAppService)
 
     list_columns = [
         "id",
@@ -32,8 +32,8 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
 
 
 appbuilder.add_view(
-    TtkEpayAppServiceSubscriptionView,
-    "TTK Epay  Subscriptions ",
+    SupabaseAppServiceSubscriptionView,
+    "Supabase  Subscriptions ",
     icon="fa-cogs",
     category="Applications",
 )
