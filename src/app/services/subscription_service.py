@@ -8,10 +8,6 @@ from flask import current_app, render_template
 from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
 from app.core.models.mail_models import Mail
 from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
-from app.service_apps.models.app_version_model import Version
-from app.service_apps.models.ttk_epay_subscription_model import (
-    TtkEpaySubscriptionAppService,
-)
 from app.services.payment_service import PaymentService
 
 _logger = logging.getLogger(__name__)
@@ -21,8 +17,6 @@ from datetime import datetime
 from typing import Optional, Tuple, Type, TypeVar
 
 import requests
-
-from app.core.celery_tasks.send_mail_task import send_mail
 
 
 @dataclass
@@ -294,6 +288,8 @@ class SubscriptionService:
 
     def validate_version(self, version_id: int) -> Tuple[bool, str, Optional[object]]:
         """Validate version"""
+        from app.service_apps.models.app_version_model import Version
+
         version = self.db.query(Version).filter_by(id=version_id).first()
         if not version:
             return self.response_400(message="Version not found")
@@ -411,6 +407,10 @@ class SubscriptionService:
         is_renew: bool = False,
     ) -> object:
         """Create ttk epay subscription record"""
+        from app.service_apps.models.ttk_epay_subscription_model import (
+            TtkEpaySubscriptionAppService,
+        )
+
         subscription = TtkEpaySubscriptionAppService(
             name=plan.plan.name,
             start_date=datetime.now(),
@@ -509,6 +509,8 @@ class SubscriptionService:
     ):
         """Send notification emails to admin and user"""
         # Admin notification
+        from app.core.celery_tasks.send_mail_task import send_mail
+
         admin_template = render_template(
             "emails/deploily_subscription.html", user_name=user.username, plan=plan
         )
