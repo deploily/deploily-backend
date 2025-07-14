@@ -32,32 +32,36 @@ class ServiceRessouceCategory(Model):
 
     @property
     def list_providers(self):
-        unique_providers = {}
+        provider_data = {}
+
         for service in self.ressouce_services:
             provider = service.provider
-            if provider and provider.id not in unique_providers:
-                min_price = min(
-                    (plan.price for plan in service.service_plans if plan.price is not None),
-                    default=None,
-                )
-                unique_providers[provider.id] = {
-                    "name": provider.name,
-                    "website": provider.website,
-                    "logo": provider.logo,
-                    "min_price": min_price,
-                }
-        return list(unique_providers.values())
+            if provider:
+                if provider.id not in provider_data:
+                    provider_data[provider.id] = {
+                        "name": provider.name,
+                        "website": provider.website,
+                        "logo": provider.logo,
+                        "min_price": None,
+                    }
+
+                for plan in service.service_plans:
+                    if plan.price is not None:
+                        current_min = provider_data[provider.id]["min_price"]
+                        if current_min is None or plan.price < current_min:
+                            provider_data[provider.id]["min_price"] = plan.price
+
+        return list(provider_data.values())
 
     @property
     def min_category_price(self):
-        min_price = None
-        for service in self.ressouce_services:
-            min_price = min(
-                (plan.price for plan in service.service_plans if plan.price is not None),
-                default=None,
-            )
-
-        return min_price if min_price is not None else None
+        all_prices = [
+            plan.price
+            for service in self.ressouce_services
+            for plan in service.service_plans
+            if plan.price is not None
+        ]
+        return min(all_prices) if all_prices else None
 
     def __repr__(self):
         return self.name
