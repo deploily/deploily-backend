@@ -10,6 +10,7 @@ from app.service_apps.models.odoo_subscription_model import OdooSubscriptionAppS
 api_columns = [
     "odoo_password",
 ]
+from app import appbuilder
 
 
 class OdooAppServiceSubscriptionModelApi(AppServiceSubscriptionModelApi):
@@ -21,3 +22,6 @@ class OdooAppServiceSubscriptionModelApi(AppServiceSubscriptionModelApi):
     list_columns = AppServiceSubscriptionModelApi.list_columns + api_columns
     show_columns = AppServiceSubscriptionModelApi.show_columns + api_columns
     edit_columns = AppServiceSubscriptionModelApi.edit_columns + api_columns
+
+
+appbuilder.add_api(OdooAppServiceSubscriptionModelApi)

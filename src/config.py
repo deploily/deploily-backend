@@ -235,6 +235,9 @@ FAB_ROLES = {
         ["TtkEpaySubscriptionApi", "can_upgrade_app_subscription"],
         ["SubscriptionApi", "can_upgrade_api_subscription"],
         ["SubscriptionApi", "can_renew_api_subscription"],
+        ["OdooAppServiceSubscriptionModelApi", "can_get"],
+        ["OdooSubscriptionApi", "can_subscribe_to_plan"],
+        ["OdooSubscriptionApi", "can_upgrade_app_subscription"],
     ]
 }
 
