@@ -320,6 +320,10 @@ class SubscriptionService:
         return True, "", old_subscription
 
     def validate_old_ttk_epay_subscription(self, old_subscription_id: int):
+        from app.service_apps.models.ttk_epay_subscription_model import (
+            TtkEpaySubscriptionAppService,
+        )
+
         old_subscription = (
             self.db.query(TtkEpaySubscriptionAppService).filter_by(id=old_subscription_id).first()
         )
