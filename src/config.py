@@ -243,6 +243,7 @@ FAB_ROLES = {
         ["TtkEpaySubscription", "can_renew_app_subscription"],
         ["OdooSubscription", "can_renew_app_subscription"],
         ["SupabaseSubscription", "can_renew_app_subscription"],
+        ["StatusApi", "can_send_pdf_receipt_mail"],
     ]
 }
 
