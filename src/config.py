@@ -235,6 +235,7 @@ FAB_ROLES = {
         ["TtkEpaySubscriptionApi", "can_upgrade_app_subscription"],
         ["SubscriptionApi", "can_upgrade_api_subscription"],
         ["SubscriptionApi", "can_renew_api_subscription"],
+        ["StatusApi", "can_senf_pdf_receipt_mail"],
     ]
 }
 
