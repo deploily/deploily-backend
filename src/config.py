@@ -238,6 +238,8 @@ FAB_ROLES = {
         ["OdooAppServiceSubscriptionModelApi", "can_get"],
         ["OdooSubscriptionApi", "can_subscribe_to_plan"],
         ["OdooSubscriptionApi", "can_upgrade_app_subscription"],
+        ["SupabaseSubscriptionApi", "can_subscribe_to_plan"],
+        ["SupabaseSubscriptionApi", "can_upgrade_supabase_subscription"],
     ]
 }
 
