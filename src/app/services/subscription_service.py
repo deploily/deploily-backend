@@ -52,6 +52,76 @@ class TtkEpaySubscriptionRequest:
 
 
 @dataclass
+class OdooSubscriptionRequest:
+    """Data class for subscription request validation"""
+
+    profile_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class SupabaseSubscriptionRequest:
+    """Data class for subscription request validation"""
+
+    profile_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class UpgradeOdooSubscriptionRequest:
+    """Data class for upgrade subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class UpgradeSupabaseSubscriptionRequest:
+    """Data class for upgrade subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
+    version_selected_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
 class UpgradeSubscriptionRequest:
     """Data class for upgrade subscription request validation"""
 
@@ -91,6 +161,52 @@ class RenewSubscriptionRequest:
 
     profile_id: int
     old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewTtkEpaySubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewOdooSubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewSupabaseSubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    total_amount: float
     duration: int
     payment_method: str
     promo_code: Optional[str] = None
@@ -131,6 +247,22 @@ class SubscriptionService:
                 "ressource_service_plan_selected_id",
                 "version_selected_id",
             ],
+            OdooSubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id",
+            ],
+            SupabaseSubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id",
+            ],
             UpgradeSubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
@@ -144,13 +276,50 @@ class SubscriptionService:
                 "duration",
                 "payment_method",
             ],
+            RenewTtkEpaySubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
+            RenewOdooSubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
+            RenewOdooSubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
             UpgradeTtkEpaySubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
                 "ressource_service_plan_selected_id",
-                "version_selected_id" "old_subscription_id",
+                "version_selected_id",
+                "old_subscription_id",
+            ],
+            UpgradeOdooSubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id",
+                "old_subscription_id",
+            ],
+            UpgradeSupabaseSubscriptionRequest: [
+                "profile_id",
+                "service_plan_selected_id",
+                "duration",
+                "payment_method",
+                "ressource_service_plan_selected_id",
+                "version_selected_id",
+                "old_subscription_id",
             ],
         }
 
@@ -186,6 +355,21 @@ class SubscriptionService:
                     else {}
                 ),
                 **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewTtkEpaySubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewOdooSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewSupabaseSubscriptionRequest
+                    else {}
+                ),
+                **(
                     {
                         "ressource_service_plan_selected_id": int(
                             data["ressource_service_plan_selected_id"]
@@ -202,10 +386,56 @@ class SubscriptionService:
                             data["ressource_service_plan_selected_id"]
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == OdooSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == SupabaseSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
                     }
                     if request_type == UpgradeTtkEpaySubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
+                        "old_subscription_id": int(data["old_subscription_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == UpgradeOdooSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": int(
+                            data["ressource_service_plan_selected_id"]
+                        ),
+                        "version_selected_id": int(data["version_selected_id"]),
+                        "old_subscription_id": int(data["old_subscription_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == UpgradeSupabaseSubscriptionRequest
                     else {}
                 ),
                 **(
@@ -237,11 +467,53 @@ class SubscriptionService:
         """Validate renew subscription request"""
         return self.validate_request_data(data, RenewSubscriptionRequest)
 
+    def validate_ttk_epay_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewTtkEpaySubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewTtkEpaySubscriptionRequest)
+
+    def validate_odoo_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewOdooSubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewOdooSubscriptionRequest)
+
+    def validate_supabase_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewSupabaseSubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewSupabaseSubscriptionRequest)
+
     def validate_ttk_epay_subscription_request(
         self, data: dict
     ) -> Tuple[bool, str, Optional[TtkEpaySubscriptionRequest]]:
         """Validate upgrade subscription request"""
         return self.validate_request_data(data, TtkEpaySubscriptionRequest)
+
+    def validate_odoo_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[OdooSubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, OdooSubscriptionRequest)
+
+    def validate_supabase_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[SupabaseSubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, SupabaseSubscriptionRequest)
+
+    def validate_upgrade_odoo_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[UpgradeOdooSubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, UpgradeOdooSubscriptionRequest)
+
+    def validate_upgrade_supabase_subscription_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[UpgradeSupabaseSubscriptionRequest]]:
+        """Validate upgrade subscription request"""
+        return self.validate_request_data(data, UpgradeSupabaseSubscriptionRequest)
 
     def validate_upgrade_ttk_epay_subscription_request(
         self, data: dict
@@ -326,6 +598,30 @@ class SubscriptionService:
 
         old_subscription = (
             self.db.query(TtkEpaySubscriptionAppService).filter_by(id=old_subscription_id).first()
+        )
+        if not old_subscription:
+            return False, "Old Subscription not found"
+        return True, "", old_subscription
+
+    def validate_old_odoo_subscription(self, old_subscription_id: int):
+        from app.service_apps.models.odoo_subscription_model import (
+            OdooSubscriptionAppService,
+        )
+
+        old_subscription = (
+            self.db.query(OdooSubscriptionAppService).filter_by(id=old_subscription_id).first()
+        )
+        if not old_subscription:
+            return False, "Old Subscription not found"
+        return True, "", old_subscription
+
+    def validate_old_supabase_subscription(self, old_subscription_id: int):
+        from app.service_apps.models.supabase_subscription_model import (
+            SupabaseSubscriptionAppService,
+        )
+
+        old_subscription = (
+            self.db.query(SupabaseSubscriptionAppService).filter_by(id=old_subscription_id).first()
         )
         if not old_subscription:
             return False, "Old Subscription not found"
@@ -436,9 +732,93 @@ class SubscriptionService:
             ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
         )
         if is_upgrade:
-            subscription["is_upgrade"] = True
+            subscription.is_upgrade = True
         if is_renew:
-            subscription["is_renew"] = True
+            subscription.is_renew = True
+
+        self.db.add(subscription)
+        self.db.flush()
+        return subscription
+
+    def create_odoo_subscription(
+        self,
+        plan,
+        duration: int,
+        total_amount: float,
+        price: float,
+        promo_code,
+        profile_id: int,
+        status: str,
+        version_id: int,
+        ressource_service_plan,
+        is_upgrade: bool = False,
+        is_renew: bool = False,
+    ) -> object:
+        """Create ttk epay subscription record"""
+        from app.service_apps.models.odoo_subscription_model import (
+            OdooSubscriptionAppService,
+        )
+
+        subscription = OdooSubscriptionAppService(
+            name=plan.plan.name,
+            start_date=datetime.now(),
+            total_amount=total_amount,
+            price=price,
+            service_plan_id=plan.id,
+            duration_month=duration,
+            promo_code_id=promo_code.id if promo_code else None,
+            status=status,
+            payment_status="paid" if status == "active" else "unpaid",
+            profile_id=profile_id,
+            version_id=version_id,
+            ressource_service_plan_id=ressource_service_plan,
+        )
+        if is_upgrade:
+            subscription.is_upgrade = True
+        if is_renew:
+            subscription.is_renew = True
+
+        self.db.add(subscription)
+        self.db.flush()
+        return subscription
+
+    def create_supabase_subscription(
+        self,
+        plan,
+        duration: int,
+        total_amount: float,
+        price: float,
+        promo_code,
+        profile_id: int,
+        status: str,
+        version_id: int,
+        ressource_service_plan,
+        is_upgrade: bool = False,
+        is_renew: bool = False,
+    ) -> object:
+        """Create supabase subscription record"""
+        from app.service_apps.models.supabase_subscription_model import (
+            SupabaseSubscriptionAppService,
+        )
+
+        subscription = SupabaseSubscriptionAppService(
+            name=plan.plan.name,
+            start_date=datetime.now(),
+            total_amount=total_amount,
+            price=price,
+            service_plan_id=plan.id,
+            duration_month=duration,
+            promo_code_id=promo_code.id if promo_code else None,
+            status=status,
+            payment_status="paid" if status == "active" else "unpaid",
+            profile_id=profile_id,
+            version_id=version_id,
+            ressource_service_plan_id=ressource_service_plan,
+        )
+        if is_upgrade:
+            subscription.is_upgrade = True
+        if is_renew:
+            subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
