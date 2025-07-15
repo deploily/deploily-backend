@@ -206,6 +206,7 @@ class RenewSupabaseSubscriptionRequest:
 
     profile_id: int
     old_subscription_id: int
+    total_amount: float
     duration: int
     payment_method: str
     promo_code: Optional[str] = None

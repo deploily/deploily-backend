@@ -789,6 +789,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 status=subscription_status,
                 is_renew=True,
                 version_id=old_subscription.version_id,
+                ressource_service_plan=old_subscription.ressource_service_plan_id,
             )
 
             # Initialize payment response variables
