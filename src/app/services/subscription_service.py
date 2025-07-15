@@ -161,6 +161,51 @@ class RenewSubscriptionRequest:
 
     profile_id: int
     old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewTtkEpaySubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewOdooSubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
+    total_amount: float
+    duration: int
+    payment_method: str
+    promo_code: Optional[str] = None
+    captcha_token: Optional[str] = None
+    client_confirm_url: Optional[str] = None
+    client_fail_url: Optional[str] = None
+
+
+@dataclass
+class RenewSupabaseSubscriptionRequest:
+    """Data class for renew subscription request validation"""
+
+    profile_id: int
+    old_subscription_id: int
     duration: int
     payment_method: str
     promo_code: Optional[str] = None
@@ -230,6 +275,24 @@ class SubscriptionService:
                 "duration",
                 "payment_method",
             ],
+            RenewTtkEpaySubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
+            RenewOdooSubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
+            RenewOdooSubscriptionRequest: [
+                "profile_id",
+                "old_subscription_id",
+                "duration",
+                "payment_method",
+            ],
             UpgradeTtkEpaySubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
@@ -288,6 +351,21 @@ class SubscriptionService:
                 **(
                     {"old_subscription_id": int(data["old_subscription_id"])}
                     if request_type == RenewSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewTtkEpaySubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewOdooSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {"old_subscription_id": int(data["old_subscription_id"])}
+                    if request_type == RenewSupabaseSubscriptionRequest
                     else {}
                 ),
                 **(
@@ -387,6 +465,24 @@ class SubscriptionService:
     ) -> Tuple[bool, str, Optional[RenewSubscriptionRequest]]:
         """Validate renew subscription request"""
         return self.validate_request_data(data, RenewSubscriptionRequest)
+
+    def validate_ttk_epay_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewTtkEpaySubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewTtkEpaySubscriptionRequest)
+
+    def validate_odoo_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewOdooSubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewOdooSubscriptionRequest)
+
+    def validate_supabase_renew_request(
+        self, data: dict
+    ) -> Tuple[bool, str, Optional[RenewSupabaseSubscriptionRequest]]:
+        """Validate renew subscription request"""
+        return self.validate_request_data(data, RenewSupabaseSubscriptionRequest)
 
     def validate_ttk_epay_subscription_request(
         self, data: dict
