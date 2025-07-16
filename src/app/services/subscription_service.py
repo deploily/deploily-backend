@@ -444,6 +444,10 @@ class SubscriptionService:
                     else {}
                 ),
             )
+            # ✅ Custom validation: enforce duration > 3
+            if request_data.duration < 3:
+                return False, "Duration must be greater than 3 months", None
+
             return True, "", request_data
         except (ValueError, TypeError) as e:
             return False, f"Invalid data format: {str(e)}", None
