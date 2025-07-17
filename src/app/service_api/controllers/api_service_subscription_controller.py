@@ -75,6 +75,8 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
 
         if not subscribe or not subscribe.service_plan:
             return Response("Subscription or ServicePlan not found", status=400)
+        if subscribe.is_expired:
+            return Response("Subscription is expired please renew your subscrption", status=400)
 
         base_service = subscribe.service_plan.service
 
