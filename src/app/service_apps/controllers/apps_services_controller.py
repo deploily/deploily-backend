@@ -17,6 +17,7 @@ api_columns = [
     "minimal_ram",
     "minimal_disk",
     "app_versions",
+    "is_subscribed",
 ]
 
 
@@ -100,6 +101,7 @@ class AppServiceModelApi(ServiceModelApi):
                 "minimal_disk": service.minimal_disk,
                 "service_slug": service.service_slug,
                 "average_rating": service.average_rating,
+                "is_subscribed": service.is_subscribed,
                 "recommended_apps": [
                     {
                         "id": app.id,
@@ -207,6 +209,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
                 "service_slug": service.service_slug,
+                "is_subscribed": service.is_subscribed,
                 "app_versions": [
                     {"id": app.id, "version": app.name, "description": app.description}
                     for app in service.app_versions

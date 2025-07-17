@@ -6,6 +6,8 @@ from sqlalchemy.orm import relationship
 from app import db
 from app.core.models import Service
 from app.core.models.rating_models import Score
+from app.core.models.subscription_models import Subscription
+from app.utils.utils import get_user
 
 
 class AppService(Service):
@@ -30,6 +32,24 @@ class AppService(Service):
         secondary="app_service_version",
         back_populates="app_services",
     )
+
+    @property
+    def is_subscribed(self):
+
+        user = get_user()
+        if not user.is_authenticated:
+            return False
+        subscription = (
+            db.session.query(Subscription)
+            .filter(
+                Subscription.service_plan.has(service_id=self.id),
+                Subscription.created_by_fk == user.id,
+                Subscription.status == "active",
+            )
+            .first()
+        )
+
+        return subscription is not None and subscription.is_expired == False
 
     @property
     def min_app_price(self):
