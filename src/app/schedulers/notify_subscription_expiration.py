@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @scheduler.task("cron", id="notify_expiring_subscriptions", max_instances=1, minute="*/1")
 def notify_expiring_subscriptions():
     print(">>> [CRON] notify_expiring_subscriptions() running")
+    today = datetime.now().date()
 
     def was_already_sent_today(sub_id, days):
         path = f"/tmp/sub_notify_{sub_id}_{days}_{today}.lock"
@@ -41,7 +42,6 @@ def notify_expiring_subscriptions():
 
             for sub in subs:
                 try:
-                    today = datetime.now().date()
                     end_date = (sub.start_date + relativedelta(months=sub.duration_month)).date()
 
                     days_difference = (end_date - today).days
