@@ -445,7 +445,22 @@ class SubscriptionService:
                 ),
             )
             # ✅ Custom validation: enforce duration > 3
-            if request_data.duration < 3:
+
+            if (
+                request_type
+                in [
+                    TtkEpaySubscriptionRequest,
+                    OdooSubscriptionRequest,
+                    SupabaseSubscriptionRequest,
+                    UpgradeSupabaseSubscriptionRequest,
+                    UpgradeOdooSubscriptionRequest,
+                    UpgradeTtkEpaySubscriptionRequest,
+                    RenewSupabaseSubscriptionRequest,
+                    RenewOdooSubscriptionRequest,
+                    RenewTtkEpaySubscriptionRequest,
+                ]
+                and request_data.duration < 3
+            ):
                 return False, "Duration must be greater than 3 months", None
 
             return True, "", request_data
