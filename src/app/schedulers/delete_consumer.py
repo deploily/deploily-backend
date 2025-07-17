@@ -51,8 +51,9 @@ def delete_expired_consumers():
                 user_name = user.username
                 slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
                 service_slug = sub.service_plan.service.service_slug
-                plan_name = re.sub(r"[^a-zA-Z0-9]", "", sub.service_plan.plan.name.lower())
-                consumer_username = f"{service_slug}_{plan_name}_{slug_user_name}"
+                re.sub(r"[^a-zA-Z0-9]", "", sub.service_plan.plan.name.lower())
+                # consumer_username = f"{service_slug}_{plan_name}_{slug_user_name}"
+                consumer_username = f"{service_slug}_{slug_user_name}"
                 if not user:
                     logger.warning(f"No user found for subscription ID {sub.id}")
                     continue

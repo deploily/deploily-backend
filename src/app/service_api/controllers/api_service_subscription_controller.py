@@ -82,13 +82,14 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
             return Response("Service not found", status=400)
 
         plan_name = subscribe.service_plan.plan.name.lower()
-        slug_plan_name = re.sub(r"[^a-zA-Z0-9]", "", plan_name)
+        re.sub(r"[^a-zA-Z0-9]", "", plan_name)
 
         service = db.session.query(ApiService).filter(ApiService.id == base_service.id).first()
         api_key = uuid.uuid4().hex[:32]
 
         try:
-            consumer_username = f"{service.service_slug}_{slug_plan_name}_{slug_user_name}"
+            # consumer_username = f"{service.service_slug}_{slug_plan_name}_{slug_user_name}"
+            consumer_username = f"{service.service_slug}_{slug_user_name}"
             apisix_service = ApiSixService()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
