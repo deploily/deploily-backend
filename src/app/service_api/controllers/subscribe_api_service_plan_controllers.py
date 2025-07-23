@@ -399,10 +399,14 @@ class SubscriptionApi(BaseApi):
 
             # Calculate pricing
             total_amount = plan.price * request_data.duration
+            print(f"##########################################Total amount: {total_amount}")
             promo_code, discount_amount = subscription_service.validate_promo_code(
                 request_data.promo_code, total_amount
             )
             final_price = total_amount - discount_amount
+            print(
+                f"##########################################Final price before remaining money: {final_price}"
+            )
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = subscription_service.validate_old_subscription(
@@ -412,8 +416,12 @@ class SubscriptionApi(BaseApi):
                 return self.response_400(message=error_msg)
 
             remaining_money = subscription_service.get_remaining_value(old_subscription)
+            print(f"#########################################Remaining money: {remaining_money}")
             if remaining_money:
                 final_price = final_price - remaining_money
+                print(
+                    f"#########################################Final price after remaining money: {final_price}"
+                )
 
             # Determine subscription status based on balance
             has_sufficient_balance = profile.balance >= final_price

@@ -1049,6 +1049,7 @@ class SubscriptionService:
             return round(total_price)
 
         remaining_days = self.get_date_diff_in_days(start_date, today)
+        print(f"#########################################Remaining days: {remaining_days}")
         total_days = duration_month * 30  # Assuming each month has ~30 days
         remaining_value = ((total_days - remaining_days) * total_price) / total_days
 
