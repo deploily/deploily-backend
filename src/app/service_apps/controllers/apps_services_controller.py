@@ -102,6 +102,7 @@ class AppServiceModelApi(ServiceModelApi):
                 "service_slug": service.service_slug,
                 "average_rating": service.average_rating,
                 "is_subscribed": service.is_subscribed,
+                "documentation_url": service.documentation_url,
                 "recommended_apps": [
                     {
                         "id": app.id,
@@ -205,6 +206,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "description": service.description,
                 "image_service": service.image_service,
                 "specifications": service.specifications,
+                "documentation_url": service.documentation_url,
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
