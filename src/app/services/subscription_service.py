@@ -1017,41 +1017,39 @@ class SubscriptionService:
     #     remaining_value = (remaining_days / total_days) * total_price
     #     return round(remaining_value, 2)
 
+    def get_date_diff_in_days(self, date1, date2):
+        """
+        Returns the number of full days between two dates.
+        """
+        if isinstance(date1, str):
+            date1 = datetime.fromisoformat(date1)
+        if isinstance(date2, str):
+            date2 = datetime.fromisoformat(date2)
 
-def get_date_diff_in_days(date1, date2):
-    """
-    Returns the number of full days between two dates.
-    """
-    if isinstance(date1, str):
-        date1 = datetime.fromisoformat(date1)
-    if isinstance(date2, str):
-        date2 = datetime.fromisoformat(date2)
+        return (date2 - date1).days
 
-    return (date2 - date1).days
+    def get_remaining_value(self, old_subscription):
 
+        total_price = old_subscription.price
+        start_date = old_subscription.start_date
+        duration_month = old_subscription.duration_month
 
-def get_remaining_value(old_subscription):
+        if isinstance(start_date, str):
+            start_date = datetime.fromisoformat(start_date)
 
-    total_price = old_subscription.price
-    start_date = old_subscription.start_date
-    duration_month = old_subscription.duration_month
+        end_date = start_date + relativedelta(months=duration_month)
+        today = datetime.now()
 
-    if isinstance(start_date, str):
-        start_date = datetime.fromisoformat(start_date)
+        # If subscription expired
+        if today >= end_date:
+            return 0.0
 
-    end_date = start_date + relativedelta(months=duration_month)
-    today = datetime.now()
+        # If subscription hasn't started yet
+        if today <= start_date:
+            return round(total_price)
 
-    # If subscription expired
-    if today >= end_date:
-        return 0.0
+        remaining_days = get_date_diff_in_days(start_date, today)
+        total_days = duration_month * 30  # Assuming each month has ~30 days
+        remaining_value = ((total_days - remaining_days) * total_price) / total_days
 
-    # If subscription hasn't started yet
-    if today <= start_date:
-        return round(total_price)
-
-    remaining_days = get_date_diff_in_days(start_date, today)
-    total_days = duration_month * 30  # Assuming each month has ~30 days
-    remaining_value = ((total_days - remaining_days) * total_price) / total_days
-
-    return remaining_value
+        return remaining_value
