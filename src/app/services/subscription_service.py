@@ -1026,7 +1026,10 @@ class SubscriptionService:
         if isinstance(date2, str):
             date2 = datetime.fromisoformat(date2)
 
-        return (date2 - date1).days
+        d1_ms = date1.timestamp() * 1000  # milliseconds since epoch
+        d2_ms = date2.timestamp() * 1000
+
+        return (d2_ms - d1_ms) / (1000 * 60 * 60 * 24)  # exact float days
 
     def get_remaining_value(self, old_subscription):
 
