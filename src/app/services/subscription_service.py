@@ -1056,4 +1056,4 @@ class SubscriptionService:
         total_days = duration_month * 30  # Assuming each month has ~30 days
         remaining_value = ((total_days - remaining_days) * total_price) / total_days
 
-        return remaining_value
+        return round(remaining_value)
