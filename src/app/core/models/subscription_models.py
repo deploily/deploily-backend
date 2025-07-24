@@ -124,12 +124,18 @@ class Subscription(Model, AuditMixin):
         details = self.service_details
         return details.get("name") if isinstance(details, dict) else None
 
+    # @property
+    # def is_expired(self):
+    #     is_subscription_expired = False
+    #     if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
+    #         is_subscription_expired = True
+    #     return is_subscription_expired
+
     @hybrid_property
     def is_expired(self):
-        is_subscription_expired = False
-        if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
-            is_subscription_expired = True
-        return is_subscription_expired
+        if self.start_date and self.duration_month:
+            return self.start_date + relativedelta(months=self.duration_month) < datetime.utcnow()
+        return False
 
     @is_expired.expression
     def is_expired(cls):
