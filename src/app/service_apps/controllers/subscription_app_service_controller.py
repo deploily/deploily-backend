@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
@@ -31,7 +30,7 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
     list_columns = SubscriptionModelApi.list_columns + api_columns
     show_columns = SubscriptionModelApi.show_columns + api_columns
     edit_columns = edit_columns
-    base_filters = [["is_expired", FilterEqual, False]]
+    # base_filters = [["is_expired", FilterEqual, False]]
 
 
 appbuilder.add_api(AppServiceSubscriptionModelApi)
