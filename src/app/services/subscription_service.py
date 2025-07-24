@@ -697,10 +697,10 @@ class SubscriptionService:
             profile_id=profile_id,
             api_key=api_key,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -751,10 +751,10 @@ class SubscriptionService:
             ttk_epay_mvc_satim_fail_url=ttk_epay_mvc_satim_fail_url,
             ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -793,10 +793,10 @@ class SubscriptionService:
             version_id=version_id,
             ressource_service_plan_id=ressource_service_plan,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -835,10 +835,10 @@ class SubscriptionService:
             version_id=version_id,
             ressource_service_plan_id=ressource_service_plan,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
