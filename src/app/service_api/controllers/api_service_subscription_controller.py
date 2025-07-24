@@ -6,6 +6,7 @@ import uuid
 
 from flask import Response, jsonify
 from flask_appbuilder.api import expose, protect
+from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
 
@@ -31,6 +32,9 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
     list_columns = SubscriptionModelApi.list_columns
     show_columns = SubscriptionModelApi.show_columns
     edit_columns = SubscriptionModelApi.edit_columns
+    base_filters = [["is_expired", FilterEqual, False]]
+
+    # base_filters = [["is_expired", FilterEqual, True]]  # or False
 
     @protect()
     @jwt_required()
