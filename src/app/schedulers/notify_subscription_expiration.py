@@ -38,15 +38,11 @@ def notify_expiring_subscriptions():
                 .filter(Subscription.status == "active", Subscription.start_date != None)
                 .all()
             )
-            print("**********************************")
-            print(subs)
 
             for sub in subs:
                 try:
                     end_date = (sub.start_date + relativedelta(months=sub.duration_month)).date()
                     days_difference = (end_date - today).days
-                    print("**********************************")
-                    print(days_difference)
                     if days_difference not in notice_days:
                         continue
 
