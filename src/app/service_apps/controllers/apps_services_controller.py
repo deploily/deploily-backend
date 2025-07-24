@@ -102,6 +102,7 @@ class AppServiceModelApi(ServiceModelApi):
                 "service_slug": service.service_slug,
                 "average_rating": service.average_rating,
                 "is_subscribed": service.is_subscribed,
+                "documentation_url": service.documentation_url,
                 "recommended_apps": [
                     {
                         "id": app.id,
@@ -137,6 +138,9 @@ class AppServiceModelApi(ServiceModelApi):
                         "id": media.id,
                         "name": media.title,
                         "image": media.image,
+                        "horizontal_image": media.horizontal_image,
+                        "vertical_image": media.vertical_image,
+                        "square_image": media.square_image,
                     }
                     for media in service.medias
                 ],
@@ -205,6 +209,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "description": service.description,
                 "image_service": service.image_service,
                 "specifications": service.specifications,
+                "documentation_url": service.documentation_url,
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,

@@ -17,6 +17,7 @@ from datetime import datetime
 from typing import Optional, Tuple, Type, TypeVar
 
 import requests
+from dateutil.relativedelta import relativedelta
 
 
 @dataclass
@@ -696,10 +697,10 @@ class SubscriptionService:
             profile_id=profile_id,
             api_key=api_key,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -750,10 +751,10 @@ class SubscriptionService:
             ttk_epay_mvc_satim_fail_url=ttk_epay_mvc_satim_fail_url,
             ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -792,10 +793,10 @@ class SubscriptionService:
             version_id=version_id,
             ressource_service_plan_id=ressource_service_plan,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -834,10 +835,10 @@ class SubscriptionService:
             version_id=version_id,
             ressource_service_plan_id=ressource_service_plan,
         )
-        if is_upgrade:
-            subscription.is_upgrade = True
-        if is_renew:
-            subscription.is_renew = True
+        # if is_upgrade:
+        #     subscription.is_upgrade = True
+        # if is_renew:
+        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()
@@ -984,7 +985,7 @@ class SubscriptionService:
         old_subscription.start_date = datetime.now() - relativedelta(
             months=old_subscription.duration_month + 1
         )
-        old_subscription.status = "inactive"
+        # old_subscription.status = "inactive"
 
         # Set the correct flag
         if is_renew:
@@ -994,24 +995,64 @@ class SubscriptionService:
 
         self.db.commit()
 
+    # def get_remaining_value(self, old_subscription):
+    #     total_price = old_subscription.price
+    #     start_date = old_subscription.start_date
+    #     duration_month = old_subscription.duration_month
+
+    #     end_date = start_date + relativedelta(months=duration_month)
+    #     today = datetime.now()
+
+    #     # Ensure today is not beyond the end date
+    #     if today > end_date:
+    #         return 0.0
+
+    #     total_days = (end_date - start_date).days
+    #     used_days = (today - start_date).days
+    #     remaining_days = total_days - used_days
+
+    #     if total_days == 0:
+    #         return 0.0
+
+    #     remaining_value = (remaining_days / total_days) * total_price
+    #     return round(remaining_value, 2)
+
+    def get_date_diff_in_days(self, date1, date2):
+        """
+        Returns the number of full days between two dates.
+        """
+        if isinstance(date1, str):
+            date1 = datetime.fromisoformat(date1)
+        if isinstance(date2, str):
+            date2 = datetime.fromisoformat(date2)
+
+        d1_ms = date1.timestamp() * 1000  # milliseconds since epoch
+        d2_ms = date2.timestamp() * 1000
+
+        return (d2_ms - d1_ms) / (1000 * 60 * 60 * 24)  # exact float days
+
     def get_remaining_value(self, old_subscription):
+
         total_price = old_subscription.price
         start_date = old_subscription.start_date
         duration_month = old_subscription.duration_month
 
+        if isinstance(start_date, str):
+            start_date = datetime.fromisoformat(start_date)
+
         end_date = start_date + relativedelta(months=duration_month)
         today = datetime.now()
 
-        # Ensure today is not beyond the end date
-        if today > end_date:
+        # If subscription expired
+        if today >= end_date:
             return 0.0
 
-        total_days = (end_date - start_date).days
-        used_days = (today - start_date).days
-        remaining_days = total_days - used_days
+        # If subscription hasn't started yet
+        if today <= start_date:
+            return round(total_price)
 
-        if total_days == 0:
-            return 0.0
+        remaining_days = self.get_date_diff_in_days(start_date, today)
+        total_days = duration_month * 30  # Assuming each month has ~30 days
+        remaining_value = ((total_days - remaining_days) * total_price) / total_days
 
-        remaining_value = (remaining_days / total_days) * total_price
-        return round(remaining_value, 2)
+        return round(remaining_value)

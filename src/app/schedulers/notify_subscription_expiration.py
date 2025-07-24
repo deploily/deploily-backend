@@ -1,5 +1,4 @@
 import logging
-import os
 from datetime import datetime, timedelta
 
 from dateutil.relativedelta import relativedelta
@@ -14,23 +13,23 @@ from app.services.mail_service import send_and_log_email
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+sent_notifications = set()
+last_reset_date = None  # Pour nettoyer le cache chaque jour
+
 
 @scheduler.task("cron", id="notify_expiring_subscriptions", max_instances=1, minute="*/1")
 def notify_expiring_subscriptions():
+    global sent_notifications, last_reset_date
+
     print(">>> [CRON] notify_expiring_subscriptions() running")
     today = datetime.now().date()
 
-    def was_already_sent_today(sub_id, days):
-        path = f"/tmp/sub_notify_{sub_id}_{days}_{today}.lock"
-        return os.path.exists(path)
-
-    def mark_sent(sub_id, days):
-        path = f"/tmp/sub_notify_{sub_id}_{days}_{today}.lock"
-        with open(path, "w") as f:
-            f.write("sent")
+    if last_reset_date != today:
+        sent_notifications.clear()
+        last_reset_date = today
+        print("[RESET] sent_notifications cleared for new day")
 
     try:
-
         with app.app_context():
             notice_days = [3, 5, 6, 7, 15, 30]
 
@@ -43,34 +42,38 @@ def notify_expiring_subscriptions():
             for sub in subs:
                 try:
                     end_date = (sub.start_date + relativedelta(months=sub.duration_month)).date()
-
                     days_difference = (end_date - today).days
-                    if days_difference in notice_days:
-                        user = sub.created_by
+                    if days_difference not in notice_days:
+                        continue
 
-                        if was_already_sent_today(sub.id, days_difference):
-                            print(
-                                f"[SKIP] Email already sent today for subscription {sub.id} at day {days_difference}"
-                            )
-                            continue
+                    key = (sub.id, days_difference, today)
 
-                        expiration_date = sub.start_date + timedelta(days=30 * sub.duration_month)
-
+                    if key in sent_notifications:
                         print(
-                            f"[NOTIFY] Subscription ID {sub.id} for user {user.username} expires in {days_difference} days."
+                            f"[SKIP] Already sent for subscription {sub.id} at day {days_difference}"
                         )
+                        continue
 
-                        subject = f"Your subscription will expire in {days_difference} days"
-                        body = render_template(
-                            "emails/subscription_expiring.html",
-                            user=user,
-                            subscription=sub,
-                            days=days_difference,
-                            expiration_date=expiration_date.strftime("%Y-%m-%d"),
-                        )
-                        send_and_log_email(user.email, subject, body)
+                    user = sub.created_by
+                    expiration_date = sub.start_date + timedelta(days=30 * sub.duration_month)
 
-                        mark_sent(sub.id, days_difference)
+                    print(
+                        f"[NOTIFY] Subscription ID {sub.id} for user {user.username} expires in {days_difference} days."
+                    )
+
+                    subject = f"Your subscription will expire in {days_difference} days"
+                    body = render_template(
+                        "emails/subscription_expiring.html",
+                        user=user,
+                        subscription=sub,
+                        days=days_difference,
+                        expiration_date=expiration_date.strftime("%Y-%m-%d"),
+                    )
+
+                    send_and_log_email(user.email, subject, body)
+
+                    sent_notifications.add(key)
+
                 except Exception as e:
                     logger.error(f"Error processing subscription {sub.id}: {e}")
                     continue

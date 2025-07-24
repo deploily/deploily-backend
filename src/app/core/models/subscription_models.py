@@ -16,8 +16,11 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    case,
     event,
+    func,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -121,12 +124,34 @@ class Subscription(Model, AuditMixin):
         details = self.service_details
         return details.get("name") if isinstance(details, dict) else None
 
-    @property
+    # @property
+    # def is_expired(self):
+    #     is_subscription_expired = False
+    #     if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
+    #         is_subscription_expired = True
+    #     return is_subscription_expired
+
+    @hybrid_property
     def is_expired(self):
-        is_subscription_expired = False
-        if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
-            is_subscription_expired = True
-        return is_subscription_expired
+        if self.start_date and self.duration_month:
+            return self.start_date + relativedelta(months=self.duration_month) < datetime.utcnow()
+        return False
+
+    @is_expired.expression
+    def is_expired(cls):
+        return case(
+            [
+                (
+                    cls.start_date.isnot(None),
+                    func.now()
+                    > (
+                        func.date_trunc("second", cls.start_date)
+                        + func.make_interval(months=cls.duration_month)
+                    ),
+                )
+            ],
+            else_=False,
+        )
 
     def __repr__(self):
         # return str(self.id)

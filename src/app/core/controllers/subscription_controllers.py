@@ -2,11 +2,11 @@
 
 import logging
 
-from flask_appbuilder.api import ModelRestApi
+from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
-from app import appbuilder
+from app import appbuilder, db
 from app.core.models.subscription_models import Subscription
 from app.utils.utils import get_user
 
@@ -57,120 +57,74 @@ class SubscriptionModelApi(ModelRestApi):
         "changed_by",
     ]
 
-    # @protect()
-    # @jwt_required()
-    # @expose("/upgrade", methods=["POST"])
-    # def upgrade_subscription(self):
+    def serialize_subscription(self, sub):
+        """
+        Custom serializer that handles related fields like service_plan.
+        """
+        return {
+            "id": sub.id,
+            "is_expired": sub.is_expired,
+            "name": sub.name,
+            "start_date": sub.start_date.isoformat() if sub.start_date else None,
+            "total_amount": sub.total_amount,
+            "price": sub.price,
+            "payment_status": sub.payment_status,
+            "duration_month": sub.duration_month,
+            "status": sub.status,
+            "service_plan_id": sub.service_plan.id if sub.service_plan else None,
+            # "service_plan_name": sub.service_plan.name if sub.service_plan else None,
+            "promo_code_id": sub.promo_code.id if sub.promo_code else None,
+            "promo_code_name": sub.promo_code.code if sub.promo_code else None,
+            "api_key": sub.api_key,
+            "is_encrypted": sub.is_encrypted,
+            "profile_id": sub.profile.id if sub.profile else None,
+            "profile_name": sub.profile.name if hasattr(sub.profile, "name") else None,
+            "is_upgrade": sub.is_upgrade,
+            "is_renew": sub.is_renew,
+            "is_expired": sub.is_expired,
+        }
 
-    #     """Subscription a user to a service plan.
-    #     ---
-    #     post:
-    #         summary: Subscription a user to a service plan
-    #         description: Creates a new subscription for the authenticated user.
-    #         requestBody:
-    #             required: true
-    #             content:
-    #                 application/json:
-    #                     schema:
-    #                         type: object
-    #                         properties:
-    #                             subscription_id:
-    #                                 type: integer
-    #                                 description: ID of the user's profile
-    #                             service_plan_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected service plan
+    @expose("/history", methods=["GET"])
+    @protect()
+    def history(self):
+        """
+        ---
+        get:
+            summary: Get all expired subscriptions for the current user
+            description: Returns a list of all expired subscriptions created by the authenticated user.
+            responses:
+                200:
+                    description: A list of subscriptions
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+                401:
+                    description: Unauthorized
+                500:
+                    description: Internal server error
+        """
+        user_id = get_user()
+        if not user_id:
+            return self.response(401, message="Unauthorized")
 
-    #                             promo_code:
-    #                                 type: string
-    #                                 nullable: true
-    #                                 description: Promo code (if applicable)
-    #                             duration:
-    #                                 type: integer
-    #                                 description: Duration of the subscription in months
-    #                             payment_method:
-    #                                 type: string
-    #                                 description: Payment method (e.g., "card", "paypal")
-    #                             captcha_token:
-    #                                 type: string
-    #                                 description: Google reCAPTCHA token
-    #                             profile_id:
-    #                                 type: integer
-    #                                 description: ID of the user's profile
-    #         responses:
-    #             200:
-    #                 description: Subscription upgraded successfully
-    #             400:
-    #                 description: Bad request
-    #             500:
-    #                 description: Internal server error
+        # Get all subscriptions for the user
+        query = (
+            db.session.query(Subscription)
+            .filter(Subscription.created_by == user_id)
+            .order_by(Subscription.id.desc())
+        )
 
-    #     """
-    #     try:
-    #         user = get_user()
-    #         if not user:
-    #             return self.response_400(message="User not found")
-    #         data = request.get_json(silent=True)
-    #         if not data:
-    #             return self.response_400(message="Invalid request data")
-    #         subscription_id = data.get("subscription_id")
-    #         if not subscription_id:
-    #             return self.response_404(message="subscription_id is required")
-    #         profile_id = data.get("profile_id")
-    #         if not profile_id:
-    #             return self.response_404(message="Profile id is required")
-    #         profile = (
-    #             db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
-    #         )
-    #         if not profile:
-    #             return self.response_400(message="PaymentProfile not found")
+        # Filter expired ones using the computed property
+        expired_subs = [sub for sub in query.all() if sub.is_expired]
+        print("Expired Subscriptions:", expired_subs)
 
-    #         if profile.balance is None:
-    #             return self.response_404(message="Insufficient balance")
+        # Serialize results using custom serializer
+        results = [self.serialize_subscription(sub) for sub in expired_subs]
 
-    #         if profile.profile_type == "default":
-
-    #             if plan and plan.service and not plan.service.is_eligible:
-    #                 return self.response_400(
-    #                     message="This service plan is not eligible for subscription"
-    #                 )
-
-    #         service_plan_selected_id = data.get("service_plan_selected_id")
-    #         if not service_plan_selected_id:
-    #             return self.response_404(message="service_plan_selected_id is required")
-
-    #         plan_id = data.get("service_plan_selected_id")
-    #         plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
-    #         if not plan:
-    #             return self.response_400(message="Service Plan not found")
-
-    #         promo_code_str = data.get("promo_code")
-    #         duration = data.get("duration")
-    #         total_amount = plan.price * duration
-
-    #         promo_code_amount = 0
-    #         promo_code = None
-    #         if promo_code_str:
-    #             promo_code = (
-    #                 db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
-    #             )
-
-    #             if promo_code and promo_code.is_valid:
-    #                 promo_code_amount = (total_amount * promo_code.rate) / 100
-
-    #         # price = total_amount - promo_code_amount
-    #         price = total_amount - promo_code_amount
-    #         #TODO New logic
-
-    #         old_subscription=  db.session.query(Subscription).filter_by(id=subscription_id).first()
-    #         api_key=old_subscription.api_key
-    #         old_subscription.is_expired=True
-    #         db.commit
-
-    #         #Todo create new consumer
-
-    #     except Exception as e:
-    #         return jsonify({"error": "Internal server error", "details": str(e)}), 500
+        return self.response(200, result=results)
 
 
 appbuilder.add_api(SubscriptionModelApi)

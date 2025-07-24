@@ -31,6 +31,11 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
     list_columns = SubscriptionModelApi.list_columns
     show_columns = SubscriptionModelApi.show_columns
     edit_columns = SubscriptionModelApi.edit_columns
+    # base_filters = [
+    #     ["status", FilterEqual, "active"],
+    #     ["is_upgrade", FilterEqual, False],
+    #     ["is_renew", FilterEqual, False],
+    # ]
 
     @protect()
     @jwt_required()
