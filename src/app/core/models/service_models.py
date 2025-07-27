@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Boolean, Column, Float, Integer, String, Text
+from sqlalchemy import Boolean, Column, Enum, Float, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -33,10 +33,11 @@ class Service(Model):
     is_eligible = Column("is_eligible", Boolean, default=True, server_default="1")
     __mapper_args__ = {"polymorphic_identity": "service", "polymorphic_on": type}
     is_published = Column(Boolean, default=False)
+    service_unity = Column(Text)
+    price_category = Column(Enum("monthly", "yearly", name="price_category"))
 
     @property
     def is_in_favorite(self):
-
         user = get_user()
         if not user.is_authenticated:
             return False

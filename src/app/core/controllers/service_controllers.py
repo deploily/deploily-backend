@@ -26,6 +26,8 @@ _service_value_display_columns = [
     "medias",
     "is_eligible",
     "service_slug",
+    "service_unity",
+    "price_category",
 ]
 
 

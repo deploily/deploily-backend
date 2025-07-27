@@ -45,6 +45,7 @@ class ServiceRessouceCategory(Model):
                         "website": provider.website,
                         "logo": provider.logo,
                         "min_price": None,
+                        "unity": None,
                     }
 
                 for plan in service.service_plans:
@@ -52,6 +53,7 @@ class ServiceRessouceCategory(Model):
                         current_min = provider_data[provider.id]["min_price"]
                         if current_min is None or plan.price < current_min:
                             provider_data[provider.id]["min_price"] = plan.price
+                            provider_data[provider.id]["unity"] = plan.unity
 
         return list(provider_data.values())
 
@@ -64,6 +66,24 @@ class ServiceRessouceCategory(Model):
             if plan.price is not None
         ]
         return min(all_prices) if all_prices else None
+
+    @property
+    def unity_category_price_details(self):
+        min_plan = None
+
+        for service in self.ressouce_services or []:
+            for plan in service.service_plans or []:
+                if plan.price is not None:
+                    if min_plan is None or plan.price < min_plan.price:
+                        min_plan = plan
+
+        if min_plan:
+            return {
+                "unity": min_plan.unity,
+                "subscription_category": min_plan.subscription_category,
+            }
+        else:
+            return None
 
     def __repr__(self):
         return self.name
