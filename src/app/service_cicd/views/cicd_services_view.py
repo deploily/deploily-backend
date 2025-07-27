@@ -31,6 +31,8 @@ class CicdServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
+        "service_unity",
+        "price_category",
         "cicd_field",
         "ratings",
     ]
@@ -48,6 +50,8 @@ class CicdServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
+        "service_unity",
+        "price_category",
         "cicd_field",
         "ratings",
     ]
@@ -65,6 +69,8 @@ class CicdServiceView(ModelView):
         "unit_price",
         "image_service",
         "service_slug",
+        "service_unity",
+        "price_category",
         "cicd_field",
         "ratings",
     ]

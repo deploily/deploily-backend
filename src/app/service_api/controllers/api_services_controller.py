@@ -92,12 +92,15 @@ class ApiServiceModelApi(ServiceModelApi):
                 "image_service": service.image_service,
                 "documentation_url": service.documentation_url,
                 "min_api_price": service.min_api_price,
+                "service_unity": service.service_unity,
+                "price_category": service.price_category,
                 "specifications": service.specifications,
                 "service_plans": [
                     {
                         "id": plan.id,
                         "name": plan.plan.name,
                         "price": plan.price,
+                        "unity": plan.unity,
                     }
                     for plan in service.service_plans
                 ],

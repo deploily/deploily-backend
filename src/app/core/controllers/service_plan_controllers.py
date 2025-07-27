@@ -27,6 +27,7 @@ _service_plan_value_display_columns = [
     "service_plan_type",
     "provider_info",
     "preparation_time",
+    "unity",
 ]
 
 
@@ -117,6 +118,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
                         "preparation_time": plan.preparation_time,
+                        "unity": plan.unity,
                         "options": [serialize_option(opt) for opt in plan.options],
                         "provider_info": plan.provider_info,
                     }
