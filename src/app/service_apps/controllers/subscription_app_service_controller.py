@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import current_app, render_template
+from flask_appbuilder.api import expose, protect
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import current_user
 
@@ -11,6 +12,7 @@ from app.core.models.mail_models import Mail
 from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
+from app.utils.utils import get_user
 
 api_columns = [
     "application_status",
@@ -39,6 +41,30 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
     #     ["is_upgrade", FilterEqual, False],
     #     ["is_renew", FilterEqual, False],
     # ]
+
+    @expose("/", methods=["GET"])
+    @protect()  # or @jwt_required() depending on your setup
+    def get_list(self):
+        """
+        Custom GET list endpoint that returns only subscriptions
+        where is_expired == False (computed field).
+        """
+        user = get_user()
+        if not user:
+            return self.response(401, message="Unauthorized")
+
+        # Load all subscriptions for the current user
+        all_items = (
+            self.datamodel.session.query(self.datamodel.obj).filter_by(created_by=user).all()
+        )
+
+        # Filter out expired items (computed property)
+        valid_items = [item for item in all_items if not item.is_expired]
+
+        # Convert to dict for JSON response
+        result = [item.to_dict() for item in valid_items]
+
+        return self.response(200, result=result)
 
     def post_update(self, item):
         user = current_user
