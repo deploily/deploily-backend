@@ -81,6 +81,10 @@ class SubscriptionAppService(Subscription):
                 "curl_command": self.service_details.get("curl_command"),
                 "api_key": self.service_details.get("api_key"),
                 "is_subscribed": self.service_details.get("is_subscribed"),
+                "service_slug": self.service_details.get("service_slug"),
+                "monitoring": self.service_details.get("monitoring"),
+                "ssh_access": self.service_details.get("ssh_access"),
+                "type": self.service_details.get("type"),
             },
         }
 
