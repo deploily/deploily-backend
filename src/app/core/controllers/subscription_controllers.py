@@ -126,7 +126,6 @@ class SubscriptionModelApi(ModelRestApi):
             .filter(Subscription.created_by == user_id)
             .order_by(Subscription.id.desc())
         )
-        print("###########################Query:", query)
 
         sub_type = request.args.get("type")  # Get type filter from query string
 
@@ -135,11 +134,9 @@ class SubscriptionModelApi(ModelRestApi):
 
         # Filter expired ones using the computed property
         expired_subs = [sub for sub in query.all() if sub.is_expired]
-        print("###########################Expired Subscriptions:", expired_subs)
 
         # Serialize results using custom serializer
         results = [self.serialize_subscription(sub) for sub in expired_subs]
-        print("###########################Serialized Results:", results)
 
         return self.response(200, result=results)
 
