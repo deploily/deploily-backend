@@ -245,7 +245,7 @@ FAB_ROLES = {
         ["OdooSubscription", "can_renew_app_subscription"],
         ["SupabaseSubscription", "can_renew_app_subscription"],
         ["StatusApi", "can_send_pdf_receipt_mail"],
-        ["ApiServiceSubscriptionModelApi", "can_history"],
+        ["SubscriptionModelApi", "can_history"],
     ]
 }
 
