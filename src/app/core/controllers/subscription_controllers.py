@@ -2,6 +2,7 @@
 
 import logging
 
+from flask import request
 from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -92,6 +93,15 @@ class SubscriptionModelApi(ModelRestApi):
         get:
             summary: Get all expired subscriptions for the current user
             description: Returns a list of all expired subscriptions created by the authenticated user.
+            parameters:
+                - in: query
+                  name: type
+                  required: false
+                  schema:
+                    type: string
+                  description: Filter by subscription type (e.g., "subscription_api_service")
+
+
             responses:
                 200:
                     description: A list of subscriptions
@@ -116,13 +126,20 @@ class SubscriptionModelApi(ModelRestApi):
             .filter(Subscription.created_by == user_id)
             .order_by(Subscription.id.desc())
         )
+        print("###########################Query:", query)
+
+        sub_type = request.args.get("type")  # Get type filter from query string
+
+        if sub_type:
+            query = query.filter(Subscription.type == sub_type)
 
         # Filter expired ones using the computed property
         expired_subs = [sub for sub in query.all() if sub.is_expired]
-        print("Expired Subscriptions:", expired_subs)
+        print("###########################Expired Subscriptions:", expired_subs)
 
         # Serialize results using custom serializer
         results = [self.serialize_subscription(sub) for sub in expired_subs]
+        print("###########################Serialized Results:", results)
 
         return self.response(200, result=results)
 
