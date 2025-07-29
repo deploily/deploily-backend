@@ -31,11 +31,35 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
     list_columns = SubscriptionModelApi.list_columns
     show_columns = SubscriptionModelApi.show_columns
     edit_columns = SubscriptionModelApi.edit_columns
+
     # base_filters = [
     #     ["status", FilterEqual, "active"],
     #     ["is_upgrade", FilterEqual, False],
     #     ["is_renew", FilterEqual, False],
     # ]
+    @expose("/", methods=["GET"])
+    @protect()  # or @jwt_required() depending on your setup
+    def get_list(self):
+        """
+        Custom GET list endpoint that returns only subscriptions
+        where is_expired == False (computed field).
+        """
+        user = get_user()
+        if not user:
+            return self.response(401, message="Unauthorized")
+
+        # Load all subscriptions for the current user
+        all_items = (
+            self.datamodel.session.query(self.datamodel.obj).filter_by(created_by=user).all()
+        )
+
+        # Filter out expired items (computed property)
+        valid_items = [item for item in all_items if not item.is_expired]
+
+        # Convert to dict for JSON response
+        result = [item.to_dict() for item in valid_items]
+
+        return self.response(200, result=result)
 
     @protect()
     @jwt_required()
