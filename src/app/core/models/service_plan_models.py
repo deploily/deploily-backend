@@ -1,6 +1,6 @@
 # app/core/models/service_plan_models.py
 from flask_appbuilder import Model
-from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer, Text
+from sqlalchemy import Boolean, Column, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.core.models.service_plan_option_models import ServicePlanOption
@@ -24,7 +24,9 @@ class ServicePlan(Model):
     subscription_category = Column(Enum("monthly", "yearly", name="subscription_category"))
     service_plan_type = Column(Enum("ressource", "app", "api", name="plan_type"))
     is_published = Column(Boolean, default=False)
-    unity = Column(Text)
+    display_on_app = Column(Boolean, default=False)
+    unity = Column(String)
+    priority = Column(Integer, default=0)
 
     options = relationship(
         "ServicePlanOption",

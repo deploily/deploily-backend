@@ -88,10 +88,12 @@ class ServicePlanRessourceModelApi(BaseApi):
                 db.session.query(ServicePlan)
                 .filter(
                     ServicePlan.service_id.in_([ressource.id for ressource in ressources_services]),
-                    ServicePlan.is_published.is_(True),
+                    ServicePlan.display_on_app.is_(True),
                     ServicePlan.is_custom.is_(False),
                 )
-                .order_by(ServicePlan.price.asc())  # Order from min to max
+                .order_by(
+                    ServicePlan.price.asc(), ServicePlan.priority.asc()
+                )  # Order from min to max
                 .all()
             )
 
