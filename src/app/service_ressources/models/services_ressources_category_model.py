@@ -54,6 +54,9 @@ class ServiceRessouceCategory(Model):
                         if current_min is None or plan.price < current_min:
                             provider_data[provider.id]["min_price"] = plan.price
                             provider_data[provider.id]["unity"] = plan.unity
+                            provider_data[provider.id][
+                                "price_category"
+                            ] = plan.service.price_category
 
         return list(provider_data.values())
 
