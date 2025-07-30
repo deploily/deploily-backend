@@ -66,7 +66,7 @@ class ServiceRessouceCategory(Model):
             plan.price
             for service in self.ressouce_services
             for plan in service.service_plans
-            if plan.price is not None
+            if plan.is_published and plan.price is not None
         ]
         return min(all_prices) if all_prices else None
 
