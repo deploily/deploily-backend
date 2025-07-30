@@ -49,7 +49,7 @@ class ServiceRessouceCategory(Model):
                     }
 
                 for plan in service.service_plans:
-                    if plan.price is not None:
+                    if plan.is_published and plan.price is not None:
                         current_min = provider_data[provider.id]["min_price"]
                         if current_min is None or plan.price < current_min:
                             provider_data[provider.id]["min_price"] = plan.price
