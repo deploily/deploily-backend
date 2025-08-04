@@ -119,6 +119,7 @@ class AppServiceModelApi(ServiceModelApi):
                         "price": plan.price,
                         "unity": plan.unity,
                         "name": plan.plan.name,
+                        "subscription_category": plan.subscription_category,
                         "options": [
                             {
                                 "id": option.id,
