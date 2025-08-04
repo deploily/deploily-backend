@@ -120,6 +120,7 @@ class AppServiceModelApi(ServiceModelApi):
                         "unity": plan.unity,
                         "name": plan.plan.name,
                         "subscription_category": plan.subscription_category,
+                        "is_custom": plan.is_custom,
                         "options": [
                             {
                                 "id": option.id,
