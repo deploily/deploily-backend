@@ -119,6 +119,8 @@ class AppServiceModelApi(ServiceModelApi):
                         "price": plan.price,
                         "unity": plan.unity,
                         "name": plan.plan.name,
+                        "subscription_category": plan.subscription_category,
+                        "is_custom": plan.is_custom,
                         "options": [
                             {
                                 "id": option.id,
@@ -227,6 +229,8 @@ class PublicAppServiceApi(BaseApi):  # public version
                         "id": plan.id,
                         "price": plan.price,
                         "name": plan.plan.name,
+                        "subscription_category": plan.subscription_category,
+                        "is_custom": plan.is_custom,
                         "options": [
                             {
                                 "id": option.id,

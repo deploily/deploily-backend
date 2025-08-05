@@ -117,6 +117,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "id": plan.id,
                         "plan_name": plan.plan.name,
                         "service_name": plan.service.name,
+                        "service_id": plan.service.id,
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
                         "preparation_time": plan.preparation_time,
