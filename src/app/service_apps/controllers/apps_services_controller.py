@@ -134,7 +134,7 @@ class AppServiceModelApi(ServiceModelApi):
                         ],
                         "preparation_time": plan.preparation_time,
                     }
-                    for plan in service.service_plans
+                    for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
                 ],
                 "medias": [
                     {
