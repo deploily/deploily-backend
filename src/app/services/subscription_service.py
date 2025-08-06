@@ -5,7 +5,14 @@ import requests
 from dateutil.relativedelta import relativedelta
 from flask import current_app, render_template
 
-from app.core.models import Payment, PaymentProfile, PromoCode, ServicePlan
+from app.core.models import (
+    ManagedRessource,
+    Payment,
+    PaymentProfile,
+    PromoCode,
+    ServicePlan,
+    Subscription,
+)
 from app.core.models.mail_models import Mail
 from app.service_api.models.api_service_subscription_model import ApiServiceSubscription
 from app.services.payment_service import PaymentService
@@ -43,6 +50,7 @@ class TtkEpaySubscriptionRequest:
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
     version_selected_id: int
+    managed_ressource_id: int
     total_amount: float
     duration: int
     payment_method: str
@@ -59,6 +67,8 @@ class OdooSubscriptionRequest:
     profile_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
+    managed_ressource_id: int
+
     version_selected_id: int
     total_amount: float
     duration: int
@@ -76,6 +86,8 @@ class SupabaseSubscriptionRequest:
     profile_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
+    managed_ressource_id: int
+
     version_selected_id: int
     total_amount: float
     duration: int
@@ -94,6 +106,7 @@ class UpgradeOdooSubscriptionRequest:
     old_subscription_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
+    managed_ressource_id: int
     version_selected_id: int
     total_amount: float
     duration: int
@@ -112,6 +125,8 @@ class UpgradeSupabaseSubscriptionRequest:
     old_subscription_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
+    managed_ressource_id: int
+
     version_selected_id: int
     total_amount: float
     duration: int
@@ -146,6 +161,7 @@ class UpgradeTtkEpaySubscriptionRequest:
     old_subscription_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
+    managed_ressource_id: int
     version_selected_id: int
     total_amount: float
     duration: int
@@ -245,7 +261,6 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
                 "version_selected_id",
             ],
             OdooSubscriptionRequest: [
@@ -253,7 +268,6 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
                 "version_selected_id",
             ],
             SupabaseSubscriptionRequest: [
@@ -261,7 +275,6 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
                 "version_selected_id",
             ],
             UpgradeSubscriptionRequest: [
@@ -300,7 +313,7 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
+                # "ressource_service_plan_selected_id",
                 "version_selected_id",
                 "old_subscription_id",
             ],
@@ -309,7 +322,7 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
+                # "ressource_service_plan_selected_id",
                 "version_selected_id",
                 "old_subscription_id",
             ],
@@ -318,7 +331,7 @@ class SubscriptionService:
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "ressource_service_plan_selected_id",
+                # "ressource_service_plan_selected_id",
                 "version_selected_id",
                 "old_subscription_id",
             ],
@@ -372,8 +385,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
@@ -383,8 +405,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
@@ -394,8 +425,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
@@ -405,8 +445,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
@@ -417,8 +466,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
@@ -429,8 +487,17 @@ class SubscriptionService:
                 ),
                 **(
                     {
-                        "ressource_service_plan_selected_id": int(
-                            data["ressource_service_plan_selected_id"]
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
                         ),
                         "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
@@ -578,6 +645,23 @@ class SubscriptionService:
 
         return True, "", ressource_service_plan
 
+    def validate_managed_ressource(
+        self, managed_ressource_id: int
+    ) -> Tuple[bool, str, Optional[object]]:
+        """Validate managed ressource"""
+        print(
+            f"#######################Validating managed ressource with ID: {managed_ressource_id}"
+        )
+
+        managed_ressource = (
+            self.db.query(ManagedRessource).filter_by(id=managed_ressource_id).first()
+        )
+
+        if not managed_ressource:
+            return False, "managed_ressource not found", None
+
+        return True, "", managed_ressource
+
     def validate_version(self, version_id: int) -> Tuple[bool, str, Optional[object]]:
         """Validate version"""
         from app.service_apps.models.app_version_model import Version
@@ -716,13 +800,14 @@ class SubscriptionService:
         profile_id: int,
         status: str,
         version_id: int,
+        # managed_ressource:int,
         ttk_epay_api_secret_key: str,
         ttk_epay_client_site_url: str,
         ttk_epay_satim_currency: str,
         ttk_epay_mvc_satim_server_url: str,
         ttk_epay_mvc_satim_fail_url: str,
         ttk_epay_mvc_satim_confirm_url: str,
-        ressource_service_plan,
+        # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
     ) -> object:
@@ -743,7 +828,8 @@ class SubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
-            ressource_service_plan_id=ressource_service_plan,
+            # ressource_service_plan_id=ressource_service_plan,
+            # managed_ressource=managed_ressource.id,
             ttk_epay_api_secret_key=ttk_epay_api_secret_key,
             ttk_epay_client_site_url=ttk_epay_client_site_url,
             ttk_epay_satim_currency=ttk_epay_satim_currency,
@@ -770,7 +856,7 @@ class SubscriptionService:
         profile_id: int,
         status: str,
         version_id: int,
-        ressource_service_plan,
+        # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
     ) -> object:
@@ -791,7 +877,7 @@ class SubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
-            ressource_service_plan_id=ressource_service_plan,
+            # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
@@ -812,7 +898,7 @@ class SubscriptionService:
         profile_id: int,
         status: str,
         version_id: int,
-        ressource_service_plan,
+        # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
     ) -> object:
@@ -833,7 +919,7 @@ class SubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
-            ressource_service_plan_id=ressource_service_plan,
+            # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
@@ -994,6 +1080,60 @@ class SubscriptionService:
             old_subscription.is_upgrade = True
 
         self.db.commit()
+
+    def create_managed_ressource(self, ressource_service_plan):
+        """Create managed ressource record"""
+        managed_ressource = ManagedRessource(
+            ressource_service_plan_id=ressource_service_plan,
+            ip="ip",
+            hotst_name="hotst_name",
+            operator_system="operator_system",
+        )
+        self.db.add(managed_ressource)
+        self.db.flush()
+        return managed_ressource
+
+    def get_or_create_managed_ressource(self, ressource_plan, managed_ressource, subscription):
+        """
+        Assigns a managed ressource to the subscription.
+
+        """
+        _logger.info(f"🛠 Getting or creating managed ressource for subscription {subscription.id}")
+
+        if ressource_plan is None and managed_ressource is None:
+            return None
+
+        user_id = subscription.created_by
+
+        # Use provided managed_ressource if available
+        if managed_ressource:
+            subscription.managed_ressource_id = managed_ressource.id
+            self.db.commit()
+            _logger.info(f"✅ Used provided managed ressource ID: {managed_ressource.id}")
+            return managed_ressource
+
+        existing = (
+            self.db.query(ManagedRessource)
+            .join(Subscription, Subscription.managed_ressource_id == ManagedRessource.id)
+            .filter(
+                ManagedRessource.ressource_service_plan_id == ressource_plan.id,
+                Subscription.created_by == user_id,
+            )
+            .first()
+        )
+
+        if existing:
+            _logger.info(f"🔄 Found existing managed ressource ID: {existing.id}")
+            subscription.managed_ressource_id = existing.id
+            self.db.commit()
+            return existing
+
+        # Create new
+        new_managed = self.create_managed_ressource(ressource_service_plan=ressource_plan.id)
+        subscription.managed_ressource_id = new_managed.id
+        self.db.commit()
+        _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
+        return new_managed
 
     # def get_remaining_value(self, old_subscription):
     #     total_price = old_subscription.price

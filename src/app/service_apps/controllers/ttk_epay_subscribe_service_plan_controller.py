@@ -57,9 +57,13 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 ressource_service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected ressource service plan
+                                managed_ressource_id:
+                                    type: integer
+                                    description: ID of the selected managed ressource
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
+
                                 version_selected_id:
                                     type: integer
                                     description: ID of the selected version app service
@@ -108,6 +112,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             ressource_service_plan_selected_id:
                                                 type: integer
                                                 description: ID of the selected ressource service plan
+                                            managed_ressource_id:
+                                                type: integer
+                                                description: ID of the selected managed ressource
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -185,13 +192,28 @@ class TtkEpaySubscriptionApi(BaseApi):
                 return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, ressource_plan = (
-                subscription_service.validate_ressource_service_plan(
-                    request_data.ressource_service_plan_selected_id
+            if request_data.ressource_service_plan_selected_id is None:
+                ressource_plan = None
+            else:
+                is_valid, error_msg, ressource_plan = (
+                    subscription_service.validate_ressource_service_plan(
+                        request_data.ressource_service_plan_selected_id
+                    )
                 )
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+                if not is_valid:
+                    return self.response_400(message=error_msg)
+
+            #  Validate managed ressource
+            if request_data.managed_ressource_id is None:
+                managed_ressource = None
+            else:
+                is_valid, error_msg, managed_ressource = (
+                    subscription_service.validate_managed_ressource(
+                        request_data.managed_ressource_id
+                    )
+                )
+                if not is_valid:
+                    return self.response_400(message=error_msg)
 
             # Validate service plan
             is_valid, error_msg, version = subscription_service.validate_version(
@@ -222,7 +244,8 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_service.create_ttk_epay_subscription(
                 plan=plan,
-                ressource_service_plan=ressource_plan.id,
+                # ressource_service_plan=ressource_plan.id,
+                # managed_ressource=managed_ressource.id,
                 duration=request_data.duration,
                 total_amount=total_amount,
                 price=final_price,
@@ -236,6 +259,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_server_url=os.getenv("TTK_EPAY_MVC_SATIM_SERVER_URL", ""),
                 ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
                 ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
+            )
+
+            managed_ressource = subscription_service.get_or_create_managed_ressource(
+                ressource_plan=ressource_plan,
+                managed_ressource=managed_ressource,
+                subscription=subscription,
             )
 
             # Initialize payment response variables
@@ -352,6 +381,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 ressource_service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected ressource service plan
+                                managed_ressource_id:
+                                    type: integer
+                                    description: ID of the selected managed ressource
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -483,13 +515,34 @@ class TtkEpaySubscriptionApi(BaseApi):
                 return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, ressource_plan = (
-                subscription_service.validate_ressource_service_plan(
-                    request_data.ressource_service_plan_selected_id
-                )
+            is_valid, error_msg, plan = subscription_service.validate_service_plan(
+                request_data.service_plan_selected_id, profile
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
+
+            if request_data.ressource_service_plan_selected_id is None:
+                ressource_plan = None
+            else:
+                is_valid, error_msg, ressource_plan = (
+                    subscription_service.validate_ressource_service_plan(
+                        request_data.ressource_service_plan_selected_id
+                    )
+                )
+                if not is_valid:
+                    return self.response_400(message=error_msg)
+
+            #  Validate managed ressource
+            if request_data.managed_ressource_id is None:
+                managed_ressource = None
+            else:
+                is_valid, error_msg, managed_ressource = (
+                    subscription_service.validate_managed_ressource(
+                        request_data.managed_ressource_id
+                    )
+                )
+                if not is_valid:
+                    return self.response_400(message=error_msg)
 
             # Validate service plan
             is_valid, error_msg, version = subscription_service.validate_version(
@@ -535,7 +588,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                 profile_id=profile.id,
                 status=subscription_status,
                 version_id=version.id,
-                ressource_service_plan=ressource_plan.id,
+                # ressource_service_plan=ressource_plan.id,
                 is_upgrade=True,
                 ttk_epay_api_secret_key=old_subscription.ttk_epay_api_secret_key,
                 ttk_epay_client_site_url=old_subscription.ttk_epay_client_site_url,
@@ -543,6 +596,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_server_url=old_subscription.ttk_epay_mvc_satim_server_url,
                 ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
                 ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
+            )
+
+            managed_ressource = subscription_service.get_or_create_managed_ressource(
+                ressource_plan=ressource_plan,
+                managed_ressource=managed_ressource,
+                subscription=subscription,
             )
 
             # Initialize payment response variables
@@ -802,7 +861,8 @@ class TtkEpaySubscriptionApi(BaseApi):
                 status=subscription_status,
                 is_renew=True,
                 version_id=old_subscription.version_id,
-                ressource_service_plan=old_subscription.ressource_service_plan_id,
+                # ressource_service_plan=old_subscription.ressource_service_plan_id,
+                # managed_ressource_id=old_subscription.managed_ressource_id,
                 ttk_epay_api_secret_key=old_subscription.ttk_epay_api_secret_key,
                 ttk_epay_client_site_url=old_subscription.ttk_epay_client_site_url,
                 ttk_epay_satim_currency=old_subscription.ttk_epay_satim_currency,
@@ -810,6 +870,8 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
                 ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
             )
+            subscription.managed_ressource_id = old_subscription.managed_ressource_id
+            db.session.commit()
 
             # Initialize payment response variables
             satim_order_id = ""
@@ -890,811 +952,6 @@ class TtkEpaySubscriptionApi(BaseApi):
             _logger.error(f"Error in subscription: {e}", exc_info=True)
             db.session.rollback()
             return self.response_500(message="Internal Server Error")
-
-    # @expose("/subscribe", methods=["POST"])
-    # @protect()
-    # @rison()
-    # @jwt_required()
-    # def subscribe_to_plan(self, **kwargs):
-    #     """Subscription a user to a service plan.
-    #     ---
-    #     post:
-    #         summary: Subscription a user to a service plan
-    #         description: Creates a new subscription for the authenticated user.
-    #         requestBody:
-    #             required: true
-    #             content:
-    #                 application/json:
-    #                     schema:
-    #                         type: object
-    #                         properties:
-    #                             profile_id:
-    #                                 type: integer
-    #                                 description: ID of the user's profile
-    #                             service_plan_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected service plan
-
-    #                             promo_code:
-    #                                 type: string
-    #                                 nullable: true
-    #                                 description: Promo code (if applicable)
-    #                             duration:
-    #                                 type: integer
-    #                                 description: Duration of the subscription in months
-    #                             payment_method:
-    #                                 type: string
-    #                                 description: Payment method (e.g., "card", "paypal")
-    #                             captcha_token:
-    #                                 type: string
-    #                                 description: Google reCAPTCHA token
-
-    #                             ressource_service_plan_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected ressource service plan
-    #                             recommendation_app_service_id:
-    #                                 type: integer
-    #                                 description: ID of the selected recommendation app service
-    #                             version_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected version app service
-
-    #         responses:
-    #             200:
-    #                 description: Subscription successful
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 subscription:
-    #                                     type: object
-    #                                     properties:
-    #                                         id:
-    #                                             type: integer
-    #                                         name:
-    #                                             type: string
-    #                                         start_date:
-    #                                             type: string
-    #                                             format: date-time
-
-    #                                         price:
-    #                                             type: number
-    #                                         status:
-    #                                             type: string
-    #                                         duration_month:
-    #                                             type: integer
-    #                                         service_plan_id:
-    #                                             type: integer
-    #                                         promo_code_id:
-    #                                             type: integer
-    #                                             nullable: true
-    #                                         ressource_service_plan_selected_id:
-    #                                             type: integer
-    #                                             description: ID of the selected ressource service plan
-    #                                         recommendation_app_service_id:
-    #                                             type: integer
-    #                                             description: ID of the selected recommendation app service
-    #                                         version_selected_id:
-    #                                             type: integer
-    #                                             description: ID of the selected version app service
-
-    #                                 order_id:
-    #                                     type: string
-    #                                 form_url:
-    #                                     type: string
-    #             400:
-    #                 description: Bad request (invalid input)
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #                                 message:
-    #                                     type: string
-    #             404:
-    #                 description: Resource not found (e.g., user, plan, or profile)
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #             500:
-    #                 description: Internal server error
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #     """
-    #     try:
-
-    #         user = get_user()
-    #         if not user:
-    #             return self.response_400(message="User not found")
-    #         data = request.get_json(silent=True)
-    #         if not data:
-    #             return self.response_400(message="Invalid request data")
-    #         profile_id = data.get("profile_id")
-    #         if not profile_id:
-    #             return self.response_404(message="Profile id is required")
-    #         version_id = data.get("version_selected_id")
-    #         if not version_id:
-    #             return self.response_404(message="Version id is required")
-
-    #         profile = (
-    #             db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
-    #         )
-    #         if not profile:
-    #             return self.response_400(message="PaymentProfile not found")
-
-    #         version = db.session.query(Version).filter_by(id=version_id).first()
-    #         if not version:
-    #             return self.response_400(message="Version not found")
-
-    #         if profile.balance is None:
-    #             return self.response_404(message="Insufficient balance")
-
-    #         plan_id = data.get("service_plan_selected_id")
-    #         plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
-    #         ressource_plan_id = data.get("ressource_service_plan_selected_id")
-    #         ressource_plan = db.session.query(ServicePlan).filter_by(id=ressource_plan_id).first()
-
-    #         if profile.profile_type == "default":
-
-    #             if plan and plan.service and not plan.service.is_eligible:
-    #                 return self.response_400(
-    #                     message="This service plan is not eligible for subscription"
-    #                 )
-
-    #         # todo add new logic here
-    #         if not plan:
-    #             return self.response_400(message="Service Plan not found")
-
-    #         promo_code_str = data.get("promo_code")
-    #         duration = data.get("duration")
-    #         total_amount = plan.price * duration
-    #         if ressource_plan:
-    #             total_amount += ressource_plan.price * duration
-
-    #         # code promo verification
-    #         promo_code_amount = 0
-    #         promo_code = None
-    #         if promo_code_str:
-    #             promo_code = (
-    #                 db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
-    #             )
-
-    #             if promo_code and promo_code.is_valid:
-    #                 promo_code_amount = (total_amount * promo_code.rate) / 100
-
-    #         # price = total_amount - promo_code_amount
-    #         price = total_amount - promo_code_amount
-    #         satim_order_id = ""
-    #         form_url = ""
-
-    #         subscription_template = render_template(
-    #             "emails/deploily_subscription.html", user_name=user.username, plan=plan
-    #         )
-    #         # Balance verification
-    #         # Case1: Sufficient balance
-    #         if profile.balance - price >= 0:
-    #             # todo add new logic here
-
-    #             subscription = TtkEpaySubscriptionAppService(
-    #                 name=plan.plan.name,
-    #                 start_date=datetime.now(),
-    #                 total_amount=total_amount,
-    #                 price=price,
-    #                 service_plan_id=plan.id,
-    #                 duration_month=duration,
-    #                 # application_status="processing",
-    #                 promo_code_id=promo_code.id if promo_code else None,
-    #                 status="active",
-    #                 payment_status="paid",
-    #                 profile_id=profile.id,
-    #                 version_id=version.id,
-    #             )
-    #             db.session.add(subscription)
-    #             db.session.commit()
-    #             db.session.flush()
-    #             email = Mail(
-    #                 title=f"New Subscription Created by {user.username}",
-    #                 body=subscription_template,
-    #                 email_to=current_app.config["NOTIFICATION_EMAIL"],
-    #                 email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #                 mail_state="outGoing",
-    #             )
-    #             db.session.add(email)
-    #             db.session.commit()
-    #             send_mail.delay(email.id)
-    #             _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
-
-    #         else:  # Case2: unsufficient balance
-
-    #             subscription = TtkEpaySubscriptionAppService(
-    #                 name=plan.plan.name,
-    #                 start_date=datetime.now(),
-    #                 total_amount=total_amount,
-    #                 price=price,
-    #                 service_plan_id=plan.id,
-    #                 duration_month=duration,
-    #                 promo_code_id=promo_code.id if promo_code else None,
-    #                 status="inactive",
-    #                 # application_status="processing",
-    #                 payment_status="unpaid",
-    #                 profile_id=profile.id,
-    #                 version_id=version.id,
-    #             )
-
-    #             db.session.add(subscription)
-    #             db.session.flush()
-
-    #             payment = Payment(
-    #                 amount=price,
-    #                 payment_method=data.get("payment_method", "card"),
-    #                 subscription_id=subscription.id,
-    #                 profile_id=profile.id,
-    #                 status="pending",
-    #             )
-    #             db.session.add(payment)
-    #             db.session.commit()
-    #             email = Mail(
-    #                 title=f"New Subscription Created by {user.username}",
-    #                 body=subscription_template,
-    #                 email_to=current_app.config["NOTIFICATION_EMAIL"],
-    #                 email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #                 mail_state="outGoing",
-    #             )
-    #             db.session.add(email)
-    #             db.session.commit()
-    #             send_mail.delay(email.id)
-    #             _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
-    #             if (
-    #                 data.get("payment_method", "card") == "card"
-    #                 and profile.profile_type != "default"
-    #             ):
-    #                 captcha_token = data.get("captcha_token")
-    #                 if not captcha_token:
-    #                     return self.response_400(message="Missing CAPTCHA token")
-    #                 verify_url = "https://www.google.com/recaptcha/api/siteverify"
-    #                 payload = {
-    #                     "secret": current_app.config["CAPTCHA_SECRET_KEY"],
-    #                     "response": captcha_token,
-    #                 }
-    #                 try:
-    #                     captcha_response = requests.post(verify_url, data=payload)
-    #                     captcha_result = captcha_response.json()
-    #                 except Exception:
-    #                     _logger.error("Failed to contact reCAPTCHA", exc_info=True)
-    #                     return self.response_500(message="CAPTCHA verification error")
-
-    #                 if not captcha_result.get("success"):
-    #                     return self.response_400(message="CAPTCHA verification failed")
-
-    #                 payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
-    #                 if not payment_check:
-    #                     return self.response_400(message="Payment ID not found in database")
-    #                 payment.order_id = "PAY" + str(payment.id)
-    #                 db.session.commit()
-    #                 payment_service = PaymentService()
-    #                 payment_response = payment_service.post_payement(
-    #                     payment.order_id, total_amount
-    #                 )[0]
-
-    #                 _logger.error(f"Payment service response: {payment_response}")
-
-    #                 if isinstance(payment_response, str):
-    #                     try:
-    #                         import json
-
-    #                         payment_response = json.loads(payment_response)
-    #                     except json.JSONDecodeError:
-    #                         return self.response_500(
-    #                             message="Invalid payment service response format"
-    #                         )
-
-    #                 if not isinstance(payment_response, dict):
-    #                     return self.response_500(message="Invalid payment service response")
-
-    #                 if "ERROR_CODE" in payment_response and payment_response["ERROR_CODE"] != "0":
-    #                     return self.response_400(
-    #                         message="Payment failed",
-    #                         # error_code=payment_response.get("ERROR_CODE"),
-    #                         details=payment_response.get("ERROR_MESSAGE", "Unknown error"),
-    #                     )
-    #                 satim_order_id = payment_response.get("ORDER_ID")
-    #                 form_url = payment_response.get("FORM_URL")
-
-    #                 payment.satim_order_id = satim_order_id
-
-    #                 db.session.commit()
-
-    #         if promo_code:
-    #             if promo_code.usage_type == "single_use":
-    #                 promo_code.active = False
-    #                 promo_code.subscription = subscription.id
-    #                 db.session.commit()
-    #             else:
-    #                 promo_code.subscription = subscription.id
-    #                 db.session.commit()
-
-    #         # Email to user
-    #         subscription_template = render_template(
-    #             "emails/user_subscription.html",
-    #             user=user,
-    #             service_name=plan.plan.name,
-    #             total_price=total_amount,
-    #         )
-    #         email = Mail(
-    #             title=f"Nouvelle souscription à deploily.cloud",
-    #             body=subscription_template,
-    #             email_to=user.email,
-    #             email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #             mail_state="outGoing",
-    #         )
-    #         db.session.add(email)
-    #         db.session.commit()
-    #         send_mail.delay(email.id)
-
-    #         return self.response(
-    #             200,
-    #             **{
-    #                 "subscription": {
-    #                     "id": subscription.id,
-    #                     "name": subscription.name,
-    #                     "start_date": subscription.start_date.strftime("%Y-%m-%d %H:%M:%S"),
-    #                     "total_amount": subscription.total_amount,
-    #                     "price": subscription.price,
-    #                     "status": subscription.status,
-    #                     "duration_month": subscription.duration_month,
-    #                     "service_plan_id": subscription.service_plan_id,
-    #                     "promo_code_id": subscription.promo_code_id,
-    #                 },
-    #                 "order_id": satim_order_id,
-    #                 "form_url": form_url,
-    #             },
-    #         )
-
-    #     except Exception as e:
-    #         _logger.error(f"Error in subscription: {e}", exc_info=True)
-    #         db.session.rollback()
-    #         return self.response_500(message="Internal Server Error")
-
-    # @expose("/upgrade", methods=["POST"])
-    # @protect()
-    # @rison()
-    # @jwt_required()
-    # def upgrade_app_subscription(self, **kwargs):
-    #     """Subscription a user to a service plan.
-    #     ---
-    #     post:
-    #         summary: Subscription a user to a service plan
-    #         description: Creates a new subscription for the authenticated user.
-    #         requestBody:
-    #             required: true
-    #             content:
-    #                 application/json:
-    #                     schema:
-    #                         type: object
-    #                         properties:
-    #                             profile_id:
-    #                                 type: integer
-    #                                 description: ID of the user's profile
-    #                             service_plan_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected service plan
-
-    #                             promo_code:
-    #                                 type: string
-    #                                 nullable: true
-    #                                 description: Promo code (if applicable)
-    #                             duration:
-    #                                 type: integer
-    #                                 description: Duration of the subscription in months
-    #                             payment_method:
-    #                                 type: string
-    #                                 description: Payment method (e.g., "card", "paypal")
-    #                             captcha_token:
-    #                                 type: string
-    #                                 description: Google reCAPTCHA token
-
-    #                             ressource_service_plan_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected ressource service plan
-    #                             recommendation_app_service_id:
-    #                                 type: integer
-    #                                 description: ID of the selected recommendation app service
-    #                             version_selected_id:
-    #                                 type: integer
-    #                                 description: ID of the selected version app service
-    #                             old_subscription_id:
-    #                                 type: integer
-    #                                 description: ID of the selected version app service
-
-    #         responses:
-    #             200:
-    #                 description: Subscription successful
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 subscription:
-    #                                     type: object
-    #                                     properties:
-    #                                         id:
-    #                                             type: integer
-    #                                         name:
-    #                                             type: string
-    #                                         start_date:
-    #                                             type: string
-    #                                             format: date-time
-
-    #                                         price:
-    #                                             type: number
-    #                                         status:
-    #                                             type: string
-    #                                         duration_month:
-    #                                             type: integer
-    #                                         service_plan_id:
-    #                                             type: integer
-    #                                         promo_code_id:
-    #                                             type: integer
-    #                                             nullable: true
-    #                                         ressource_service_plan_selected_id:
-    #                                             type: integer
-    #                                             description: ID of the selected ressource service plan
-    #                                         recommendation_app_service_id:
-    #                                             type: integer
-    #                                             description: ID of the selected recommendation app service
-    #                                         version_selected_id:
-    #                                             type: integer
-    #                                             description: ID of the selected version app service
-
-    #                                 order_id:
-    #                                     type: string
-    #                                 form_url:
-    #                                     type: string
-    #             400:
-    #                 description: Bad request (invalid input)
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #                                 message:
-    #                                     type: string
-    #             404:
-    #                 description: Resource not found (e.g., user, plan, or profile)
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #             500:
-    #                 description: Internal server error
-    #                 content:
-    #                     application/json:
-    #                         schema:
-    #                             type: object
-    #                             properties:
-    #                                 error:
-    #                                     type: string
-    #     """
-    #     try:
-
-    #         user = get_user()
-    #         if not user:
-    #             return self.response_400(message="User not found")
-    #         data = request.get_json(silent=True)
-    #         if not data:
-    #             return self.response_400(message="Invalid request data")
-    #         profile_id = data.get("profile_id")
-    #         if not profile_id:
-    #             return self.response_404(message="Profile id is required")
-    #         version_id = data.get("version_selected_id")
-    #         if not version_id:
-    #             return self.response_404(message="Version id is required")
-
-    #         old_subscription_id = data.get("old_subscription_id")
-    #         if not old_subscription_id:
-    #             return self.response_404(message="old subscription id is required")
-
-    #         profile = (
-    #             db.session.query(PaymentProfile).filter_by(created_by=user, id=profile_id).first()
-    #         )
-    #         if not profile:
-    #             return self.response_400(message="PaymentProfile not found")
-
-    #         version = db.session.query(Version).filter_by(id=version_id).first()
-    #         if not version:
-    #             return self.response_400(message="Version not found")
-
-    #         if profile.balance is None:
-    #             return self.response_404(message="Insufficient balance")
-
-    #         plan_id = data.get("service_plan_selected_id")
-    #         plan = db.session.query(ServicePlan).filter_by(id=plan_id).first()
-    #         ressource_plan_id = data.get("ressource_service_plan_selected_id")
-    #         ressource_plan = db.session.query(ServicePlan).filter_by(id=ressource_plan_id).first()
-
-    #         if profile.profile_type == "default":
-
-    #             if plan and plan.service and not plan.service.is_eligible:
-    #                 return self.response_400(
-    #                     message="This service plan is not eligible for subscription"
-    #                 )
-
-    #         # todo add new logic here
-    #         if not plan:
-    #             return self.response_400(message="Service Plan not found")
-
-    #         promo_code_str = data.get("promo_code")
-    #         duration = data.get("duration")
-    #         total_amount = plan.price * duration
-    #         if ressource_plan:
-    #             total_amount += ressource_plan.price * duration
-
-    #         # code promo verification
-    #         promo_code_amount = 0
-    #         promo_code = None
-    #         if promo_code_str:
-    #             promo_code = (
-    #                 db.session.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
-    #             )
-
-    #             if promo_code and promo_code.is_valid:
-    #                 promo_code_amount = (total_amount * promo_code.rate) / 100
-
-    #         # price = total_amount - promo_code_amount
-    #         price = total_amount - promo_code_amount
-    #         satim_order_id = ""
-    #         form_url = ""
-
-    #         subscription_template = render_template(
-    #             "emails/deploily_subscription.html", user_name=user.username, plan=plan
-    #         )
-
-    #         # Todo get api key from old subscription
-    #         _logger.info(f"######################################{old_subscription_id}")
-
-    #         old_subscription = (
-    #             db.session.query(TtkEpaySubscriptionAppService)
-    #             .filter_by(id=old_subscription_id)
-    #             .first()
-    #         )
-    #         if not old_subscription:
-    #             return self.response_400(message="old_subscription not found")
-
-    #         remaining_money = self.get_remaining_value(old_subscription)
-    #         if remaining_money:
-    #             price = price - remaining_money
-
-    #         # Balance verification
-    #         # Case1: Sufficient balance
-    #         if profile.balance - price >= 0:
-    #             # todo add new logic here
-
-    #             subscription = TtkEpaySubscriptionAppService(
-    #                 name=plan.plan.name,
-    #                 start_date=datetime.now(),
-    #                 total_amount=total_amount,
-    #                 price=price,
-    #                 service_plan_id=plan.id,
-    #                 duration_month=duration,
-    #                 # application_status="processing",
-    #                 promo_code_id=promo_code.id if promo_code else None,
-    #                 status="active",
-    #                 payment_status="paid",
-    #                 profile_id=profile.id,
-    #                 version_id=version.id,
-    #             )
-    #             db.session.add(subscription)
-    #             db.session.commit()
-    #             db.session.flush()
-    #             email = Mail(
-    #                 title=f"New Subscription Created by {user.username}",
-    #                 body=subscription_template,
-    #                 email_to=current_app.config["NOTIFICATION_EMAIL"],
-    #                 email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #                 mail_state="outGoing",
-    #             )
-    #             db.session.add(email)
-    #             db.session.commit()
-    #             send_mail.delay(email.id)
-    #             _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
-
-    #         else:  # Case2: unsufficient balance
-
-    #             subscription = TtkEpaySubscriptionAppService(
-    #                 name=plan.plan.name,
-    #                 start_date=datetime.now(),
-    #                 total_amount=total_amount,
-    #                 price=price,
-    #                 service_plan_id=plan.id,
-    #                 duration_month=duration,
-    #                 promo_code_id=promo_code.id if promo_code else None,
-    #                 status="inactive",
-    #                 # application_status="processing",
-    #                 payment_status="unpaid",
-    #                 profile_id=profile.id,
-    #                 version_id=version.id,
-    #             )
-
-    #             db.session.add(subscription)
-    #             db.session.flush()
-
-    #             payment = Payment(
-    #                 amount=price,
-    #                 payment_method=data.get("payment_method", "card"),
-    #                 subscription_id=subscription.id,
-    #                 profile_id=profile.id,
-    #                 status="pending",
-    #             )
-    #             db.session.add(payment)
-    #             db.session.commit()
-    #             email = Mail(
-    #                 title=f"New Subscription Created by {user.username}",
-    #                 body=subscription_template,
-    #                 email_to=current_app.config["NOTIFICATION_EMAIL"],
-    #                 email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #                 mail_state="outGoing",
-    #             )
-    #             db.session.add(email)
-    #             db.session.commit()
-    #             send_mail.delay(email.id)
-    #             _logger.info(f"[EMAIL] is successfully sent for subscription {subscription.id}")
-    #             if (
-    #                 data.get("payment_method", "card") == "card"
-    #                 and profile.profile_type != "default"
-    #             ):
-    #                 captcha_token = data.get("captcha_token")
-    #                 if not captcha_token:
-    #                     return self.response_400(message="Missing CAPTCHA token")
-    #                 verify_url = "https://www.google.com/recaptcha/api/siteverify"
-    #                 payload = {
-    #                     "secret": current_app.config["CAPTCHA_SECRET_KEY"],
-    #                     "response": captcha_token,
-    #                 }
-    #                 try:
-    #                     captcha_response = requests.post(verify_url, data=payload)
-    #                     captcha_result = captcha_response.json()
-    #                 except Exception:
-    #                     _logger.error("Failed to contact reCAPTCHA", exc_info=True)
-    #                     return self.response_500(message="CAPTCHA verification error")
-
-    #                 if not captcha_result.get("success"):
-    #                     return self.response_400(message="CAPTCHA verification failed")
-
-    #                 payment_check = db.session.query(Payment).filter_by(id=payment.id).first()
-    #                 if not payment_check:
-    #                     return self.response_400(message="Payment ID not found in database")
-    #                 payment.order_id = "PAY" + str(payment.id)
-    #                 db.session.commit()
-    #                 payment_service = PaymentService()
-    #                 payment_response = payment_service.post_payement(
-    #                     payment.order_id, total_amount
-    #                 )[0]
-
-    #                 _logger.error(f"Payment service response: {payment_response}")
-
-    #                 if isinstance(payment_response, str):
-    #                     try:
-    #                         import json
-
-    #                         payment_response = json.loads(payment_response)
-    #                     except json.JSONDecodeError:
-    #                         return self.response_500(
-    #                             message="Invalid payment service response format"
-    #                         )
-
-    #                 if not isinstance(payment_response, dict):
-    #                     return self.response_500(message="Invalid payment service response")
-
-    #                 if "ERROR_CODE" in payment_response and payment_response["ERROR_CODE"] != "0":
-    #                     return self.response_400(
-    #                         message="Payment failed",
-    #                         # error_code=payment_response.get("ERROR_CODE"),
-    #                         details=payment_response.get("ERROR_MESSAGE", "Unknown error"),
-    #                     )
-    #                 satim_order_id = payment_response.get("ORDER_ID")
-    #                 form_url = payment_response.get("FORM_URL")
-
-    #                 payment.satim_order_id = satim_order_id
-
-    #                 db.session.commit()
-
-    #         old_subscription.start_date = datetime.now() - relativedelta(
-    #             months=old_subscription.duration_month + 1
-    #         )
-    #         old_subscription.status = "inactive"
-    #         old_subscription.is_upgrade = True
-
-    #         db.session.commit()
-
-    #         if promo_code:
-    #             if promo_code.usage_type == "single_use":
-    #                 promo_code.active = False
-    #                 promo_code.subscription = subscription.id
-    #                 db.session.commit()
-    #             else:
-    #                 promo_code.subscription = subscription.id
-    #                 db.session.commit()
-
-    #         # Email to user
-    #         subscription_template = render_template(
-    #             "emails/user_subscription.html",
-    #             user=user,
-    #             service_name=plan.plan.name,
-    #             total_price=total_amount,
-    #         )
-    #         email = Mail(
-    #             title=f"Nouvelle souscription à deploily.cloud",
-    #             body=subscription_template,
-    #             email_to=user.email,
-    #             email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #             mail_state="outGoing",
-    #         )
-    #         db.session.add(email)
-    #         db.session.commit()
-    #         send_mail.delay(email.id)
-
-    #         return self.response(
-    #             200,
-    #             **{
-    #                 "subscription": {
-    #                     "id": subscription.id,
-    #                     "name": subscription.name,
-    #                     "start_date": subscription.start_date.strftime("%Y-%m-%d %H:%M:%S"),
-    #                     "total_amount": subscription.total_amount,
-    #                     "price": subscription.price,
-    #                     "status": subscription.status,
-    #                     "duration_month": subscription.duration_month,
-    #                     "service_plan_id": subscription.service_plan_id,
-    #                     "promo_code_id": subscription.promo_code_id,
-    #                 },
-    #                 "order_id": satim_order_id,
-    #                 "form_url": form_url,
-    #             },
-    #         )
-
-    #     except Exception as e:
-    #         _logger.error(f"Error in subscription: {e}", exc_info=True)
-    #         db.session.rollback()
-    #         return self.response_500(message="Internal Server Error")
-
-    # def get_remaining_value(self, old_subscription):
-    #     total_price = old_subscription.price
-    #     start_date = old_subscription.start_date
-    #     duration_month = old_subscription.duration_month
-
-    #     end_date = start_date + relativedelta(months=duration_month)
-    #     today = datetime.now()
-
-    #     # Ensure today is not beyond the end date
-    #     if today > end_date:
-    #         return 0.0
-
-    #     total_days = (end_date - start_date).days
-    #     used_days = (today - start_date).days
-    #     remaining_days = total_days - used_days
-
-    #     if total_days == 0:
-    #         return 0.0
-
-    #     remaining_value = (remaining_days / total_days) * total_price
-    #     return round(remaining_value, 2)
 
 
 appbuilder.add_api(TtkEpaySubscriptionApi)
