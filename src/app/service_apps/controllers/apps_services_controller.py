@@ -91,6 +91,7 @@ class AppServiceModelApi(ServiceModelApi):
             return {
                 "id": service.id,
                 "name": service.name,
+                "price_category": service.price_category,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
@@ -208,6 +209,7 @@ class PublicAppServiceApi(BaseApi):  # public version
         def serialize_service(service):
             return {
                 "name": service.name,
+                "price_category": service.price_category,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
