@@ -4,13 +4,13 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder, db
-from app.core.models.managed_ressource_model import ManagedRessource
+from app.core.models.managed_ressource_models import ManagedRessource
 
 
 class ManagedRessourcelView(ModelView):
     route_base = "/admin/managed_ressource"
     datamodel = SQLAInterface(ManagedRessource)
-    list_columns = ["id", "ip", "hotst_name", "operator_system"]
+    list_columns = ["id", "ip", "host_name", "operator_system"]
     base_order = ("id", "desc")
 
 

@@ -10,7 +10,7 @@ class ManagedRessource(Model):
 
     id = Column(Integer, primary_key=True)
     ip = Column(String(100), nullable=False)  # e.g. "v1.0.0"
-    hotst_name = Column(Text)
+    host_name = Column(Text)
     operator_system = Column(Text)
     subscriptions = relationship(
         "Subscription", back_populates="managed_ressource", cascade="all, delete-orphan"

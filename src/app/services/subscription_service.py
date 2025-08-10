@@ -1086,7 +1086,7 @@ class SubscriptionService:
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
             ip="ip",
-            hotst_name="hotst_name",
+            host_name="host_name",
             operator_system="operator_system",
         )
         self.db.add(managed_ressource)
