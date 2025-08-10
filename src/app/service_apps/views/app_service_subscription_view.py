@@ -28,7 +28,7 @@ class SubscriptionAppServiceView(ModelView):
         "version",
         "console_url",
         "application_status",
-        "ressource_service_plan",
+        # "ressource_service_plan",
     ]
 
     base_order = ("id", "desc")
