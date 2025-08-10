@@ -27,6 +27,7 @@ class ServicePlan(Model):
     display_on_app = Column(Boolean, default=False)
     unity = Column(String)
     priority = Column(Integer, default=0)
+    managed_ressources = relationship("ManagedRessource", back_populates="ressource_service_plan")
 
     options = relationship(
         "ServicePlanOption",

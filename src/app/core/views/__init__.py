@@ -19,6 +19,7 @@ from . import (
     rating_views,
     media_views,
     promo_code_views,
+    managed_ressource_view,
 )
 
 appbuilder.add_link(

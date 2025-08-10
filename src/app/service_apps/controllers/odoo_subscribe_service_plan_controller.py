@@ -1,5 +1,4 @@
 import logging
-import uuid
 
 from flask import request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
@@ -56,6 +55,9 @@ class OdooSubscriptionApi(BaseApi):
                                 ressource_service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected ressource service plan
+                                managed_ressource_id:
+                                    type: integer
+                                    description: ID of the selected managed ressource
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -184,13 +186,28 @@ class OdooSubscriptionApi(BaseApi):
                 return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, ressource_plan = (
-                subscription_service.validate_ressource_service_plan(
-                    request_data.ressource_service_plan_selected_id
+            if request_data.ressource_service_plan_selected_id is None:
+                ressource_plan = None
+            else:
+                is_valid, error_msg, ressource_plan = (
+                    subscription_service.validate_ressource_service_plan(
+                        request_data.ressource_service_plan_selected_id
+                    )
                 )
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+                if not is_valid:
+                    return self.response_400(message=error_msg)
+
+            #  Validate managed ressource
+            if request_data.managed_ressource_id is None:
+                managed_ressource = None
+            else:
+                is_valid, error_msg, managed_ressource = (
+                    subscription_service.validate_managed_ressource(
+                        request_data.managed_ressource_id
+                    )
+                )
+                if not is_valid:
+                    return self.response_400(message=error_msg)
 
             # Validate service plan
             is_valid, error_msg, version = subscription_service.validate_version(
@@ -213,15 +230,12 @@ class OdooSubscriptionApi(BaseApi):
             # Determine subscription status based on balance
             has_sufficient_balance = profile.balance >= final_price
             subscription_status = "active" if has_sufficient_balance else "inactive"
-            api_secret_key = uuid.uuid4().hex[:32]
             user = get_user()
-            user_name = user.username
-            client_site_url = f"https://{user_name}-ttkepay.apps.depoloily.cloud"
 
             # Create subscription
             subscription = subscription_service.create_odoo_subscription(
                 plan=plan,
-                ressource_service_plan=ressource_plan.id,
+                # ressource_service_plan=ressource_plan.id,
                 duration=request_data.duration,
                 total_amount=total_amount,
                 price=final_price,
@@ -229,6 +243,11 @@ class OdooSubscriptionApi(BaseApi):
                 profile_id=profile.id,
                 status=subscription_status,
                 version_id=version.id,
+            )
+            managed_ressource = subscription_service.get_or_create_managed_ressource(
+                ressource_plan=ressource_plan,
+                managed_ressource=managed_ressource,
+                subscription=subscription,
             )
 
             # Initialize payment response variables
@@ -345,6 +364,9 @@ class OdooSubscriptionApi(BaseApi):
                                 ressource_service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected ressource service plan
+                                managed_ressource_id:
+                                    type: integer
+                                    description: ID of the selected managed ressource
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -475,14 +497,28 @@ class OdooSubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            # Validate service plan
-            is_valid, error_msg, ressource_plan = (
-                subscription_service.validate_ressource_service_plan(
-                    request_data.ressource_service_plan_selected_id
+            if request_data.ressource_service_plan_selected_id is None:
+                ressource_plan = None
+            else:
+                is_valid, error_msg, ressource_plan = (
+                    subscription_service.validate_ressource_service_plan(
+                        request_data.ressource_service_plan_selected_id
+                    )
                 )
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+                if not is_valid:
+                    return self.response_400(message=error_msg)
+
+            #  Validate managed ressource
+            if request_data.managed_ressource_id is None:
+                managed_ressource = None
+            else:
+                is_valid, error_msg, managed_ressource = (
+                    subscription_service.validate_managed_ressource(
+                        request_data.managed_ressource_id
+                    )
+                )
+                if not is_valid:
+                    return self.response_400(message=error_msg)
 
             # Validate service plan
             is_valid, error_msg, version = subscription_service.validate_version(
@@ -528,8 +564,13 @@ class OdooSubscriptionApi(BaseApi):
                 profile_id=profile.id,
                 status=subscription_status,
                 version_id=version.id,
-                ressource_service_plan=ressource_plan.id,
+                # ressource_service_plan=ressource_plan.id,
                 is_upgrade=True,
+            )
+            managed_ressource = subscription_service.get_or_create_managed_ressource(
+                ressource_plan=ressource_plan,
+                managed_ressource=managed_ressource,
+                subscription=subscription,
             )
 
             # Initialize payment response variables
@@ -789,8 +830,10 @@ class OdooSubscriptionApi(BaseApi):
                 status=subscription_status,
                 is_renew=True,
                 version_id=old_subscription.version_id,
-                ressource_service_plan=old_subscription.ressource_service_plan_id,
+                # ressource_service_plan=old_subscription.ressource_service_plan_id,
             )
+            subscription.managed_ressource_id = old_subscription.managed_ressource_id
+            db.session.commit()
 
             # Initialize payment response variables
             satim_order_id = ""

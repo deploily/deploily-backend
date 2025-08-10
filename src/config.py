@@ -246,6 +246,7 @@ FAB_ROLES = {
         ["SupabaseSubscription", "can_renew_app_subscription"],
         ["StatusApi", "can_send_pdf_receipt_mail"],
         ["SubscriptionModelApi", "can_history"],
+        ["ManagedRessourceModelApi", "can_get"],
     ]
 }
 
