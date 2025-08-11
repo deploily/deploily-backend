@@ -25,6 +25,8 @@ _subscribe_display_columns = [
     "api_key",
     "service_plan_id",
     "is_expired",
+    "managed_ressource_id",
+    "managed_ressource",
 ]
 
 _subscribe_edit_columns = [
