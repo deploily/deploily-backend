@@ -103,6 +103,7 @@ class AppServiceModelApi(ServiceModelApi):
                 "average_rating": service.average_rating,
                 "is_subscribed": service.is_subscribed,
                 "documentation_url": service.documentation_url,
+                "unit_price": service.unit_price,
                 "recommended_apps": [
                     {
                         "id": app.id,
