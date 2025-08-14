@@ -64,4 +64,4 @@ class AppService(Service):
         return round(result, 2) if result is not None else 0.0
 
     def __repr__(self):
-        return f"AppService: {self.name} "
+        return f"Application: {self.name} "

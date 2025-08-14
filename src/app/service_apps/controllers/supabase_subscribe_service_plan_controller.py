@@ -224,6 +224,7 @@ class SupabaseSubscriptionApi(BaseApi):
             promo_code, discount_amount = subscription_service.validate_promo_code(
                 request_data.promo_code, total_amount
             )
+            # todo log and fix discount-amout !!
             final_price = total_amount - discount_amount
 
             # Determine subscription status based on balance
