@@ -25,6 +25,7 @@ from typing import Optional, Tuple, Type, TypeVar
 
 import requests
 from dateutil.relativedelta import relativedelta
+from slugify import slugify
 
 
 @dataclass
@@ -1087,7 +1088,7 @@ class SubscriptionService:
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
             ip="000.000.000.000",
-            host_name="host_name",
+            host_name=f"{slugify(subscription.profile_id.name)}-({subscription.id})",
             operator_system="Debian 12",
         )
         self.db.add(managed_ressource)
@@ -1130,7 +1131,9 @@ class SubscriptionService:
             return existing
 
         # Create new
-        new_managed = self.create_managed_ressource(ressource_service_plan=ressource_plan.id)
+        new_managed = self.create_managed_ressource(
+            ressource_service_plan=ressource_plan.id, subscription=subscription
+        )
         subscription.managed_ressource_id = new_managed.id
         self.db.commit()
         _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
