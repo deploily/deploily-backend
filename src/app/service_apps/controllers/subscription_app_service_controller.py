@@ -22,7 +22,7 @@ api_columns = [
     "version",
     "demo_url",
     "console_url",
-    # "ressource_service_plan",
+    "managed_ressource_details",
 ]
 
 edit_columns = ["application_status"]

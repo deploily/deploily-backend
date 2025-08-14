@@ -27,7 +27,7 @@ class ApiServiceSubscription(Subscription):
             "service_plan": {
                 "id": self.service_plan.id,
                 "price": self.service_plan.price,
-                " subscription_category": self.service_plan.subscription_category,
+                "subscription_category": self.service_plan.subscription_category,
             },
             "promo_code_id": self.promo_code.id if self.promo_code else None,
             "promo_code_name": self.promo_code.code if self.promo_code else None,

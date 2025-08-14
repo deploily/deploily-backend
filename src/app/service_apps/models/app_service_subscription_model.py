@@ -54,7 +54,7 @@ class SubscriptionAppService(Subscription):
             "service_plan": {
                 "id": self.service_plan.id,
                 "price": self.service_plan.price,
-                " subscription_category": self.service_plan.subscription_category,
+                "subscription_category": self.service_plan.subscription_category,
             },
             "promo_code_id": self.promo_code.id if self.promo_code else None,
             "promo_code_name": self.promo_code.code if self.promo_code else None,
@@ -84,6 +84,22 @@ class SubscriptionAppService(Subscription):
                 "monitoring": self.service_details.get("monitoring"),
                 "ssh_access": self.service_details.get("ssh_access"),
                 "type": self.service_details.get("type"),
+            },
+            "managed_ressource_details": {
+                "id": self.managed_ressource_details.get("id"),
+                "display_on_app": self.managed_ressource_details.get("display_on_app"),
+                "is_custom": self.managed_ressource_details.get("is_custom"),
+                "is_published": self.managed_ressource_details.get("is_published"),
+                "plan_id": self.managed_ressource_details.get("plan_id"),
+                "preparation_time": self.managed_ressource_details.get("preparation_time"),
+                "price": self.managed_ressource_details.get("price"),
+                "priority": self.managed_ressource_details.get("priority"),
+                "service_id": self.managed_ressource_details.get("service_id"),
+                "service_plan_type": self.managed_ressource_details.get("service_plan_type"),
+                "subscription_category": self.managed_ressource_details.get(
+                    "subscription_category"
+                ),
+                "unity": self.managed_ressource_details.get("unity"),
             },
         }
 

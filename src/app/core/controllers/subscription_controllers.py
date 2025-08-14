@@ -41,6 +41,7 @@ _subscribe_edit_columns = [
     "service_plan",
     "api_key",
     "service_plan_id",
+    "managed_ressource_details",
 ]
 
 
@@ -96,6 +97,20 @@ class SubscriptionModelApi(ModelRestApi):
                 "curl_command": sub.service_details.get("curl_command"),
                 "api_key": sub.service_details.get("api_key"),
                 "is_subscribed": sub.service_details.get("is_subscribed"),
+            },
+            "managed_ressource_details": {
+                "id": sub.managed_ressource_details.get("id"),
+                "display_on_app": sub.managed_ressource_details.get("display_on_app"),
+                "is_custom": sub.managed_ressource_details.get("is_custom"),
+                "is_published": sub.managed_ressource_details.get("is_published"),
+                "plan_id": sub.managed_ressource_details.get("plan_id"),
+                "preparation_time": sub.managed_ressource_details.get("preparation_time"),
+                "price": sub.managed_ressource_details.get("price"),
+                "priority": sub.managed_ressource_details.get("priority"),
+                "service_id": sub.managed_ressource_details.get("service_id"),
+                "service_plan_type": sub.managed_ressource_details.get("service_plan_type"),
+                "subscription_category": sub.managed_ressource_details.get("subscription_category"),
+                "unity": sub.managed_ressource_details.get("unity"),
             },
             "promo_code_id": sub.promo_code.id if sub.promo_code else None,
             "promo_code_name": sub.promo_code.code if sub.promo_code else None,
