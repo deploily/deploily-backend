@@ -1081,13 +1081,14 @@ class SubscriptionService:
 
         self.db.commit()
 
-    def create_managed_ressource(self, ressource_service_plan):
+    def create_managed_ressource(self, ressource_service_plan, subscription=None):
         """Create managed ressource record"""
+        # todo host_name should be : slug(subscription.profile_id.name)-(subscription.id)
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
-            ip="ip",
+            ip="000.000.000.000",
             host_name="host_name",
-            operator_system="operator_system",
+            operator_system="Debian 12",
         )
         self.db.add(managed_ressource)
         self.db.flush()

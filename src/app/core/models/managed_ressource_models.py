@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_appbuilder import Model
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -10,8 +10,8 @@ class ManagedRessource(Model):
 
     id = Column(Integer, primary_key=True)
     ip = Column(String(100), nullable=False)  # e.g. "v1.0.0"
-    host_name = Column(Text)
-    operator_system = Column(Text)
+    host_name = Column(String(100))
+    operator_system = Column(String(100))
     subscriptions = relationship(
         "Subscription", back_populates="managed_ressource", cascade="all, delete-orphan"
     )
@@ -19,4 +19,4 @@ class ManagedRessource(Model):
     ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
 
     def __repr__(self):
-        return f"{self.ressource_service_plan} "
+        return f"{self.host_name} ({self.ip})"

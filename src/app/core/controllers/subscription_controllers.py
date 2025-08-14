@@ -27,6 +27,7 @@ _subscribe_display_columns = [
     "is_expired",
     "managed_ressource_id",
     "managed_ressource",
+    "managed_ressource_details",
 ]
 
 _subscribe_edit_columns = [

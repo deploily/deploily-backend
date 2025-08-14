@@ -122,6 +122,35 @@ class Subscription(Model, AuditMixin):
             return {}
 
     @property
+    def managed_ressource_details(self):
+
+        if self.managed_ressource and self.managed_ressource.ressource_service_plan:
+            ressource_service_plan = self.managed_ressource.ressource_service_plan
+            managed_ressource = {}
+            # Get all keys from the base (Service)
+            # base_keys = set(Service.__mapper__.c.keys())
+
+            # Get all keys from the subclass
+            child_keys = set(ressource_service_plan.__class__.__mapper__.c.keys())
+
+            # Only use keys that are in child but not in base
+            specific_child_keys = child_keys
+
+            for key in specific_child_keys:
+                try:
+                    managed_ressource[key] = getattr(ressource_service_plan, key)
+                except Exception:
+                    managed_ressource[key] = None
+            # for key, value in service.__dict__.items():
+            #     if not key.startswith("_"):
+            #         service_json[key] = value
+            return managed_ressource
+
+        else:
+            _logger.warning("Service or service_plan is None for MyService ID %d", self.id)
+            return {}
+
+    @property
     def service_name(self):
         details = self.service_details
         return details.get("name") if isinstance(details, dict) else None
@@ -157,7 +186,7 @@ class Subscription(Model, AuditMixin):
 
     def __repr__(self):
         # return str(self.id)
-        return f"Subscription/{self.service_plan}/{self.created_by}"
+        return f"{self.service_plan} | {self.created_by} ({self.profile.name})"
 
 
 def encrypt_api_key(api_key):
