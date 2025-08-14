@@ -79,7 +79,7 @@ class SubscriptionModelApi(ModelRestApi):
             "service_plan": {
                 "id": sub.service_plan.id,
                 "price": sub.service_plan.price,
-                " subscription_category": sub.service_plan.subscription_category,
+                "subscription_category": sub.service_plan.subscription_category,
             },
             "service_details": {
                 "id": sub.service_details.get("id"),
