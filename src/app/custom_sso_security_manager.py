@@ -31,7 +31,9 @@ class CustomSsoSecurityManager(SecurityManager):
         from app.core.models.payment_profile_models import PaymentProfile
 
         username = jwt_data["preferred_username"]
-        user = self.find_user(username=username)
+        email = jwt_data["email"]
+        # user = self.find_user(username=username)
+        user = self.find_user(email=email)
         if user and user.is_active:
             # Set flask g.user to JWT user, we can't do it on before request
             existing_profile = (

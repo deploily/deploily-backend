@@ -91,6 +91,7 @@ class AppServiceModelApi(ServiceModelApi):
             return {
                 "id": service.id,
                 "name": service.name,
+                "price_category": service.price_category,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
@@ -135,7 +136,7 @@ class AppServiceModelApi(ServiceModelApi):
                         ],
                         "preparation_time": plan.preparation_time,
                     }
-                    for plan in service.service_plans
+                    for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
                 ],
                 "medias": [
                     {
@@ -209,6 +210,7 @@ class PublicAppServiceApi(BaseApi):  # public version
         def serialize_service(service):
             return {
                 "name": service.name,
+                "price_category": service.price_category,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
@@ -245,7 +247,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                         ],
                         "preparation_time": plan.preparation_time,
                     }
-                    for plan in service.service_plans
+                    for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
                 ],
                 "medias": [
                     {
