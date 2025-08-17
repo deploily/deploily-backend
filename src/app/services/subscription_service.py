@@ -947,16 +947,16 @@ class SubscriptionService:
         return payment
 
     def process_payment(
-        self, payment, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
+        self, invoice, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
     ) -> Tuple[bool, str, dict]:
         """Process payment through external service"""
-        payment.order_id = "PAY" + str(payment.id)
-        self.db.commit()
+        # payment.order_id = "PAY" + str(payment.id)
+        # self.db.commit()
 
         try:
             payment_service = PaymentService()
             payment_response = payment_service.post_payement(
-                payment.order_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                invoice.id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
             )[0]
 
             # Parse response if it's a string
@@ -974,7 +974,7 @@ class SubscriptionService:
                 return False, f"Payment failed: {error_msg}", {}
 
             # Update payment with external order ID
-            payment.satim_order_id = payment_response.get("ORDER_ID")
+            invoice.satim_order_id = payment_response.get("ORDER_ID")
             self.db.commit()
 
             return True, "", payment_response
