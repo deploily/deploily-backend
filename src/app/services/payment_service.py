@@ -30,7 +30,7 @@ class PaymentService:
             "IS_MVC_CALL": is_mvc_call,
             "CLIENT_CONFIRM_URL": client_confirm_url,
             "CLIENT_FAIL_URL": client_fail_url,
-            # "CLIENT_CODE": user.id,
+            "CLIENT_CODE": user.id,
         }
         headers = {"Content-Type": "application/json"}
 
