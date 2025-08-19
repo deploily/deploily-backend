@@ -3,6 +3,8 @@ import os
 
 import requests
 
+from app.utils.utils import get_user
+
 _logger = logging.getLogger(__name__)
 
 
@@ -14,20 +16,26 @@ class PaymentService:
         )
         self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
+        self.API_SECRET_KEY = os.getenv("API_SECRET_KEY", "")
         # TODO Get APIKey from ENV
 
     def post_payement(
-        self, payment_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+        self, invoice_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
     ):
+        user = get_user()
+        if not user:
+            return self.response_400(message="User not found")
         payload = {
-            "ORDER_ID": payment_id,
+            "INVOICE_NUMBER": invoice_id,
             "NET_AMOUNT": int(total_amount),
             "IS_MVC_CALL": is_mvc_call,
             "CLIENT_CONFIRM_URL": client_confirm_url,
             "CLIENT_FAIL_URL": client_fail_url,
+            "CLIENT_CODE": user.id,
         }
-        headers = {"Content-Type": "application/json"}
-
+        headers = {"Content-Type": "application/json", "X-API-KEY": self.API_SECRET_KEY}
+        print("lllllllllllllllllllllllllllllllll")
+        print(headers)
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")
 
         try:
