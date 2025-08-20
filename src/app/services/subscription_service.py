@@ -25,6 +25,7 @@ from typing import Optional, Tuple, Type, TypeVar
 
 import requests
 from dateutil.relativedelta import relativedelta
+from slugify import slugify
 
 
 @dataclass
@@ -947,16 +948,16 @@ class SubscriptionService:
         return payment
 
     def process_payment(
-        self, payment, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
+        self, invoice, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
     ) -> Tuple[bool, str, dict]:
         """Process payment through external service"""
-        payment.order_id = "PAY" + str(payment.id)
-        self.db.commit()
+        # payment.order_id = "PAY" + str(payment.id)
+        # self.db.commit()
 
         try:
             payment_service = PaymentService()
             payment_response = payment_service.post_payement(
-                payment.order_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                invoice.id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
             )[0]
 
             # Parse response if it's a string
@@ -974,7 +975,7 @@ class SubscriptionService:
                 return False, f"Payment failed: {error_msg}", {}
 
             # Update payment with external order ID
-            payment.satim_order_id = payment_response.get("ORDER_ID")
+            invoice.satim_order_id = payment_response.get("ORDER_ID")
             self.db.commit()
 
             return True, "", payment_response
@@ -1087,7 +1088,7 @@ class SubscriptionService:
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
             ip="000.000.000.000",
-            host_name="host_name",
+            host_name=f"{slugify(subscription.profile_id.name)}-({subscription.id})",
             operator_system="Debian 12",
         )
         self.db.add(managed_ressource)
@@ -1130,7 +1131,9 @@ class SubscriptionService:
             return existing
 
         # Create new
-        new_managed = self.create_managed_ressource(ressource_service_plan=ressource_plan.id)
+        new_managed = self.create_managed_ressource(
+            ressource_service_plan=ressource_plan.id, subscription=subscription
+        )
         subscription.managed_ressource_id = new_managed.id
         self.db.commit()
         _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
