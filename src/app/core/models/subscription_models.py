@@ -186,7 +186,9 @@ class Subscription(Model, AuditMixin):
 
     def __repr__(self):
         # return str(self.id)
-        return f"{self.service_plan} | {self.created_by} ({self.profile.name})"
+        return (
+            f"{self.service_plan} | {self.created_by} ({self.profile.name if self.profile else ''})"
+        )
 
 
 def encrypt_api_key(api_key):
