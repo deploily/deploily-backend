@@ -16,7 +16,7 @@ class PaymentService:
         )
         self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
-        self.API_SECRET_KEY = os.getenv("API_SECRET_KEY", "")
+        self.PAYMENT_API_SECRET_KEY = os.getenv("PAYMENT_API_SECRET_KEY", "")
         # TODO Get APIKey from ENV
 
     def post_payement(
@@ -33,9 +33,7 @@ class PaymentService:
             "CLIENT_FAIL_URL": client_fail_url,
             "CLIENT_CODE": user.id,
         }
-        headers = {"Content-Type": "application/json", "X-API-KEY": self.API_SECRET_KEY}
-        print("lllllllllllllllllllllllllllllllll")
-        print(headers)
+        headers = {"Content-Type": "application/json", "X-API-KEY": self.PAYMENT_API_SECRET_KEY}
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")
 
         try:
