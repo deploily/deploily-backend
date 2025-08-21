@@ -196,11 +196,11 @@ class SubscriptionApi(BaseApi):
                 # Handle card payment for non-default profiles
                 if request_data.payment_method == "card" and profile.profile_type != "default":
                     # # TODO Verify CAPTCHA
-                    is_valid, error_msg = subscription_service.verify_captcha(
-                        request_data.captcha_token
-                    )
-                    if not is_valid:
-                        return self.response_400(message=error_msg)
+                    # is_valid, error_msg = subscription_service.verify_captcha(
+                    #     request_data.captcha_token
+                    # )
+                    # if not is_valid:
+                    #     return self.response_400(message=error_msg)
 
                     # Process payment
                     is_mvc_call = False
@@ -216,6 +216,7 @@ class SubscriptionApi(BaseApi):
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
                     payment.satim_order_id = satim_order_id
+                    payment.status = "completed"
                     db.session.commit()
 
             # Update promo code usage

@@ -90,6 +90,7 @@ class StatusApi(BaseApi):
                 if not payment:
                     return self.response_400(message="Payment not found")
                 payment.status = "completed"
+                db.session.commit()
                 subscription = (
                     db.session.query(Subscription).filter_by(id=payment.subscription_id).first()
                 )
