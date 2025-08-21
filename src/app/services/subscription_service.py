@@ -1088,7 +1088,7 @@ class SubscriptionService:
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
             ip="000.000.000.000",
-            host_name=f"{slugify(subscription.profile_id.name)}-({subscription.id})",
+            host_name=f"{slugify(subscription.profile.name)}-({subscription.id})",
             operator_system="Debian 12",
         )
         self.db.add(managed_ressource)
