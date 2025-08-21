@@ -303,7 +303,8 @@ class TtkEpaySubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
-
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
             # Update promo code usage
             subscription_service.update_promo_code_usage(promo_code, subscription.id)
 
@@ -640,7 +641,8 @@ class TtkEpaySubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
-
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
             # Update old subscrption
             subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
 
@@ -909,7 +911,8 @@ class TtkEpaySubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
-
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
             # Update old subscrption
             subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
 

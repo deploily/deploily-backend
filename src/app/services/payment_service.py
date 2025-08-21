@@ -18,6 +18,10 @@ class PaymentService:
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
         self.PAYMENT_API_SECRET_KEY = os.getenv("PAYMENT_API_SECRET_KEY", "")
         # TODO Get APIKey from ENV
+        self.headers = {
+            "Content-Type": "application/json",
+            "X-API-KEY": self.PAYMENT_API_SECRET_KEY,
+        }
 
     def post_payement(
         self, invoice_id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
@@ -37,7 +41,7 @@ class PaymentService:
         _logger.info(f"[PAYMENT SERVICE] Sending payload: {payload}")
 
         try:
-            response = requests.post(self.URL, json=payload, headers=headers)
+            response = requests.post(self.URL, json=payload, headers=self.headers)
 
             _logger.info(f"[PAYMENT SERVICE] Response status: {response.status_code}")
             _logger.info(f"[PAYMENT SERVICE] Response content: {response.text}")
@@ -65,9 +69,13 @@ class PaymentService:
     def get_payment_status(self, satim_order_id):
         params = {"SATIM_ORDER_ID": satim_order_id}
         try:
-            response = requests.get(self.STATUS_URL, params=params)
-            _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
-            _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
+            headers = {"Content-Type": "application/json", "X-API-KEY": self.PAYMENT_API_SECRET_KEY}
+            response = requests.get(self.STATUS_URL, params=params, headers=self.headers)
+            # _logger.info(
+            #     f"[PAYMENT SERVICE] Status check response content: {response.text}")
+
+            print(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
+
             return response
         except requests.RequestException as e:
             _logger.error(f"[PAYMENT SERVICE] Failed to check payment status: {str(e)}")
@@ -76,7 +84,7 @@ class PaymentService:
     def get_pdf_receipt(self, satim_order_id):
         params = {"SATIM_ORDER_ID": satim_order_id}
         try:
-            response = requests.get(self.PDF_RECEIPT_URL, params=params)
+            response = requests.get(self.PDF_RECEIPT_URL, params=params, headers=self.headers)
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
             return response
@@ -87,7 +95,7 @@ class PaymentService:
     def send_pdf_receipt_mail(self, satim_order_id, email):
         params = {"SATIM_ORDER_ID": satim_order_id, "EMAIL": email}
         try:
-            response = requests.get(self.SEND_RECEIPT_MAIL_URL, params=params)
+            response = requests.get(self.SEND_RECEIPT_MAIL_URL, params=params, headers=self.headers)
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {response.text}")
             _logger.info(f"[PAYMENT SERVICE] Status check response content: {type(response)}")
             return response
