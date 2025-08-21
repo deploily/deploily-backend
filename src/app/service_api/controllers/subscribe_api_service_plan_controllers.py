@@ -195,7 +195,7 @@ class SubscriptionApi(BaseApi):
 
                 # Handle card payment for non-default profiles
                 if request_data.payment_method == "card" and profile.profile_type != "default":
-                    # TODO Verify CAPTCHA
+                    # # TODO Verify CAPTCHA
                     is_valid, error_msg = subscription_service.verify_captcha(
                         request_data.captcha_token
                     )
@@ -215,6 +215,8 @@ class SubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
 
             # Update promo code usage
             subscription_service.update_promo_code_usage(promo_code, subscription.id)
@@ -467,6 +469,8 @@ class SubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
 
             # Update old subscrption
             subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
@@ -709,6 +713,8 @@ class SubscriptionApi(BaseApi):
 
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
+                    payment.satim_order_id = satim_order_id
+                    db.session.commit()
 
             # Update old subscrption
             subscription_service.update_old_subscription(old_subscription, is_renew=True)
