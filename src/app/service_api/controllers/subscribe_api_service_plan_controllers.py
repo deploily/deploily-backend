@@ -216,7 +216,6 @@ class SubscriptionApi(BaseApi):
                     satim_order_id = payment_response.get("ORDER_ID", "")
                     form_url = payment_response.get("FORM_URL", "")
                     payment.satim_order_id = satim_order_id
-                    payment.status = "completed"
                     db.session.commit()
 
             # Update promo code usage
