@@ -2,12 +2,17 @@
 
 import logging
 
+from flask import request
 from flask_appbuilder.api import BaseApi, ModelRestApi, expose
 from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from sqlalchemy import and_
+from sqlalchemy.orm import aliased
 
 from app import appbuilder, db
 from app.core.models.service_plan_models import ServicePlan
+from app.core.models.service_plan_option_models import ServicePlanOption
+from app.service_apps.models.apps_services_model import AppService
 from app.service_ressources.models.services_ressources_category_model import (
     ServiceRessouceCategory,
 )
@@ -56,6 +61,20 @@ class ServicePlanRessourceModelApi(BaseApi):
         get:
             summary: Get all service plans with type "ressource"
             description: Returns a list of all service plans of type "ressource", including options and provider.
+            parameters:
+                - in: query
+                  name: app_service_id
+                  required: false
+                  schema:
+                    type: integer
+                  description: id of the selected app
+                - in: query
+                  name: subscription_category
+                  required: false
+                  schema:
+                    type: string
+                  description: category of subscription (yearly/montly)
+
             responses:
                 200:
                     description: A list of service plans
@@ -69,7 +88,12 @@ class ServicePlanRessourceModelApi(BaseApi):
                     description: Internal server error
         """
         try:
+            app_service_id = request.args.get("app_service_id")
+            subscription_category = request.args.get("subscription_category")
 
+            cpu_option = aliased(ServicePlanOption)
+            ram_option = aliased(ServicePlanOption)
+            disk_option = aliased(ServicePlanOption)
             ressources_services = (
                 db.session.query(RessourceService)
                 .join(RessourceService.ressouce_category)
@@ -80,22 +104,56 @@ class ServicePlanRessourceModelApi(BaseApi):
                 )
                 .all()
             )
-
             if not ressources_services:
                 return self.response(200, result=[])
 
-            vps_ressources_plans = (
+            query = (
                 db.session.query(ServicePlan)
                 .filter(
                     ServicePlan.service_id.in_([ressource.id for ressource in ressources_services]),
                     ServicePlan.display_on_app.is_(True),
                     ServicePlan.is_custom.is_(False),
                 )
-                .order_by(
-                    ServicePlan.price.asc(), ServicePlan.priority.asc()
-                )  # Order from min to max
-                .all()
+                .join(cpu_option, ServicePlan.options)
+                .join(ram_option, ServicePlan.options)
+                .join(disk_option, ServicePlan.options)
+                .order_by(ServicePlan.price.asc(), ServicePlan.priority.asc())
             )
+
+            if app_service_id:
+                app_service = (
+                    db.session.query(AppService).filter(AppService.id == app_service_id).first()
+                )
+                query = query.filter(
+                    and_(
+                        # ServicePlan.service_id == app_service_id,
+                        app_service.minimal_cpu <= cpu_option.option_value,
+                        app_service.minimal_ram <= ram_option.option_value,
+                        app_service.minimal_disk <= disk_option.option_value,
+                        cpu_option.option_type == "cpu",
+                        ram_option.option_type == "ram",
+                        disk_option.option_type == "disque",
+                    )
+                )
+            if subscription_category:
+                query = query.filter(
+                    and_(ServicePlan.subscription_category == subscription_category)
+                )
+            # vps_ressources_plans = (
+            #     db.session.query(ServicePlan)
+            #     .filter(
+            #         ServicePlan.service_id.in_(
+            #             [ressource.id for ressource in ressources_services]),
+            #         ServicePlan.display_on_app.is_(True),
+            #         ServicePlan.is_custom.is_(False),
+            #     )
+            #     .order_by(
+            #         ServicePlan.price.asc(), ServicePlan.priority.asc()
+            #     )  # Order from min to max
+            #     .all()
+            # )
+
+            vps_ressources_plans = query.all()
 
             if not vps_ressources_plans:
                 return self.response(200, result=[])
@@ -121,6 +179,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
                         "preparation_time": plan.preparation_time,
+                        "subscription_category": plan.subscription_category,
                         "unity": plan.unity,
                         "options": [serialize_option(opt) for opt in plan.options],
                         "provider_info": plan.provider_info,
