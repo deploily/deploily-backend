@@ -6,11 +6,13 @@ from flask import request
 from flask_appbuilder.api import BaseApi, ModelRestApi, expose
 from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from sqlalchemy import and_
 from sqlalchemy.orm import aliased
 
 from app import appbuilder, db
 from app.core.models.service_plan_models import ServicePlan
 from app.core.models.service_plan_option_models import ServicePlanOption
+from app.service_apps.models.apps_services_model import AppService
 from app.service_ressources.models.services_ressources_category_model import (
     ServiceRessouceCategory,
 )
@@ -86,12 +88,12 @@ class ServicePlanRessourceModelApi(BaseApi):
                     description: Internal server error
         """
         try:
-            request.args.get("app_service_id")
-            request.args.get("subscription_category")
+            app_service_id = request.args.get("app_service_id")
+            subscription_category = request.args.get("subscription_category")
 
-            aliased(ServicePlanOption)
-            aliased(ServicePlanOption)
-            aliased(ServicePlanOption)
+            cpu_option = aliased(ServicePlanOption)
+            ram_option = aliased(ServicePlanOption)
+            disk_option = aliased(ServicePlanOption)
             ressources_services = (
                 db.session.query(RessourceService)
                 .join(RessourceService.ressouce_category)
@@ -105,46 +107,53 @@ class ServicePlanRessourceModelApi(BaseApi):
             if not ressources_services:
                 return self.response(200, result=[])
 
-            # query = (
-            #     db.session.query(ServicePlan)
-            #     .join(AppService, AppService.id == ServicePlan.service_id)
-            #     .join(cpu_option, ServicePlan.options)
-            #     .join(ram_option, ServicePlan.options)
-            #     .join(disk_option, ServicePlan.options)
-            #     .filter(ServicePlan.display_on_app.is_(True))
-            #     .filter(ServicePlan.is_custom.is_(False))
-            #     .filter(cpu_option.option_type == "cpu")
-            #     .filter(ram_option.option_type == "ram")
-            #     .filter(disk_option.option_type == "disque")
-            #     .order_by(ServicePlan.price.asc(), ServicePlan.priority.asc())
-            # )
-            # if app_service_id:
-            #     query = query.filter(
-            #         and_(
-            #             ServicePlan.service_id == app_service_id,
-            #             AppService.minimal_cpu <= cpu_option.option_value,
-            #             AppService.minimal_ram <= ram_option.option_value,
-            #             AppService.minimal_disk <= disk_option.option_value,
-            #         )
-            #     )
-            # if subscription_category:
-            #     query = query.filter(
-            #         and_(ServicePlan.subscription_category == subscription_category)
-            #     )
-            vps_ressources_plans = (
+            query = (
                 db.session.query(ServicePlan)
                 .filter(
                     ServicePlan.service_id.in_([ressource.id for ressource in ressources_services]),
                     ServicePlan.display_on_app.is_(True),
                     ServicePlan.is_custom.is_(False),
                 )
-                .order_by(
-                    ServicePlan.price.asc(), ServicePlan.priority.asc()
-                )  # Order from min to max
-                .all()
+                .join(cpu_option, ServicePlan.options)
+                .join(ram_option, ServicePlan.options)
+                .join(disk_option, ServicePlan.options)
+                .order_by(ServicePlan.price.asc(), ServicePlan.priority.asc())
             )
 
-            # vps_ressources_plans = query.all()
+            if app_service_id:
+                app_service = (
+                    db.session.query(AppService).filter(AppService.id == app_service_id).first()
+                )
+                query = query.filter(
+                    and_(
+                        # ServicePlan.service_id == app_service_id,
+                        app_service.minimal_cpu <= cpu_option.option_value,
+                        app_service.minimal_ram <= ram_option.option_value,
+                        app_service.minimal_disk <= disk_option.option_value,
+                        cpu_option.option_type == "cpu",
+                        ram_option.option_type == "ram",
+                        disk_option.option_type == "disque",
+                    )
+                )
+            if subscription_category:
+                query = query.filter(
+                    and_(ServicePlan.subscription_category == subscription_category)
+                )
+            # vps_ressources_plans = (
+            #     db.session.query(ServicePlan)
+            #     .filter(
+            #         ServicePlan.service_id.in_(
+            #             [ressource.id for ressource in ressources_services]),
+            #         ServicePlan.display_on_app.is_(True),
+            #         ServicePlan.is_custom.is_(False),
+            #     )
+            #     .order_by(
+            #         ServicePlan.price.asc(), ServicePlan.priority.asc()
+            #     )  # Order from min to max
+            #     .all()
+            # )
+
+            vps_ressources_plans = query.all()
 
             if not vps_ressources_plans:
                 return self.response(200, result=[])
