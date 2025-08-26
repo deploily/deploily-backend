@@ -144,7 +144,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .all()
             )
 
-            vps_ressources_plans = query.all()
+            # vps_ressources_plans = query.all()
 
             if not vps_ressources_plans:
                 return self.response(200, result=[])
