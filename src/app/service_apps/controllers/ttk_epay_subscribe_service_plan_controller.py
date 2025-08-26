@@ -283,12 +283,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                 # Handle card payment for non-default profiles
                 if request_data.payment_method == "card" and profile.profile_type != "default":
 
-                    # Verify CAPTCHA
-                    is_valid, error_msg = subscription_service.verify_captcha(
-                        request_data.captcha_token
-                    )
-                    if not is_valid:
-                        return self.response_400(message=error_msg)
+                    # todo Verify CAPTCHA
+                    # is_valid, error_msg = subscription_service.verify_captcha(
+                    #     request_data.captcha_token
+                    # )
+                    # if not is_valid:
+                    #     return self.response_400(message=error_msg)
 
                     # Process payment
                     is_mvc_call = False
