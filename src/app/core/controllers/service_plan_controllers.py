@@ -91,10 +91,9 @@ class ServicePlanRessourceModelApi(BaseApi):
             app_service_id = request.args.get("app_service_id")
             subscription_category = (
                 request.args.get("subscription_category")
-                if "subscription_category" in request.args
+                if request.args.get("subscription_category")
                 else "yearly"
             )
-
             cpu_option = aliased(ServicePlanOption)
             ram_option = aliased(ServicePlanOption)
             disk_option = aliased(ServicePlanOption)
@@ -110,30 +109,32 @@ class ServicePlanRessourceModelApi(BaseApi):
             )
             if not ressources_services:
                 return self.response(200, result=[])
-
-            vps_ressources_plans = (
+            query = (
                 db.session.query(ServicePlan)
                 .join(AppService, AppService.id == ServicePlan.service_id)
                 .join(cpu_option, ServicePlan.options)
                 .join(ram_option, ServicePlan.options)
                 .join(disk_option, ServicePlan.options)
-                .filter(ServicePlan.service_id == app_service_id)
                 .filter(ServicePlan.display_on_app.is_(True))
                 .filter(ServicePlan.is_custom.is_(False))
                 .filter(ServicePlan.subscription_category == subscription_category)
                 .filter(cpu_option.option_type == "cpu")
                 .filter(ram_option.option_type == "ram")
                 .filter(disk_option.option_type == "disque")
-                .filter(
+                .order_by(ServicePlan.price.asc(), ServicePlan.priority.asc())
+            )
+
+            if app_service_id:
+                query = query.filter(
                     and_(
-                        AppService.minimal_cpu < cpu_option.option_value,
-                        AppService.minimal_ram < ram_option.option_value,
-                        AppService.minimal_disk < disk_option.option_value,
+                        ServicePlan.service_id == app_service_id,
+                        AppService.minimal_cpu <= cpu_option.option_value,
+                        AppService.minimal_ram <= ram_option.option_value,
+                        AppService.minimal_disk <= disk_option.option_value,
                     )
                 )
-                .order_by(ServicePlan.price.asc(), ServicePlan.priority.asc())
-                .all()
-            )
+
+            vps_ressources_plans = query.all()
 
             if not vps_ressources_plans:
                 return self.response(200, result=[])
@@ -159,6 +160,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
                         "preparation_time": plan.preparation_time,
+                        "subscription_category": plan.subscription_category,
                         "unity": plan.unity,
                         "options": [serialize_option(opt) for opt in plan.options],
                         "provider_info": plan.provider_info,
