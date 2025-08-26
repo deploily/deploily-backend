@@ -89,11 +89,8 @@ class ServicePlanRessourceModelApi(BaseApi):
         """
         try:
             app_service_id = request.args.get("app_service_id")
-            subscription_category = (
-                request.args.get("subscription_category")
-                if request.args.get("subscription_category")
-                else "yearly"
-            )
+            subscription_category = request.args.get("subscription_category")
+
             cpu_option = aliased(ServicePlanOption)
             ram_option = aliased(ServicePlanOption)
             disk_option = aliased(ServicePlanOption)
@@ -117,7 +114,6 @@ class ServicePlanRessourceModelApi(BaseApi):
                 .join(disk_option, ServicePlan.options)
                 .filter(ServicePlan.display_on_app.is_(True))
                 .filter(ServicePlan.is_custom.is_(False))
-                .filter(ServicePlan.subscription_category == subscription_category)
                 .filter(cpu_option.option_type == "cpu")
                 .filter(ram_option.option_type == "ram")
                 .filter(disk_option.option_type == "disque")
@@ -132,6 +128,10 @@ class ServicePlanRessourceModelApi(BaseApi):
                         AppService.minimal_ram <= ram_option.option_value,
                         AppService.minimal_disk <= disk_option.option_value,
                     )
+                )
+            if subscription_category:
+                query = query.filter(
+                    and_(ServicePlan.subscription_category == subscription_category)
                 )
 
             vps_ressources_plans = query.all()
