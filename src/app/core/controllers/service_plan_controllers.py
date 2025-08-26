@@ -64,7 +64,7 @@ class ServicePlanRessourceModelApi(BaseApi):
             parameters:
                 - in: query
                   name: app_service_id
-                  required: true
+                  required: false
                   schema:
                     type: integer
                   description: id of the selected app
