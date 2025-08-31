@@ -135,7 +135,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         disk_option.option_type == "disque",
                     )
                 )
-            if subscription_category:
+            if subscription_category and subscription_category == "monthly":
                 query = query.filter(
                     and_(ServicePlan.subscription_category == subscription_category)
                 )
