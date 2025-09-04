@@ -131,8 +131,6 @@ class SubscriptionApi(BaseApi):
             # Initialize services
             # subscription_service = SubscriptionService(db.session, _logger)
             api_subscription_service = ApiSubscriptionService(db.session, _logger)
-            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-
             # Get and validate user
             user = get_user()
             if not user:
@@ -146,40 +144,22 @@ class SubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            # Validate profile
-            is_valid, error_msg, profile = subscription_service_base.validate_profile(
-                user, request_data.profile_id
+            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
+
+            is_valid, error_msg, subscription_json = (
+                subscription_service_base.process_subscription_request(user, request_data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
-
-            # Validate service plan
-            is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
-                request_data.service_plan_selected_id, profile
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
-
-            # Calculate pricing
-            total_amount = plan.price * request_data.duration
-            promo_code, discount_amount = subscription_service_base.validate_promo_code(
-                request_data.promo_code, total_amount
-            )
-            final_price = total_amount - discount_amount
-
-            # Determine subscription status based on balance
-            has_sufficient_balance = profile.balance >= final_price
-            subscription_status = "active" if has_sufficient_balance else "inactive"
-
             # Create subscription
             subscription = api_subscription_service.create_api_subscription(
-                plan=plan,
-                duration=request_data.duration,
-                total_amount=total_amount,
-                price=final_price,
-                promo_code=promo_code,
-                profile_id=profile.id,
-                status=subscription_status,
+                plan=subscription_json["plan"],
+                duration=subscription_json["duration"],
+                total_amount=subscription_json["total_amount"],
+                price=subscription_json["price"],
+                promo_code=subscription_json["promo_code"],
+                profile_id=subscription_json["profile"].id,
+                status=subscription_json["status"],
                 api_key="",
             )
 
@@ -188,16 +168,19 @@ class SubscriptionApi(BaseApi):
             form_url = ""
 
             # Handle payment processing for insufficient balance
-            if not has_sufficient_balance:
+            if not subscription_json["has_sufficient_balance"]:
                 payment = subscription_service_base.create_payment(
-                    price=final_price,
+                    price=subscription_json["price"],
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
-                    profile_id=profile.id,
+                    profile_id=subscription_json["profile"].id,
                 )
 
                 # Handle card payment for non-default profiles
-                if request_data.payment_method == "card" and profile.profile_type != "default":
+                if (
+                    request_data.payment_method == "card"
+                    and subscription_json["profile"].profile_type != "default"
+                ):
                     # # TODO Verify CAPTCHA
                     is_valid, error_msg = subscription_service_base.verify_captcha(
                         request_data.captcha_token
@@ -228,11 +211,17 @@ class SubscriptionApi(BaseApi):
                     db.session.commit()
 
             # Update promo code usage
-            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(
+                subscription_json["promo_code"], subscription.id
+            )
 
             # Send notification emails
             subscription_service_base.send_notification_emails(
-                user, plan, total_amount, subscription, request_data.payment_method
+                user,
+                subscription_json["plan"],
+                subscription_json["total_amount"],
+                subscription,
+                request_data.payment_method,
             )
 
             # Commit transaction

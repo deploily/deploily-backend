@@ -164,7 +164,6 @@ class TtkEpaySubscriptionApi(BaseApi):
         try:
             # Initialize services
             # subscription_service = SubscriptionService(db.session, _logger)
-            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
             subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
 
             # Get and validate user
@@ -180,65 +179,14 @@ class TtkEpaySubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            # Validate profile
-            is_valid, error_msg, profile = subscription_service_base.validate_profile(
-                user, request_data.profile_id
+            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
+
+            is_valid, error_msg, subscription_json = (
+                subscription_service_base.process_subscription_request(user, request_data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            # Validate service plan
-            is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
-                request_data.service_plan_selected_id, profile
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
-
-            # Validate service plan
-            if request_data.ressource_service_plan_selected_id is None:
-                ressource_plan = None
-            else:
-                is_valid, error_msg, ressource_plan = (
-                    subscription_service_base.validate_ressource_service_plan(
-                        request_data.ressource_service_plan_selected_id
-                    )
-                )
-                if not is_valid:
-                    return self.response_400(message=error_msg)
-
-            #  Validate managed ressource
-            if request_data.managed_ressource_id is None:
-                managed_ressource = None
-            else:
-                is_valid, error_msg, managed_ressource = (
-                    subscription_service_base.validate_managed_ressource(
-                        request_data.managed_ressource_id
-                    )
-                )
-                if not is_valid:
-                    return self.response_400(message=error_msg)
-
-            # Validate service plan
-            is_valid, error_msg, version = subscription_service_base.validate_version(
-                request_data.version_selected_id
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
-
-            # Calculate pricing
-            total_amount = plan.price * request_data.duration
-
-            if ressource_plan:
-                total_amount += ressource_plan.price * request_data.duration
-
-            promo_code, discount_amount = subscription_service_base.validate_promo_code(
-                request_data.promo_code, total_amount
-            )
-            final_price = total_amount - discount_amount
-
-            # Determine subscription status based on balance
-            has_sufficient_balance = profile.balance >= final_price
-            subscription_status = "active" if has_sufficient_balance else "inactive"
             api_secret_key = uuid.uuid4().hex[:32]
             user = get_user()
             user_name = user.username
@@ -246,16 +194,16 @@ class TtkEpaySubscriptionApi(BaseApi):
 
             # Create subscription
             subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
-                plan=plan,
+                plan=subscription_json["plan"],
                 # ressource_service_plan=ressource_plan.id,
                 # managed_ressource=managed_ressource.id,
-                duration=request_data.duration,
-                total_amount=total_amount,
-                price=final_price,
-                promo_code=promo_code,
-                profile_id=profile.id,
-                status=subscription_status,
-                version_id=version.id,
+                duration=subscription_json["duration"],
+                total_amount=subscription_json["total_amount"],
+                price=subscription_json["price"],
+                promo_code=subscription_json["promo_code"],
+                profile_id=subscription_json["profile"].id,
+                status=subscription_json["status"],
+                version_id=subscription_json["version_id"],
                 ttk_epay_api_secret_key=api_secret_key,
                 ttk_epay_client_site_url=client_site_url,
                 ttk_epay_satim_currency=os.getenv("TTK_EPAY_SATIM_CURRENCY", ""),
@@ -265,8 +213,8 @@ class TtkEpaySubscriptionApi(BaseApi):
             )
 
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=ressource_plan,
-                managed_ressource=managed_ressource,
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
             )
 
@@ -275,16 +223,19 @@ class TtkEpaySubscriptionApi(BaseApi):
             form_url = ""
 
             # Handle payment processing for insufficient balance
-            if not has_sufficient_balance:
+            if not subscription_json["has_sufficient_balance"]:
                 payment = subscription_service_base.create_payment(
-                    price=final_price,
+                    price=subscription_json["price"],
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
-                    profile_id=profile.id,
+                    profile_id=subscription_json["profile"].id,
                 )
 
                 # Handle card payment for non-default profiles
-                if request_data.payment_method == "card" and profile.profile_type != "default":
+                if (
+                    request_data.payment_method == "card"
+                    and subscription_json["profile"].profile_type != "default"
+                ):
 
                     # todo Verify CAPTCHA
                     is_valid, error_msg = subscription_service_base.verify_captcha(
@@ -315,11 +266,17 @@ class TtkEpaySubscriptionApi(BaseApi):
                     payment.satim_order_id = satim_order_id
                     db.session.commit()
             # Update promo code usage
-            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(
+                subscription_json["promo_code"], subscription.id
+            )
 
             # Send notification emails
             subscription_service_base.send_notification_emails(
-                user, plan, total_amount, subscription, request_data.payment_method
+                user,
+                subscription_json["plan"],
+                subscription_json["total_amount"],
+                subscription,
+                request_data.payment_method,
             )
 
             # Commit transaction

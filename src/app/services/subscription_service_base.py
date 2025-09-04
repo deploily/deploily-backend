@@ -367,3 +367,74 @@ class SubscriptionServiceBase:
         remaining_value = ((total_days - remaining_days) * total_price) / total_days
 
         return round(remaining_value)
+
+    def process_subscription_request(self, user, request_data) -> Tuple[bool, str, Optional[dict]]:
+
+        # Validate profile
+        is_valid, error_msg, profile = self.validate_profile(user, request_data.profile_id)
+        if not is_valid:
+            return False, error_msg, None
+
+        # Validate service plan
+        is_valid, error_msg, plan = self.validate_service_plan(
+            request_data.service_plan_selected_id, profile
+        )
+        if not is_valid:
+            return False, error_msg, None
+
+        # Validate service plan
+        if (
+            ressource_service_plan_selected_id in request_data
+            and request_data.ressource_service_plan_selected_id is None
+        ):
+            ressource_plan = None
+        else:
+            is_valid, error_msg, ressource_plan = self.validate_ressource_service_plan(
+                request_data.ressource_service_plan_selected_id
+            )
+            if not is_valid:
+                return False, error_msg, None
+
+        #  Validate managed ressource
+        if request_data.managed_ressource_id is None:
+            managed_ressource = None
+        else:
+            is_valid, error_msg, managed_ressource = self.validate_managed_ressource(
+                request_data.managed_ressource_id
+            )
+            if not is_valid:
+                return False, error_msg, None
+
+        # Validate service plan
+        is_valid, error_msg, version = self.validate_version(request_data.version_selected_id)
+        if not is_valid:
+            return False, error_msg, None
+
+        # Calculate pricing
+        total_amount = plan.price * request_data.duration
+
+        if ressource_plan:
+            total_amount += ressource_plan.price * request_data.duration
+
+        promo_code, discount_amount = self.validate_promo_code(
+            request_data.promo_code, total_amount
+        )
+        final_price = total_amount - discount_amount
+
+        # Determine subscription status based on balance
+        has_sufficient_balance = profile.balance >= final_price
+        subscription_status = "active" if has_sufficient_balance else "inactive"
+        subscription_json = {
+            "plan": plan,
+            "ressource_plan": ressource_plan if ressource_plan else None,
+            "duration": request_data.duration,
+            "total_amount": total_amount,
+            "price": final_price,
+            "promo_code": promo_code,
+            "profile": profile,
+            "status": subscription_status,
+            "version_id": version.id,
+            "managed_ressource": managed_ressource,
+            "has_sufficient_balance": has_sufficient_balance,
+        }
+        return True, "success", subscription_json
