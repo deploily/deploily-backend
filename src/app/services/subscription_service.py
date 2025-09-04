@@ -1139,28 +1139,6 @@ class SubscriptionService:
         _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
         return new_managed
 
-    # def get_remaining_value(self, old_subscription):
-    #     total_price = old_subscription.price
-    #     start_date = old_subscription.start_date
-    #     duration_month = old_subscription.duration_month
-
-    #     end_date = start_date + relativedelta(months=duration_month)
-    #     today = datetime.now()
-
-    #     # Ensure today is not beyond the end date
-    #     if today > end_date:
-    #         return 0.0
-
-    #     total_days = (end_date - start_date).days
-    #     used_days = (today - start_date).days
-    #     remaining_days = total_days - used_days
-
-    #     if total_days == 0:
-    #         return 0.0
-
-    #     remaining_value = (remaining_days / total_days) * total_price
-    #     return round(remaining_value, 2)
-
     def get_date_diff_in_days(self, date1, date2):
         """
         Returns the number of full days between two dates.

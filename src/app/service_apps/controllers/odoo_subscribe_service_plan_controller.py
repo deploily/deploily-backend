@@ -5,7 +5,8 @@ from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.services.subscription_service import SubscriptionService
+from app.services.subscription_odoo_service import SubscriptionOdooService
+from app.services.subscription_service_base import SubscriptionServiceBase
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
@@ -156,7 +157,8 @@ class OdooSubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            subscription_service = SubscriptionService(db.session, _logger)
+            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
+            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -166,20 +168,20 @@ class OdooSubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_service.validate_odoo_subscription_request(data)
+                subscription_odoo_service.validate_odoo_subscription_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
             # Validate profile
-            is_valid, error_msg, profile = subscription_service.validate_profile(
+            is_valid, error_msg, profile = subscription_service_base.validate_profile(
                 user, request_data.profile_id
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, plan = subscription_service.validate_service_plan(
+            is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
                 request_data.service_plan_selected_id, profile
             )
             if not is_valid:
@@ -190,7 +192,7 @@ class OdooSubscriptionApi(BaseApi):
                 ressource_plan = None
             else:
                 is_valid, error_msg, ressource_plan = (
-                    subscription_service.validate_ressource_service_plan(
+                    subscription_service_base.validate_ressource_service_plan(
                         request_data.ressource_service_plan_selected_id
                     )
                 )
@@ -202,7 +204,7 @@ class OdooSubscriptionApi(BaseApi):
                 managed_ressource = None
             else:
                 is_valid, error_msg, managed_ressource = (
-                    subscription_service.validate_managed_ressource(
+                    subscription_service_base.validate_managed_ressource(
                         request_data.managed_ressource_id
                     )
                 )
@@ -210,7 +212,7 @@ class OdooSubscriptionApi(BaseApi):
                     return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, version = subscription_service.validate_version(
+            is_valid, error_msg, version = subscription_service_base.validate_version(
                 request_data.version_selected_id
             )
             if not is_valid:
@@ -222,7 +224,7 @@ class OdooSubscriptionApi(BaseApi):
             if ressource_plan:
                 total_amount += ressource_plan.price * request_data.duration
 
-            promo_code, discount_amount = subscription_service.validate_promo_code(
+            promo_code, discount_amount = subscription_service_base.validate_promo_code(
                 request_data.promo_code, total_amount
             )
             final_price = total_amount - discount_amount
@@ -233,7 +235,7 @@ class OdooSubscriptionApi(BaseApi):
             user = get_user()
 
             # Create subscription
-            subscription = subscription_service.create_odoo_subscription(
+            subscription = subscription_odoo_service.create_odoo_subscription(
                 plan=plan,
                 # ressource_service_plan=ressource_plan.id,
                 duration=request_data.duration,
@@ -244,7 +246,7 @@ class OdooSubscriptionApi(BaseApi):
                 status=subscription_status,
                 version_id=version.id,
             )
-            managed_ressource = subscription_service.get_or_create_managed_ressource(
+            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=ressource_plan,
                 managed_ressource=managed_ressource,
                 subscription=subscription,
@@ -256,7 +258,7 @@ class OdooSubscriptionApi(BaseApi):
 
             # Handle payment processing for insufficient balance
             if not has_sufficient_balance:
-                payment = subscription_service.create_payment(
+                payment = subscription_service_base.create_payment(
                     price=final_price,
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
@@ -267,7 +269,7 @@ class OdooSubscriptionApi(BaseApi):
                 if request_data.payment_method == "card" and profile.profile_type != "default":
 
                     # Verify CAPTCHA
-                    is_valid, error_msg = subscription_service.verify_captcha(
+                    is_valid, error_msg = subscription_service_base.verify_captcha(
                         request_data.captcha_token
                     )
                     if not is_valid:
@@ -278,8 +280,14 @@ class OdooSubscriptionApi(BaseApi):
                     client_confirm_url = request_data.client_confirm_url
                     client_fail_url = request_data.client_fail_url
 
-                    success, error_msg, payment_response = subscription_service.process_payment(
-                        subscription, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                    success, error_msg, payment_response = (
+                        subscription_service_base.process_payment(
+                            subscription,
+                            total_amount,
+                            is_mvc_call,
+                            client_confirm_url,
+                            client_fail_url,
+                        )
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -289,10 +297,10 @@ class OdooSubscriptionApi(BaseApi):
                     payment.satim_order_id = satim_order_id
                     db.session.commit()
             # Update promo code usage
-            subscription_service.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
 
             # Send notification emails
-            subscription_service.send_notification_emails(
+            subscription_service_base.send_notification_emails(
                 user, plan, total_amount, subscription, request_data.payment_method
             )
 
@@ -469,7 +477,8 @@ class OdooSubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            subscription_service = SubscriptionService(db.session, _logger)
+            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
+            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -479,20 +488,20 @@ class OdooSubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_service.validate_upgrade_odoo_subscription_request(data)
+                subscription_odoo_service.validate_upgrade_odoo_subscription_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
             # Validate profile
-            is_valid, error_msg, profile = subscription_service.validate_profile(
+            is_valid, error_msg, profile = subscription_service_base.validate_profile(
                 user, request_data.profile_id
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, plan = subscription_service.validate_service_plan(
+            is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
                 request_data.service_plan_selected_id, profile
             )
             if not is_valid:
@@ -502,7 +511,7 @@ class OdooSubscriptionApi(BaseApi):
                 ressource_plan = None
             else:
                 is_valid, error_msg, ressource_plan = (
-                    subscription_service.validate_ressource_service_plan(
+                    subscription_service_base.validate_ressource_service_plan(
                         request_data.ressource_service_plan_selected_id
                     )
                 )
@@ -514,7 +523,7 @@ class OdooSubscriptionApi(BaseApi):
                 managed_ressource = None
             else:
                 is_valid, error_msg, managed_ressource = (
-                    subscription_service.validate_managed_ressource(
+                    subscription_service_base.validate_managed_ressource(
                         request_data.managed_ressource_id
                     )
                 )
@@ -522,7 +531,7 @@ class OdooSubscriptionApi(BaseApi):
                     return self.response_400(message=error_msg)
 
             # Validate service plan
-            is_valid, error_msg, version = subscription_service.validate_version(
+            is_valid, error_msg, version = subscription_service_base.validate_version(
                 request_data.version_selected_id
             )
             if not is_valid:
@@ -533,21 +542,21 @@ class OdooSubscriptionApi(BaseApi):
             if ressource_plan:
                 total_amount += ressource_plan.price * request_data.duration
 
-            promo_code, discount_amount = subscription_service.validate_promo_code(
+            promo_code, discount_amount = subscription_service_base.validate_promo_code(
                 request_data.promo_code, total_amount
             )
             final_price = total_amount - discount_amount
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_service.validate_old_odoo_subscription(
+                subscription_odoo_service.validate_old_odoo_subscription(
                     request_data.old_subscription_id,
                 )
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            remaining_money = subscription_service.get_remaining_value(old_subscription)
+            remaining_money = subscription_service_base.get_remaining_value(old_subscription)
             if remaining_money:
                 final_price = final_price - remaining_money
 
@@ -556,7 +565,7 @@ class OdooSubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_service.create_odoo_subscription(
+            subscription = subscription_service_base.create_odoo_subscription(
                 plan=plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
@@ -568,7 +577,7 @@ class OdooSubscriptionApi(BaseApi):
                 # ressource_service_plan=ressource_plan.id,
                 is_upgrade=True,
             )
-            managed_ressource = subscription_service.get_or_create_managed_ressource(
+            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=ressource_plan,
                 managed_ressource=managed_ressource,
                 subscription=subscription,
@@ -580,7 +589,7 @@ class OdooSubscriptionApi(BaseApi):
 
             # Handle payment processing for insufficient balance
             if not has_sufficient_balance:
-                payment = subscription_service.create_payment(
+                payment = subscription_service_base.create_payment(
                     price=final_price,
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
@@ -591,7 +600,7 @@ class OdooSubscriptionApi(BaseApi):
                 if request_data.payment_method == "card" and profile.profile_type != "default":
 
                     # Verify CAPTCHA
-                    is_valid, error_msg = subscription_service.verify_captcha(
+                    is_valid, error_msg = subscription_service_base.verify_captcha(
                         request_data.captcha_token
                     )
                     if not is_valid:
@@ -602,8 +611,14 @@ class OdooSubscriptionApi(BaseApi):
                     client_confirm_url = request_data.client_confirm_url
                     client_fail_url = request_data.client_fail_url
 
-                    success, error_msg, payment_response = subscription_service.process_payment(
-                        subscription, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                    success, error_msg, payment_response = (
+                        subscription_service_base.process_payment(
+                            subscription,
+                            total_amount,
+                            is_mvc_call,
+                            client_confirm_url,
+                            client_fail_url,
+                        )
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -613,13 +628,13 @@ class OdooSubscriptionApi(BaseApi):
                     payment.satim_order_id = satim_order_id
                     db.session.commit()
             # Update old subscrption
-            subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
+            subscription_service_base.update_old_subscription(old_subscription, is_upgrade=True)
 
             # Update promo code usage
-            subscription_service.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
 
             # Send notification emails
-            subscription_service.send_notification_emails(
+            subscription_service_base.send_notification_emails(
                 user, plan, total_amount, subscription, request_data.payment_method
             )
 
@@ -774,7 +789,8 @@ class OdooSubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            subscription_service = SubscriptionService(db.session, _logger)
+            subscription_service_base = SubscriptionServiceBase(db.session, _logger)
+            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -783,14 +799,14 @@ class OdooSubscriptionApi(BaseApi):
 
             # Validate request data
             data = request.get_json(silent=True)
-            is_valid, error_msg, request_data = subscription_service.validate_odoo_renew_request(
-                data
+            is_valid, error_msg, request_data = (
+                subscription_odoo_service.validate_odoo_renew_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
             # Validate profile
-            is_valid, error_msg, profile = subscription_service.validate_profile(
+            is_valid, error_msg, profile = subscription_service_base.validate_profile(
                 user, request_data.profile_id
             )
             if not is_valid:
@@ -798,7 +814,7 @@ class OdooSubscriptionApi(BaseApi):
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_service.validate_old_odoo_subscription(
+                subscription_odoo_service.validate_old_odoo_subscription(
                     request_data.old_subscription_id,
                 )
             )
@@ -808,12 +824,12 @@ class OdooSubscriptionApi(BaseApi):
             # Calculate pricing
             total_amount = old_subscription.service_plan.price * request_data.duration
 
-            promo_code, discount_amount = subscription_service.validate_promo_code(
+            promo_code, discount_amount = subscription_service_base.validate_promo_code(
                 request_data.promo_code, total_amount
             )
             final_price = total_amount - discount_amount
 
-            remaining_money = subscription_service.get_remaining_value(old_subscription)
+            remaining_money = subscription_service_base.get_remaining_value(old_subscription)
             if remaining_money:
                 final_price = final_price - remaining_money
 
@@ -822,7 +838,7 @@ class OdooSubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_service.create_odoo_subscription(
+            subscription = subscription_odoo_service.create_odoo_subscription(
                 plan=old_subscription.service_plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
@@ -843,7 +859,7 @@ class OdooSubscriptionApi(BaseApi):
 
             # Handle payment processing for insufficient balance
             if not has_sufficient_balance:
-                payment = subscription_service.create_payment(
+                payment = subscription_service_base.create_payment(
                     price=final_price,
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
@@ -854,7 +870,7 @@ class OdooSubscriptionApi(BaseApi):
                 if request_data.payment_method == "card" and profile.profile_type != "default":
 
                     # Verify CAPTCHA
-                    is_valid, error_msg = subscription_service.verify_captcha(
+                    is_valid, error_msg = subscription_service_base.verify_captcha(
                         request_data.captcha_token
                     )
                     if not is_valid:
@@ -865,8 +881,14 @@ class OdooSubscriptionApi(BaseApi):
                     client_confirm_url = request_data.client_confirm_url
                     client_fail_url = request_data.client_fail_url
 
-                    success, error_msg, payment_response = subscription_service.process_payment(
-                        subscription, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                    success, error_msg, payment_response = (
+                        subscription_service_base.process_payment(
+                            subscription,
+                            total_amount,
+                            is_mvc_call,
+                            client_confirm_url,
+                            client_fail_url,
+                        )
                     )
                     if not success:
                         return self.response_400(message=error_msg)
@@ -876,13 +898,13 @@ class OdooSubscriptionApi(BaseApi):
                     payment.satim_order_id = satim_order_id
                     db.session.commit()
             # Update old subscrption
-            subscription_service.update_old_subscription(old_subscription, is_upgrade=True)
+            subscription_service_base.update_old_subscription(old_subscription, is_upgrade=True)
 
             # Update promo code usage
-            subscription_service.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
 
             # Send notification emails
-            subscription_service.send_notification_emails(
+            subscription_service_base.send_notification_emails(
                 user,
                 old_subscription.service_plan,
                 total_amount,
