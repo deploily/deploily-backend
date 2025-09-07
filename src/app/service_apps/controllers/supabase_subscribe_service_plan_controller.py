@@ -180,6 +180,11 @@ class SupabaseSubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
+            has_sufficient_balance = (
+                subscription_json["profile"].balance >= subscription_json["price"]
+            )
+            subscription_status = "active" if has_sufficient_balance else "inactive"
+
             # Create subscription
             subscription = subscription_supabase_service.create_supabase_subscription(
                 plan=subscription_json["plan"],
@@ -188,7 +193,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 price=subscription_json["price"],
                 promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
-                status=subscription_json["status"],
+                status=subscription_status,
                 version_id=subscription_json["version_id"],
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
@@ -198,7 +203,7 @@ class SupabaseSubscriptionApi(BaseApi):
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
-                user, subscription, request_data, subscription_json["has_sufficient_balance"]
+                user, subscription, request_data, has_sufficient_balance
             )
             if not success:
                 return self.response_400(message=error_msg)

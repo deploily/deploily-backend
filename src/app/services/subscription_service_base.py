@@ -428,8 +428,8 @@ class SubscriptionServiceBase:
         final_price = total_amount - discount_amount
 
         # Determine subscription status based on balance
-        has_sufficient_balance = profile.balance >= final_price
-        subscription_status = "active" if has_sufficient_balance else "inactive"
+        # has_sufficient_balance = profile.balance >= final_price
+        # subscription_status = "active" if has_sufficient_balance else "inactive"
         subscription_json = {
             "plan": plan,
             "ressource_plan": ressource_plan if ressource_plan else None,
@@ -438,94 +438,12 @@ class SubscriptionServiceBase:
             "price": final_price,
             "promo_code": promo_code,
             "profile": profile,
-            "status": subscription_status,
+            # "status": subscription_status,
             "version_id": version.id if version else None,
             "managed_ressource": managed_ressource if managed_ressource else None,
-            "has_sufficient_balance": has_sufficient_balance,
+            # "has_sufficient_balance": has_sufficient_balance,
         }
         return True, "success", subscription_json
-
-        """Process subscription request with validation and pricing calculation."""
-
-        # Validate profile
-        is_valid, error_msg, profile = self.validate_profile(user, request_data.profile_id)
-        if not is_valid:
-            return False, error_msg, None
-
-        # Validate service plan
-        is_valid, error_msg, plan = self.validate_service_plan(
-            request_data.service_plan_selected_id, profile
-        )
-        if not is_valid:
-            return False, error_msg, None
-
-        # Check if this is an API subscription request
-        is_api_request = type(request_data).__name__ == "ApiSubscriptionRequest"
-
-        # Validate resource service plan (consolidated logic)
-        resource_plan = None
-        if (
-            not is_api_request
-            and hasattr(request_data, "ressource_service_plan_selected_id")
-            and request_data.ressource_service_plan_selected_id is not None
-        ):
-            is_valid, error_msg, resource_plan = self.validate_ressource_service_plan(
-                request_data.ressource_service_plan_selected_id
-            )
-            if not is_valid:
-                return False, error_msg, None
-
-        # Validate managed resource (consolidated logic)
-        managed_resource = None
-        if (
-            not is_api_request
-            and hasattr(request_data, "managed_ressource_id")
-            and request_data.managed_ressource_id is not None
-        ):
-            is_valid, error_msg, managed_resource = self.validate_managed_ressource(
-                request_data.managed_ressource_id
-            )
-            if not is_valid:
-                return False, error_msg, None
-
-        # Validate version (consolidated logic)
-        version = None
-        if not is_api_request and hasattr(request_data, "version_selected_id"):
-            is_valid, error_msg, version = self.validate_version(request_data.version_selected_id)
-            if not is_valid:
-                return False, error_msg, None
-
-        # Calculate pricing
-        total_amount = plan.price * request_data.duration
-        if resource_plan:
-            total_amount += resource_plan.price * request_data.duration
-
-        # Apply promo code discount
-        promo_code, discount_amount = self.validate_promo_code(
-            getattr(request_data, "promo_code", None), total_amount
-        )
-        final_price = total_amount - discount_amount
-
-        # Determine subscription status
-        has_sufficient_balance = profile.balance >= final_price
-        subscription_status = "active" if has_sufficient_balance else "inactive"
-
-        # Build response data
-        subscription_data = {
-            "plan": plan,
-            "resource_plan": resource_plan,  # Fixed typo: ressource -> resource
-            "duration": request_data.duration,
-            "total_amount": total_amount,
-            "price": final_price,
-            "promo_code": promo_code,
-            "profile": profile,
-            "status": subscription_status,
-            "version_id": version.id if version else None,
-            "managed_resource": managed_resource,  # Fixed typo: ressource -> resource
-            "has_sufficient_balance": has_sufficient_balance,
-        }
-
-        return True, "success", subscription_data
 
     def handle_payment_process(self, user, subscription, request_data, has_sufficient_balance):
         """Handle payment processing logic."""
