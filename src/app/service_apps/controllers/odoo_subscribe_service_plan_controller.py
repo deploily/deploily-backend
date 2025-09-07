@@ -188,96 +188,18 @@ class OdooSubscriptionApi(BaseApi):
                 managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
             )
-            # todo common ******************************************************
-            # Initialize payment response variables
-            satim_order_id = ""
-            form_url = ""
 
-            # Handle payment processing for insufficient balance
-            if not subscription_json["has_sufficient_balance"]:
-                payment = subscription_service_base.create_payment(
-                    price=subscription_json["price"],
-                    payment_method=request_data.payment_method,
-                    subscription_id=subscription.id,
-                    profile_id=subscription_json["profile"].id,
-                )
-
-                # Handle card payment for non-default profiles
-                if (
-                    request_data.payment_method == "card"
-                    and subscription_json["profile"].profile_type != "default"
-                ):
-
-                    # Verify CAPTCHA
-                    is_valid, error_msg = subscription_service_base.verify_captcha(
-                        request_data.captcha_token
-                    )
-                    if not is_valid:
-                        return self.response_400(message=error_msg)
-
-                    # Process payment
-                    is_mvc_call = False
-                    client_confirm_url = request_data.client_confirm_url
-                    client_fail_url = request_data.client_fail_url
-
-                    success, error_msg, payment_response = (
-                        subscription_service_base.process_payment(
-                            subscription,
-                            total_amount,
-                            is_mvc_call,
-                            client_confirm_url,
-                            client_fail_url,
-                        )
-                    )
-                    if not success:
-                        return self.response_400(message=error_msg)
-
-                    satim_order_id = payment_response.get("ORDER_ID", "")
-                    form_url = payment_response.get("FORM_URL", "")
-                    payment.satim_order_id = satim_order_id
-                    db.session.commit()
-            # Update promo code usage
-            subscription_service_base.update_promo_code_usage(
-                subscription_json["promo_code"], subscription.id
+            success, error_msg, result = subscription_service_base.handle_payment_process(
+                user, subscription, request_data, subscription_json["has_sufficient_balance"]
             )
+            if not success:
+                return self.response_400(message=error_msg)
 
-            # Send notification emails
-            subscription_service_base.send_notification_emails(
-                user,
-                subscription_json["plan"],
-                subscription_json["total_amount"],
-                subscription,
-                request_data.payment_method,
-            )
-
-            # Commit transaction
-            db.session.commit()
-
-            # Return success response
-            return self.response(
-                200,
-                **{
-                    "subscription": {
-                        "id": subscription.id,
-                        "name": subscription.name,
-                        "start_date": subscription.start_date.strftime("%Y-%m-%d %H:%M:%S"),
-                        "total_amount": subscription.total_amount,
-                        "price": subscription.price,
-                        "status": subscription.status,
-                        "duration_month": subscription.duration_month,
-                        "service_plan_id": subscription.service_plan_id,
-                        "promo_code_id": subscription.promo_code_id,
-                    },
-                    "order_id": satim_order_id,
-                    "form_url": form_url,
-                },
-            )
-
+            return self.response(200, data=result, message="Payment processed successfully")
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
             db.session.rollback()
             return self.response_500(message="Internal Server Error")
-        # todo common ******************************************************
 
     @expose("/upgrade", methods=["POST"])
     @protect()
@@ -512,7 +434,7 @@ class OdooSubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_service_base.create_odoo_subscription(
+            subscription = subscription_odoo_service.create_odoo_subscription(
                 plan=plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
