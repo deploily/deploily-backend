@@ -25,7 +25,10 @@ import requests
 from dateutil.relativedelta import relativedelta
 from slugify import slugify
 
-from app.services.subscription_api_service import ApiSubscriptionRequest
+from app.services.subscription_api_service import (
+    ApiSubscriptionRequest,
+    UpgradeApiSubscriptionRequest,
+)
 
 
 class SubscriptionServiceBase:
@@ -385,7 +388,10 @@ class SubscriptionServiceBase:
             return False, error_msg, None
 
         # Validate service plan
-        if type(request_data) == ApiSubscriptionRequest:
+        if (
+            type(request_data) == ApiSubscriptionRequest
+            or type(request_data) == UpgradeApiSubscriptionRequest
+        ):
             ressource_plan = None
         elif request_data.ressource_service_plan_selected_id is None:
             ressource_plan = None
@@ -397,7 +403,10 @@ class SubscriptionServiceBase:
             return False, error_msg, None
 
         #  Validate managed ressource
-        if type(request_data) == ApiSubscriptionRequest:
+        if (
+            type(request_data) == ApiSubscriptionRequest
+            or type(request_data) == UpgradeApiSubscriptionRequest
+        ):
             managed_ressource = None
         elif request_data.managed_ressource_id is None:
             managed_ressource = None
@@ -409,7 +418,10 @@ class SubscriptionServiceBase:
                 return False, error_msg, None
 
         # Validate service plan
-        if type(request_data) == ApiSubscriptionRequest:
+        if (
+            type(request_data) == ApiSubscriptionRequest
+            or type(request_data) == UpgradeApiSubscriptionRequest
+        ):
             version = None
         else:
             is_valid, error_msg, version = self.validate_version(request_data.version_selected_id)

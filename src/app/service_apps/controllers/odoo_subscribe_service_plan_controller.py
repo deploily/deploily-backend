@@ -364,6 +364,8 @@ class OdooSubscriptionApi(BaseApi):
             is_valid, error_msg, request_data = (
                 subscription_odoo_service.validate_upgrade_odoo_subscription_request(data)
             )
+            if not is_valid:
+                return self.response_400(message=error_msg)
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
@@ -401,7 +403,7 @@ class OdooSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 is_upgrade=True,
             )
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
+            subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
