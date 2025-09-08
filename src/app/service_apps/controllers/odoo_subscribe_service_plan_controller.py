@@ -364,62 +364,62 @@ class OdooSubscriptionApi(BaseApi):
             is_valid, error_msg, request_data = (
                 subscription_odoo_service.validate_upgrade_odoo_subscription_request(data)
             )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+            # if not is_valid:
+            #     return self.response_400(message=error_msg)
 
-            # Validate profile
-            is_valid, error_msg, profile = subscription_service_base.validate_profile(
-                user, request_data.profile_id
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+            # # Validate profile
+            # is_valid, error_msg, profile = subscription_service_base.validate_profile(
+            #     user, request_data.profile_id
+            # )
+            # if not is_valid:
+            #     return self.response_400(message=error_msg)
 
-            # Validate service plan
-            is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
-                request_data.service_plan_selected_id, profile
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+            # # Validate service plan
+            # is_valid, error_msg, plan = subscription_service_base.validate_service_plan(
+            #     request_data.service_plan_selected_id, profile
+            # )
+            # if not is_valid:
+            #     return self.response_400(message=error_msg)
 
-            if request_data.ressource_service_plan_selected_id is None:
-                ressource_plan = None
-            else:
-                is_valid, error_msg, ressource_plan = (
-                    subscription_service_base.validate_ressource_service_plan(
-                        request_data.ressource_service_plan_selected_id
-                    )
-                )
-                if not is_valid:
-                    return self.response_400(message=error_msg)
+            # if request_data.ressource_service_plan_selected_id is None:
+            #     ressource_plan = None
+            # else:
+            #     is_valid, error_msg, ressource_plan = (
+            #         subscription_service_base.validate_ressource_service_plan(
+            #             request_data.ressource_service_plan_selected_id
+            #         )
+            #     )
+            #     if not is_valid:
+            #         return self.response_400(message=error_msg)
 
-            #  Validate managed ressource
-            if request_data.managed_ressource_id is None:
-                managed_ressource = None
-            else:
-                is_valid, error_msg, managed_ressource = (
-                    subscription_service_base.validate_managed_ressource(
-                        request_data.managed_ressource_id
-                    )
-                )
-                if not is_valid:
-                    return self.response_400(message=error_msg)
+            # #  Validate managed ressource
+            # if request_data.managed_ressource_id is None:
+            #     managed_ressource = None
+            # else:
+            #     is_valid, error_msg, managed_ressource = (
+            #         subscription_service_base.validate_managed_ressource(
+            #             request_data.managed_ressource_id
+            #         )
+            #     )
+            #     if not is_valid:
+            #         return self.response_400(message=error_msg)
 
-            # Validate service plan
-            is_valid, error_msg, version = subscription_service_base.validate_version(
-                request_data.version_selected_id
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
+            # # Validate service plan
+            # is_valid, error_msg, version = subscription_service_base.validate_version(
+            #     request_data.version_selected_id
+            # )
+            # if not is_valid:
+            #     return self.response_400(message=error_msg)
 
-            # Calculate pricing
-            total_amount = plan.price * request_data.duration
-            if ressource_plan:
-                total_amount += ressource_plan.price * request_data.duration
+            # # Calculate pricing
+            # total_amount = plan.price * request_data.duration
+            # if ressource_plan:
+            #     total_amount += ressource_plan.price * request_data.duration
 
-            promo_code, discount_amount = subscription_service_base.validate_promo_code(
-                request_data.promo_code, total_amount
-            )
-            final_price = total_amount - discount_amount
+            # promo_code, discount_amount = subscription_service_base.validate_promo_code(
+            #     request_data.promo_code, total_amount
+            # )
+            # final_price = total_amount - discount_amount
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
@@ -430,30 +430,36 @@ class OdooSubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
+            is_valid, error_msg, subscription_json = (
+                subscription_service_base.process_subscription_request(user, request_data)
+            )
+            if not is_valid:
+                return self.response_400(message=error_msg)
+
+            final_price = subscription_json["price"]
             remaining_money = subscription_service_base.get_remaining_value(old_subscription)
             if remaining_money:
                 final_price = final_price - remaining_money
 
             # Determine subscription status based on balance
-            has_sufficient_balance = profile.balance >= final_price
+            has_sufficient_balance = subscription_json["profile"].balance >= final_price
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
             subscription = subscription_odoo_service.create_odoo_subscription(
-                plan=plan,
-                duration=request_data.duration,
-                total_amount=total_amount,
-                price=final_price,
-                promo_code=promo_code,
-                profile_id=profile.id,
+                plan=subscription_json["plan"],
+                duration=subscription_json["duration"],
+                total_amount=subscription_json["total_amount"],
+                price=subscription_json["price"],
+                promo_code=subscription_json["promo_code"],
+                profile_id=subscription_json["profile"].id,
                 status=subscription_status,
-                version_id=version.id,
-                # ressource_service_plan=ressource_plan.id,
+                version_id=subscription_json["version_id"],
                 is_upgrade=True,
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=ressource_plan,
-                managed_ressource=managed_ressource,
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
             )
 
@@ -467,7 +473,7 @@ class OdooSubscriptionApi(BaseApi):
                     price=final_price,
                     payment_method=request_data.payment_method,
                     subscription_id=subscription.id,
-                    profile_id=profile.id,
+                    profile_id=subscription_json["profile"].id,
                 )
 
                 # Handle card payment for non-default profiles
@@ -505,7 +511,9 @@ class OdooSubscriptionApi(BaseApi):
             subscription_service_base.update_old_subscription(old_subscription, is_upgrade=True)
 
             # Update promo code usage
-            subscription_service_base.update_promo_code_usage(promo_code, subscription.id)
+            subscription_service_base.update_promo_code_usage(
+                subscription_json["promo_code"], subscription.id
+            )
 
             # Send notification emails
             subscription_service_base.send_notification_emails(
