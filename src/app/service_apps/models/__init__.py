@@ -6,6 +6,7 @@ from . import ttk_epay_subscription_model
 from . import app_version_model
 from . import app_service_version_association_model
 from . import odoo_subscription_model
+from . import nextcloud_subscription_model
 from . import supabase_subscription_model
 from ...core.models import managed_ressource_models
 
