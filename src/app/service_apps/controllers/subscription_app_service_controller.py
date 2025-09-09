@@ -3,7 +3,7 @@
 from flask import current_app, render_template
 from flask_appbuilder.api import expose, protect
 from flask_appbuilder.models.sqla.interface import SQLAInterface
-from flask_jwt_extended import current_user
+from flask_jwt_extended import current_user, jwt_required
 
 from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
@@ -36,18 +36,57 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
     list_columns = SubscriptionModelApi.list_columns + api_columns
     show_columns = SubscriptionModelApi.show_columns + api_columns
     edit_columns = edit_columns
-    # base_filters = [
-    #     ["status", FilterEqual, "active"],
-    #     ["is_upgrade", FilterEqual, False],
-    #     ["is_renew", FilterEqual, False],
-    # ]
 
     @expose("/", methods=["GET"])
     @protect()  # or @jwt_required() depending on your setup
+    @jwt_required()
     def get_list(self):
         """
-        Custom GET list endpoint that returns only subscriptions
-        where is_expired == False (computed field).
+        ---
+        get:
+          summary: Get active App Service Subscriptions
+          description: >
+            Returns a list of active (non-expired) app service subscriptions
+            belonging to the current authenticated user.
+          tags:
+            - App Service Subscription
+          security:
+            - BearerAuth: []   # JWT authentication
+          responses:
+            "200":
+              description: Successful response with valid subscriptions
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 12
+                            name:
+                              type: string
+                              example: My Service
+                            is_expired:
+                              type: boolean
+                              example: false
+                            created_by:
+                              type: string
+                              example: user@test.com
+            "401":
+              description: Unauthorized (missing or invalid token)
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Unauthorized
         """
         user = get_user()
         if not user:

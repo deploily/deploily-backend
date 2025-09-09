@@ -246,7 +246,13 @@ FAB_ROLES = {
         ["SupabaseSubscription", "can_renew_app_subscription"],
         ["StatusApi", "can_send_pdf_receipt_mail"],
         ["SubscriptionModelApi", "can_history"],
+        ["NextCloudSubscriptionApi", "can_subscribe_to_plan"],
+        ["NextCloudSubscriptionApi", "can_upgrade_app_subscription"],
+        ["NextCloudSubscriptionApi", "can_renew_app_subscription"],
         ["ManagedRessourceModelApi", "can_get"],
+        ["HiEventsSubscriptionApi", "can_subscribe_to_plan"],
+        ["HiEventsSubscriptionApi", "can_upgrade_app_subscription"],
+        ["HiEventsSubscriptionApi", "can_renew_app_subscription"],
     ]
 }
 
