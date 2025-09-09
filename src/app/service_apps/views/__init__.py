@@ -6,3 +6,4 @@ from . import app_version_view
 from . import odoo_subscription_view
 from . import supabase_subscription_view
 from ...core.views import managed_ressource_view
+from . import hi_events_subscription_view

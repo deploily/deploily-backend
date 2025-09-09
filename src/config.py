@@ -247,6 +247,9 @@ FAB_ROLES = {
         ["StatusApi", "can_send_pdf_receipt_mail"],
         ["SubscriptionModelApi", "can_history"],
         ["ManagedRessourceModelApi", "can_get"],
+        ["HiEventsSubscriptionApi", "can_subscribe_to_plan"],
+        ["HiEventsSubscriptionApi", "can_upgrade_app_subscription"],
+        ["HiEventsSubscriptionApi", "can_renew_app_subscription"],
     ]
 }
 
