@@ -115,8 +115,20 @@ def validate_old_new_myapp_subscription(self, old_subscription_id: int):
 
 ## ✅ STEP 5: Create Subscribe/Upgrade/Renew Controller
 
-📁 **Path**: `app/service_apps/controllers/myapp_subscribe_to_plan_subscription_controller.py`
+📁 **Path**: `app/service_apps/controllers/myapp_subscribe_service_plan_controller.py.py`
 
+---
+
+## ✅ Instructions
+
+1. Copy any existing service file from `app/services/`.
+2. Rename the copied file with your app’s name.  
+3. Inside the file:  
+- Rename the **class** with your app’s name.  
+- Rename the **functions** with your app’s name.  
+- Update the **model import** to point to your new subscription model.  
+
+---
 
 ```python
 from flask_appbuilder.api import expose

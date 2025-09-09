@@ -10,3 +10,5 @@ from . import odoo_subscribe_service_plan_controller
 from . import nextcloud_subscription_controller
 from . import nextcloud_subscribe_service_plan_controller
 from . import supabase_subscribe_service_plan_controller
+from . import hi_events_subscription_controller
+from . import hi_events_subscribe_service_plan_controller
