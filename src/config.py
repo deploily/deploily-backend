@@ -8,7 +8,6 @@ from flask_appbuilder.security.manager import AUTH_OAUTH
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "")
-# TODO  add KEYCLOAK_... prefix to the variables
 KEYKCLOAK_REALM_NAME = os.getenv("REALM_NAME", "myrealm")
 KEYKCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
