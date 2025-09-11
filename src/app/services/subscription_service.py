@@ -1084,7 +1084,6 @@ class SubscriptionService:
 
     def create_managed_ressource(self, ressource_service_plan, subscription=None):
         """Create managed ressource record"""
-        # todo host_name should be : slug(subscription.profile_id.name)-(subscription.id)
         managed_ressource = ManagedRessource(
             ressource_service_plan_id=ressource_service_plan,
             ip="000.000.000.000",
