@@ -9,11 +9,20 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "")
 # TODO  add KEYCLOAK_... prefix to the variables
-REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+KEYKCLOAK_REALM_NAME = os.getenv("REALM_NAME", "myrealm")
+KEYKCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
-CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+KEYKCLOAK_CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
+KEYKCLOAK_LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/logout"
+)
+
+
+# REALM_NAME = os.getenv("REALM_NAME", "myrealm")
+# CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
+# CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
+# LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -21,18 +30,18 @@ OAUTH_PROVIDERS = [
         "token_key": "access_token",
         "icon": "fa-address-card",
         "remote_app": {
-            "jwks_uri": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/certs",
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "api_base_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect",
-            "access_token_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token",
-            "authorize_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/auth",
+            "jwks_uri": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/certs",
+            "client_id": KEYKCLOAK_CLIENT_ID,
+            "client_secret": KEYKCLOAK_CLIENT_SECRET,
+            "api_base_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect",
+            "access_token_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/token",
+            "authorize_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/auth",
             "client_kwargs": {"scope": "openid email profile roles"},
         },
     }
 ]
 
-public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
+public_key_url = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}"
 
 JWT_ALGORITHM = "RS256"
 
@@ -63,7 +72,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 JWT_ALGORITHM = "RS256"
 AUTH_TYPE = AUTH_OAUTH
-LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/logout"
+)
 
 
 RECAPTCHA_PUBLIC_KEY = ""
