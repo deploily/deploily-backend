@@ -5,15 +5,15 @@ from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
-from app.services.subscription_odoo_service import SubscriptionOdooService
+from app.services.subscription_nextcloud_service import SubscriptionNextCloudService
 from app.services.subscription_service_base import SubscriptionServiceBase
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
 
-class OdooSubscriptionApi(BaseApi):
-    resource_name = "odoo-app-service-subscription"
+class NextCloudSubscriptionApi(BaseApi):
+    resource_name = "nextcloud-app-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()
@@ -152,11 +152,11 @@ class OdooSubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_odoo_service.validate_odoo_subscription_request(data)
+                subscription_nextcloud_service.validate_nextcloud_subscription_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
@@ -178,7 +178,7 @@ class OdooSubscriptionApi(BaseApi):
             )
             subscription_status = "active" if has_sufficient_balance else "inactive"
             # Create subscription
-            subscription = subscription_odoo_service.create_odoo_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=subscription_json["plan"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
@@ -352,7 +352,7 @@ class OdooSubscriptionApi(BaseApi):
         try:
             # Initialize services
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -362,14 +362,12 @@ class OdooSubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_odoo_service.validate_upgrade_odoo_subscription_request(data)
+                subscription_nextcloud_service.validate_upgrade_nextcloud_subscription_request(data)
             )
-            if not is_valid:
-                return self.response_400(message=error_msg)
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_odoo_service.validate_old_odoo_subscription(
+                subscription_nextcloud_service.validate_old_nextcloud_subscription(
                     request_data.old_subscription_id,
                 )
             )
@@ -392,7 +390,7 @@ class OdooSubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_odoo_service.create_odoo_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=subscription_json["plan"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
@@ -403,7 +401,7 @@ class OdooSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 is_upgrade=True,
             )
-            subscription_service_base.get_or_create_managed_ressource(
+            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
@@ -446,7 +444,6 @@ class OdooSubscriptionApi(BaseApi):
                                     type: integer
                                     description: ID of the user's profile
 
-
                                 promo_code:
                                     type: string
                                     nullable: true
@@ -470,11 +467,6 @@ class OdooSubscriptionApi(BaseApi):
                                 client_fail_url:
                                     type: string
                                     description: URL to redirect after failure
-
-
-
-
-
 
             responses:
                 200:
@@ -506,10 +498,6 @@ class OdooSubscriptionApi(BaseApi):
                                             promo_code_id:
                                                 type: integer
                                                 nullable: true
-
-
-
-
 
                                     order_id:
                                         type: string
@@ -549,7 +537,7 @@ class OdooSubscriptionApi(BaseApi):
         try:
             # Initialize services
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-            subscription_odoo_service = SubscriptionOdooService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -559,7 +547,7 @@ class OdooSubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_odoo_service.validate_odoo_renew_request(data)
+                subscription_nextcloud_service.validate_nextcloud_renew_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
@@ -573,7 +561,7 @@ class OdooSubscriptionApi(BaseApi):
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_odoo_service.validate_old_odoo_subscription(
+                subscription_nextcloud_service.validate_old_nextcloud_subscription(
                     request_data.old_subscription_id,
                 )
             )
@@ -597,7 +585,7 @@ class OdooSubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_odoo_service.create_odoo_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=old_subscription.service_plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
@@ -700,4 +688,4 @@ class OdooSubscriptionApi(BaseApi):
             return self.response_500(message="Internal Server Error")
 
 
-appbuilder.add_api(OdooSubscriptionApi)
+appbuilder.add_api(NextCloudSubscriptionApi)
