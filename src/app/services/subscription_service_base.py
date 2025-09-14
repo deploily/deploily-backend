@@ -1,9 +1,13 @@
+import json
 import logging
 import os
+from datetime import datetime
+from typing import Optional, Tuple
 
 import requests
 from dateutil.relativedelta import relativedelta
 from flask import current_app, render_template
+from slugify import slugify
 
 from app.core.models import (
     ManagedRessource,
@@ -15,20 +19,12 @@ from app.core.models import (
 )
 from app.core.models.mail_models import Mail
 from app.services.payment_service import PaymentService
-
-_logger = logging.getLogger(__name__)
-import json
-from datetime import datetime
-from typing import Optional, Tuple
-
-import requests
-from dateutil.relativedelta import relativedelta
-from slugify import slugify
-
 from app.services.subscription_api_service import (
     ApiSubscriptionRequest,
     UpgradeApiSubscriptionRequest,
 )
+
+_logger = logging.getLogger(__name__)
 
 
 class SubscriptionServiceBase:
@@ -476,10 +472,10 @@ class SubscriptionServiceBase:
                 request_data.payment_method == "card"
                 and subscription.profile.profile_type != "default"
             ):
-                # Vérification CAPTCHA
-                is_valid, error_msg = self.verify_captcha(request_data.captcha_token)
-                if not is_valid:
-                    return False, error_msg, None  # ❌ avant c'était response_400
+                # todo Vérification CAPTCHA
+                # is_valid, error_msg = self.verify_captcha(request_data.captcha_token)
+                # if not is_valid:
+                #     return False, error_msg, None  # ❌ avant c'était response_400
 
                 # Process paiement
                 is_mvc_call = False
