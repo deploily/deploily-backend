@@ -10,7 +10,7 @@ cp .env.example .env
 pre-commit install
 ```
 
-Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `CLIENT_SECRET` and the `APISIX_API_KEY`.
+Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `KEYCLOAK_CLIENT_SECRET` and the `APISIX_API_KEY`.
 
 ## Database Migration steps 
 

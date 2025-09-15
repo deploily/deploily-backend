@@ -8,8 +8,6 @@ from flask import current_app, render_template
 from app import db
 from app.core.models import Mail
 
-# TODO check if this file is relevant and remove if not
-
 
 def render_email_template(template_name, **context):
     return render_template(f"emails/{template_name}", **context)

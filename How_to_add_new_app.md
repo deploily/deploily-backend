@@ -44,6 +44,8 @@ appbuilder.add_view(
 )
 ```
 
+
+
 ---
 
 ## ✅ STEP 3: Create Subscription Controller
@@ -69,11 +71,64 @@ class MyAppSubscriptionApi(ModelRestApi):
 appbuilder.add_api(MyAppSubscriptionApi)
 ```
 
+
+
+
+
+
+# 📖 STEP 4: Create New Service of App
+
+**Path**:  `app/services/subscription_app_name_service.py`
+
 ---
 
-## ✅ STEP 4: Create Subscribe/Upgrade/Renew Controller
+## ✅ Instructions
 
-📁 **Path**: `app/service_apps/controllers/myapp_subscribe_to_plan_subscription_controller.py`
+1. Copy any existing service file from `app/services/`.
+2. Rename the copied file with your app’s name.  
+3. Inside the file:  
+- Rename the **class** with your app’s name.  
+- Rename the **functions** with your app’s name.  
+- Update the **model import** to point to your new subscription model.  
+
+---
+
+## ✅ Example
+
+```python
+def validate_old_new_myapp_subscription(self, old_subscription_id: int):
+ from app.service_apps.models.myapp_subscription_model import (
+     MyAppSubscriptionAppService,
+ )
+
+ old_subscription = (
+     self.db.query(MyAppSubscriptionAppService).filter_by(id=old_subscription_id).first()
+ )
+ if not old_subscription:
+     return False, "Old Subscription not found"
+ return True, "", old_subscription
+
+```
+
+
+
+
+## ✅ STEP 5: Create Subscribe/Upgrade/Renew Controller
+
+📁 **Path**: `app/service_apps/controllers/myapp_subscribe_service_plan_controller.py.py`
+
+---
+
+## ✅ Instructions
+
+1. Copy any existing service file from `app/services/`.
+2. Rename the copied file with your app’s name.  
+3. Inside the file:  
+- Rename the **class** with your app’s name.  
+- Rename the **functions** with your app’s name.  
+- Update the **model import** to point to your new subscription model.  
+
+---
 
 ```python
 from flask_appbuilder.api import expose
@@ -90,7 +145,27 @@ class MyAppSubscriptionApi(BaseApi):
     @rison()
     @jwt_required()
     def subscribe_to_plan(self, **kwargs):
-        pass
+        # you sould update only this 
+            subscription_new_app_service = SubscriptionNewAppService(db.session, _logger)
+            # Validate request data
+            data = request.get_json(silent=True)
+            is_valid, error_msg, request_data = (
+                subscription_odoo_service.validate_new_app_subscription_request(data)
+            )
+            if not is_valid:
+                return self.response_400(message=error_msg)
+
+
+            subscription = subscription_new_app_service.create_new_app_subscription(
+                plan=subscription_json["plan"],
+                duration=subscription_json["duration"],
+                total_amount=subscription_json["total_amount"],
+                price=subscription_json["price"],
+                promo_code=subscription_json["promo_code"],
+                profile_id=subscription_json["profile"].id,
+                status=subscription_status,
+                version_id=subscription_json["version_id"],
+            )
 
     @expose("/upgrade", methods=["POST"])
     @protect()
@@ -105,215 +180,4 @@ class MyAppSubscriptionApi(BaseApi):
     @jwt_required()
     def renew_app_subscription(self, **kwargs):
         pass
-```
----
-
-## ✅ STEP 5: Add Dataclasses for Request Validation
-
-📁 **Path**: `app/services/subscription_service.py`
-
-```python
-from dataclasses import dataclass
-from typing import Optional
-
-@dataclass
-class MyAppSubscriptionRequest:
-    profile_id: int
-    service_plan_selected_id: int
-    ressource_service_plan_selected_id: int
-    version_selected_id: int
-    total_amount: float
-    duration: int
-    payment_method: str
-    promo_code: Optional[str] = None
-    captcha_token: Optional[str] = None
-    client_confirm_url: Optional[str] = None
-    client_fail_url: Optional[str] = None
-
-@dataclass
-class UpgradeMyAppSubscriptionRequest:
-    profile_id: int
-    old_subscription_id: int
-    service_plan_selected_id: int
-    ressource_service_plan_selected_id: int
-    version_selected_id: int
-    total_amount: float
-    duration: int
-    payment_method: str
-    promo_code: Optional[str] = None
-    captcha_token: Optional[str] = None
-    client_confirm_url: Optional[str] = None
-    client_fail_url: Optional[str] = None
-
-@dataclass
-class RenewMyAppSubscriptionRequest:
-    profile_id: int
-    old_subscription_id: int
-    total_amount: float
-    duration: int
-    payment_method: str
-    promo_code: Optional[str] = None
-    captcha_token: Optional[str] = None
-    client_confirm_url: Optional[str] = None
-    client_fail_url: Optional[str] = None
-```
-
----
-
-## ✅ STEP 6: Add to `required_fields_map`
-
-Within the `validate_request_data()` method:
-
-```python
-required_fields_map = {
-    ...
-    MyAppSubscriptionRequest: [
-        "profile_id",
-        "service_plan_selected_id",
-        "ressource_service_plan_selected_id",
-        "version_selected_id",
-        "duration",
-        "payment_method",
-    ],
-    UpgradeMyAppSubscriptionRequest: [
-        "profile_id",
-        "old_subscription_id",
-        "service_plan_selected_id",
-        "ressource_service_plan_selected_id",
-        "version_selected_id",
-        "duration",
-        "payment_method",
-    ],
-    RenewMyAppSubscriptionRequest: [
-        "profile_id",
-        "old_subscription_id",
-        "duration",
-        "payment_method",
-    ],
-}
-```
-
----
-
-## ✅ STEP 7: Add Construction Logic
-
-Inside the `validate_request_data()` method try block:
-
-```python
-**(
-    {
-        "ressource_service_plan_selected_id": int(data["ressource_service_plan_selected_id"]),
-        "version_selected_id": int(data["version_selected_id"]),
-        "service_plan_selected_id": int(data["service_plan_selected_id"]),
-    }
-    if request_type == MyAppSubscriptionRequest
-    else {}
-),
-**(
-    {
-        "ressource_service_plan_selected_id": int(data["ressource_service_plan_selected_id"]),
-        "version_selected_id": int(data["version_selected_id"]),
-        "old_subscription_id": int(data["old_subscription_id"]),
-        "service_plan_selected_id": int(data["service_plan_selected_id"]),
-    }
-    if request_type == UpgradeMyAppSubscriptionRequest
-    else {}
-),
-**(
-    {
-        "old_subscription_id": int(data["old_subscription_id"]),
-    }
-    if request_type == RenewMyAppSubscriptionRequest
-    else {}
-),
-```
-
----
-
-## ✅ STEP 8: Optional Custom Validation
-
-Still in `validate_request_data()`:
-
-```python
-if (
-    request_type
-    in [
-        MyAppSubscriptionRequest,
-        UpgradeMyAppSubscriptionRequest,
-        RenewMyAppSubscriptionRequest,
-    ]
-    and request_data.duration < 3
-):
-    return False, "Duration must be greater than 3 months", None
-```
-
----
-
-## ✅ STEP 9: Add Validation Shortcuts
-
-At the bottom of `SubscriptionService`:
-
-```python
-def validate_my_app_subscription_request(
-    self, data: dict
-) -> Tuple[bool, str, Optional[MyAppSubscriptionRequest]]:
-    return self.validate_request_data(data, MyAppSubscriptionRequest)
-
-def validate_my_app_upgrade_request(
-    self, data: dict
-) -> Tuple[bool, str, Optional[UpgradeMyAppSubscriptionRequest]]:
-    return self.validate_request_data(data, UpgradeMyAppSubscriptionRequest)
-
-def validate_my_app_renew_request(
-    self, data: dict
-) -> Tuple[bool, str, Optional[RenewMyAppSubscriptionRequest]]:
-    return self.validate_request_data(data, RenewMyAppSubscriptionRequest)
-```
-
----
-
-## ✅ STEP 10: Create Subscription Logic
-
-Inside `SubscriptionService`:
-
-```python
-from datetime import datetime
-
-def create_my_app_subscription(
-    self,
-    plan,
-    duration: int,
-    total_amount: float,
-    price: float,
-    promo_code,
-    profile_id: int,
-    status: str,
-    version_id: int,
-    ressource_service_plan,
-    is_upgrade: bool = False,
-    is_renew: bool = False,
-) -> object:
-    """Create MyApp subscription record"""
-    from app.service_apps.models.myapp_subscription_model import MyAppSubscriptionService
-
-    subscription = MyAppSubscriptionService(
-        name=plan.plan.name,
-        start_date=datetime.now(),
-        total_amount=total_amount,
-        price=price,
-        service_plan_id=plan.id,
-        duration_month=duration,
-        promo_code_id=promo_code.id if promo_code else None,
-        status=status,
-        payment_status="paid" if status == "active" else "unpaid",
-        profile_id=profile_id,
-        version_id=version_id,
-        ressource_service_plan_id=ressource_service_plan,
-        is_upgrade=is_upgrade,
-        is_renew=is_renew,
-    )
-
-    self.db.add(subscription)
-    self.db.flush()
-    return subscription
 ```

@@ -17,7 +17,6 @@ class PaymentService:
         self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")
         self.PAYMENT_API_SECRET_KEY = os.getenv("PAYMENT_API_SECRET_KEY", "")
-        # TODO Get APIKey from ENV
         self.headers = {
             "Content-Type": "application/json",
             "X-API-KEY": self.PAYMENT_API_SECRET_KEY,

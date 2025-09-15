@@ -1,21 +1,19 @@
 import logging
-import os
-import uuid
 
 from flask import request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
 from flask_jwt_extended import jwt_required
 
 from app import appbuilder, db
+from app.services.subscription_nextcloud_service import SubscriptionNextCloudService
 from app.services.subscription_service_base import SubscriptionServiceBase
-from app.services.subscription_ttk_epay_service import SubscriptionTtkEpayService
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
 
 
-class TtkEpaySubscriptionApi(BaseApi):
-    resource_name = "ttk-epay-app-service-subscription"
+class NextCloudSubscriptionApi(BaseApi):
+    resource_name = "nextcloud-app-service-subscription"
 
     @expose("/subscribe", methods=["POST"])
     @protect()
@@ -64,7 +62,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
-
                                 version_selected_id:
                                     type: integer
                                     description: ID of the selected version app service
@@ -74,11 +71,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 client_fail_url:
                                     type: string
                                     description: URL to redirect after failure
-
-
-
-
-
 
             responses:
                 200:
@@ -113,9 +105,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             ressource_service_plan_selected_id:
                                                 type: integer
                                                 description: ID of the selected ressource service plan
-                                            managed_ressource_id:
-                                                type: integer
-                                                description: ID of the selected managed ressource
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -163,45 +152,34 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
-            subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
+            # Validate request data
+            data = request.get_json(silent=True)
+            is_valid, error_msg, request_data = (
+                subscription_nextcloud_service.validate_nextcloud_subscription_request(data)
+            )
+            if not is_valid:
+                return self.response_400(message=error_msg)
 
             # Get and validate user
             user = get_user()
             if not user:
                 return self.response_400(message="User not found")
 
-            # Validate request data
-            data = request.get_json(silent=True)
-            is_valid, error_msg, request_data = (
-                subscription_ttk_epay_service.validate_ttk_epay_subscription_request(data)
-            )
-            if not is_valid:
-                return self.response_400(message=error_msg)
-
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-
             is_valid, error_msg, subscription_json = (
                 subscription_service_base.process_subscription_request(user, request_data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            api_secret_key = uuid.uuid4().hex[:32]
-            user = get_user()
-            user_name = user.username
-            client_site_url = f"https://{user_name}-ttkepay.apps.depoloily.cloud"
-
             has_sufficient_balance = (
                 subscription_json["profile"].balance >= subscription_json["price"]
             )
             subscription_status = "active" if has_sufficient_balance else "inactive"
-
             # Create subscription
-            subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=subscription_json["plan"],
-                # ressource_service_plan=ressource_plan.id,
-                # managed_ressource=managed_ressource.id,
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -209,14 +187,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
-                ttk_epay_api_secret_key=api_secret_key,
-                ttk_epay_client_site_url=client_site_url,
-                ttk_epay_satim_currency=os.getenv("TTK_EPAY_SATIM_CURRENCY", ""),
-                ttk_epay_mvc_satim_server_url=os.getenv("TTK_EPAY_MVC_SATIM_SERVER_URL", ""),
-                ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
-                ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
             )
-
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
@@ -230,7 +201,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                 return self.response_400(message=error_msg)
 
             return self.response(200, **result, message="Payment processed successfully")
-
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
             db.session.rollback()
@@ -381,9 +351,8 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-            subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -393,14 +362,12 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_ttk_epay_service.validate_upgrade_ttk_epay_subscription_request(data)
+                subscription_nextcloud_service.validate_upgrade_nextcloud_subscription_request(data)
             )
-            if not is_valid:
-                return self.response_400(message=error_msg)
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_ttk_epay_service.validate_old_ttk_epay_subscription(
+                subscription_nextcloud_service.validate_old_nextcloud_subscription(
                     request_data.old_subscription_id,
                 )
             )
@@ -423,7 +390,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=subscription_json["plan"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
@@ -432,17 +399,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
-                # ressource_service_plan=ressource_plan.id,
                 is_upgrade=True,
-                ttk_epay_api_secret_key=old_subscription.ttk_epay_api_secret_key,
-                ttk_epay_client_site_url=old_subscription.ttk_epay_client_site_url,
-                ttk_epay_satim_currency=old_subscription.ttk_epay_satim_currency,
-                ttk_epay_mvc_satim_server_url=old_subscription.ttk_epay_mvc_satim_server_url,
-                ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
-                ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
             )
-
-            subscription_service_base.get_or_create_managed_ressource(
+            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 subscription=subscription,
@@ -454,11 +413,9 @@ class TtkEpaySubscriptionApi(BaseApi):
             if not success:
                 return self.response_400(message=error_msg)
 
-            # Update old subscrption
             subscription_service_base.update_old_subscription(old_subscription, is_upgrade=True)
-
-            # Commit transaction
             db.session.commit()
+
             return self.response(200, **result, message="Payment processed successfully")
 
         except Exception as e:
@@ -487,7 +444,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                     type: integer
                                     description: ID of the user's profile
 
-
                                 promo_code:
                                     type: string
                                     nullable: true
@@ -511,11 +467,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 client_fail_url:
                                     type: string
                                     description: URL to redirect after failure
-
-
-
-
-
 
             responses:
                 200:
@@ -547,10 +498,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             promo_code_id:
                                                 type: integer
                                                 nullable: true
-
-
-
-
 
                                     order_id:
                                         type: string
@@ -589,9 +536,8 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
-            subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
+            subscription_nextcloud_service = SubscriptionNextCloudService(db.session, _logger)
 
             # Get and validate user
             user = get_user()
@@ -601,7 +547,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Validate request data
             data = request.get_json(silent=True)
             is_valid, error_msg, request_data = (
-                subscription_ttk_epay_service.validate_ttk_epay_renew_request(data)
+                subscription_nextcloud_service.validate_nextcloud_renew_request(data)
             )
             if not is_valid:
                 return self.response_400(message=error_msg)
@@ -615,7 +561,7 @@ class TtkEpaySubscriptionApi(BaseApi):
 
             # Validate old subscription
             is_valid, error_msg, old_subscription = (
-                subscription_ttk_epay_service.validate_old_ttk_epay_subscription(
+                subscription_nextcloud_service.validate_old_nextcloud_subscription(
                     request_data.old_subscription_id,
                 )
             )
@@ -639,7 +585,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription_status = "active" if has_sufficient_balance else "inactive"
 
             # Create subscription
-            subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
+            subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=old_subscription.service_plan,
                 duration=request_data.duration,
                 total_amount=total_amount,
@@ -650,13 +596,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                 is_renew=True,
                 version_id=old_subscription.version_id,
                 # ressource_service_plan=old_subscription.ressource_service_plan_id,
-                # managed_ressource_id=old_subscription.managed_ressource_id,
-                ttk_epay_api_secret_key=old_subscription.ttk_epay_api_secret_key,
-                ttk_epay_client_site_url=old_subscription.ttk_epay_client_site_url,
-                ttk_epay_satim_currency=old_subscription.ttk_epay_satim_currency,
-                ttk_epay_mvc_satim_server_url=old_subscription.ttk_epay_mvc_satim_server_url,
-                ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
-                ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
             )
             subscription.managed_ressource_id = old_subscription.managed_ressource_id
             db.session.commit()
@@ -749,4 +688,4 @@ class TtkEpaySubscriptionApi(BaseApi):
             return self.response_500(message="Internal Server Error")
 
 
-appbuilder.add_api(TtkEpaySubscriptionApi)
+appbuilder.add_api(NextCloudSubscriptionApi)
