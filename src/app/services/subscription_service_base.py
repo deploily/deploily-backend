@@ -494,9 +494,12 @@ class SubscriptionServiceBase:
                         False,
                         error_msg,
                         None,
-                    )  # ❌ idem, cohérent avec ton appel                satim_order_id = payment_response.get("ORDER_ID", "")
+                    )  # ❌ idem, cohérent avec ton appel
+                satim_order_id = payment_response.get("ORDER_ID", "")
                 form_url = payment_response.get("FORM_URL", "")
                 payment.satim_order_id = satim_order_id
+
+                print(f"Order ID: {satim_order_id}, Form URL: {form_url}")
                 self.db.commit()
 
             # Mise à jour promo code
