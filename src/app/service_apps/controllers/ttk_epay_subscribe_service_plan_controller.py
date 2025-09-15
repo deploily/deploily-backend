@@ -690,7 +690,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                     client_fail_url = request_data.client_fail_url
 
                     success, error_msg, payment_response = (
-                        subscription_service_base.ion_service.process_payment(
+                        subscription_service_base.process_payment(
                             subscription,
                             total_amount,
                             is_mvc_call,

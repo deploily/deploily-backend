@@ -490,9 +490,11 @@ class SubscriptionServiceBase:
                     client_fail_url,
                 )
                 if not success:
-                    return False, error_msg, None  # ❌ idem, cohérent avec ton appel
-
-                satim_order_id = payment_response.get("ORDER_ID", "")
+                    return (
+                        False,
+                        error_msg,
+                        None,
+                    )  # ❌ idem, cohérent avec ton appel                satim_order_id = payment_response.get("ORDER_ID", "")
                 form_url = payment_response.get("FORM_URL", "")
                 payment.satim_order_id = satim_order_id
                 self.db.commit()
