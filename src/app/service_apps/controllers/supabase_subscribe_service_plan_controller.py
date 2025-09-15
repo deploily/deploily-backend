@@ -208,7 +208,7 @@ class SupabaseSubscriptionApi(BaseApi):
             if not success:
                 return self.response_400(message=error_msg)
 
-            return self.response(200, data=result, message="Payment processed successfully")
+            return self.response(200, **result, message="Payment processed successfully")
 
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
@@ -431,7 +431,7 @@ class SupabaseSubscriptionApi(BaseApi):
 
             # Commit transaction
             db.session.commit()
-            return self.response(200, data=result, message="Payment processed successfully")
+            return self.response(200, **result, message="Payment processed successfully")
 
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)

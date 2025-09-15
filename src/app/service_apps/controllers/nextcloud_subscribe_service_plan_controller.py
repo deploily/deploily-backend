@@ -200,7 +200,7 @@ class NextCloudSubscriptionApi(BaseApi):
             if not success:
                 return self.response_400(message=error_msg)
 
-            return self.response(200, data=result, message="Payment processed successfully")
+            return self.response(200, **result, message="Payment processed successfully")
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
             db.session.rollback()
@@ -416,7 +416,7 @@ class NextCloudSubscriptionApi(BaseApi):
             subscription_service_base.update_old_subscription(old_subscription, is_upgrade=True)
             db.session.commit()
 
-            return self.response(200, data=result, message="Payment processed successfully")
+            return self.response(200, **result, message="Payment processed successfully")
 
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
