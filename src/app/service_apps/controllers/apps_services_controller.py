@@ -299,6 +299,7 @@ class PublicAppServiceApi(BaseApi):  # public version
 
     def serialize_service(self, service):
         return {
+            "id": service.id,
             "name": service.name,
             "price_category": service.price_category,
             "short_description": service.short_description,
