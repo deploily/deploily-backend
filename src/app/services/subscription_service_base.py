@@ -445,6 +445,7 @@ class SubscriptionServiceBase:
             "price": final_price,
             "promo_code": promo_code,
             "profile": profile,
+            "phone": request_data.phone,
             # "status": subscription_status,
             "version_id": version.id if version else None,
             "managed_ressource": managed_ressource if managed_ressource else None,

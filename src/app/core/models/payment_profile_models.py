@@ -36,6 +36,7 @@ class PaymentProfile(Model, AuditMixin):
     is_default_profile = Column(Boolean, default=False)
     # user = relationship("MyUser", back_populates="profiles")
     subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
+    nin = Column(String(255), nullable=True, unique=True)
 
     @property
     def balance(self):

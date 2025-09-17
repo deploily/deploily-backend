@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, ForeignKey, Integer, func
+from sqlalchemy import Column, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -32,6 +32,8 @@ class AppService(Service):
         secondary="app_service_version",
         back_populates="app_services",
     )
+    sequence = Column(Integer)
+    demo_url = Column(String, nullable=True)
 
     @property
     def is_subscribed(self):

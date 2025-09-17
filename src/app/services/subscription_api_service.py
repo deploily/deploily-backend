@@ -21,6 +21,7 @@ class ApiSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -37,6 +38,7 @@ class UpgradeApiSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -52,6 +54,7 @@ class RenewApiSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -103,6 +106,7 @@ class ApiSubscriptionService:
             # Create instance of the specified request type
             request_data = request_type(
                 profile_id=int(data["profile_id"]),
+                phone=data.get("phone"),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
@@ -173,6 +177,7 @@ class ApiSubscriptionService:
         profile_id: int,
         status: str,
         api_key: str,
+        phone: str,
         is_upgrade: bool = False,
         is_renew: bool = False,
     ) -> object:
@@ -189,6 +194,7 @@ class ApiSubscriptionService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             api_key=api_key,
+            phone=phone,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
@@ -197,4 +203,5 @@ class ApiSubscriptionService:
 
         self.db.add(subscription)
         self.db.flush()
+        self.db.commit()
         return subscription

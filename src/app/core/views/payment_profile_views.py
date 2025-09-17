@@ -17,6 +17,7 @@ class PaymentProfileModelView(ModelView):
         "name",
         "profile_type",
         "balance",
+        "nin",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

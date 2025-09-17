@@ -28,6 +28,7 @@ _subscribe_display_columns = [
     "managed_ressource_id",
     "managed_ressource",
     "managed_ressource_details",
+    "phone",
 ]
 
 _subscribe_edit_columns = [
@@ -42,6 +43,7 @@ _subscribe_edit_columns = [
     "api_key",
     "service_plan_id",
     "managed_ressource_details",
+    "phone",
 ]
 
 
@@ -70,6 +72,7 @@ class SubscriptionModelApi(ModelRestApi):
             "id": sub.id,
             "is_expired": sub.is_expired,
             "name": sub.name,
+            "phone": sub.phone,
             "start_date": sub.start_date.isoformat() if sub.start_date else None,
             "total_amount": sub.total_amount,
             "price": sub.price,

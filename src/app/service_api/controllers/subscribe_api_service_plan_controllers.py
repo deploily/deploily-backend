@@ -49,6 +49,9 @@ class SubscriptionApi(BaseApi):
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
+                                phone:
+                                    type: string
+                                    description: User's phone number
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
@@ -167,6 +170,7 @@ class SubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 api_key="",
+                phone=subscription_json["phone"],
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
@@ -219,6 +223,9 @@ class SubscriptionApi(BaseApi):
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
+                                phone:
+                                    type: string
+                                    description: User's phone number
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
@@ -352,6 +359,7 @@ class SubscriptionApi(BaseApi):
                 status=subscription_status,
                 api_key=old_subscription.api_key,
                 is_upgrade=True,
+                phone=subscription_json["phone"],
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
@@ -401,6 +409,9 @@ class SubscriptionApi(BaseApi):
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
+                                phone:
+                                    type: string
+                                    description: User's phone number
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
@@ -541,6 +552,7 @@ class SubscriptionApi(BaseApi):
                 status=subscription_status,
                 api_key=old_subscription.api_key,
                 is_renew=True,
+                phone=request_data.phone,
             )
 
             # Initialize payment response variables
