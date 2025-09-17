@@ -32,6 +32,7 @@ _profile_display_columns = [
     "country",
     "postal_code",
     "profile_type",
+    "nin",
 ]
 
 
