@@ -40,6 +40,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected service plan
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
 
                                 promo_code:
                                     type: string
@@ -205,6 +208,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
+                phone=subscription_json["phone"],
                 promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
@@ -259,6 +263,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected service plan
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
 
                                 promo_code:
                                     type: string
@@ -428,6 +435,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
+                phone=subscription_json["phone"],
                 promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
@@ -492,6 +500,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                     type: string
                                     nullable: true
                                     description: Promo code (if applicable)
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -642,6 +653,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
                 plan=old_subscription.service_plan,
                 duration=request_data.duration,
+                phone=request_data.phone,
                 total_amount=total_amount,
                 price=final_price,
                 promo_code=promo_code,

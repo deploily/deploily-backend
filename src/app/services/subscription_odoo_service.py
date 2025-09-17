@@ -23,6 +23,7 @@ class OdooSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -42,6 +43,7 @@ class UpgradeOdooSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -57,6 +59,7 @@ class RenewOdooSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -114,6 +117,7 @@ class SubscriptionOdooService:
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
+                phone=data.get("phone"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 client_confirm_url=data.get("client_confirm_url"),
@@ -224,6 +228,7 @@ class SubscriptionOdooService:
         profile_id: int,
         status: str,
         version_id: int,
+        phone: Optional[str] = None,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -238,6 +243,7 @@ class SubscriptionOdooService:
             start_date=datetime.now(),
             total_amount=total_amount,
             price=price,
+            phone=phone,
             service_plan_id=plan.id,
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,

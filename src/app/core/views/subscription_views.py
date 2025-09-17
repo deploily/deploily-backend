@@ -20,6 +20,7 @@ class SubscriptionModelView(ModelView):
         "is_expired",
         "start_date",
         "duration_month",
+        "phone",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

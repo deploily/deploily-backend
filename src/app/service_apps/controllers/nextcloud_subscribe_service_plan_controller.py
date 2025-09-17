@@ -43,6 +43,9 @@ class NextCloudSubscriptionApi(BaseApi):
                                     type: string
                                     nullable: true
                                     description: Promo code (if applicable)
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -187,6 +190,7 @@ class NextCloudSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
+                phone=subscription_json["phone"],
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
@@ -240,6 +244,9 @@ class NextCloudSubscriptionApi(BaseApi):
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
@@ -399,6 +406,7 @@ class NextCloudSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
+                phone=subscription_json["phone"],
                 is_upgrade=True,
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
@@ -448,6 +456,9 @@ class NextCloudSubscriptionApi(BaseApi):
                                     type: string
                                     nullable: true
                                     description: Promo code (if applicable)
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -588,6 +599,7 @@ class NextCloudSubscriptionApi(BaseApi):
             subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=old_subscription.service_plan,
                 duration=request_data.duration,
+                phone=request_data.phone,
                 total_amount=total_amount,
                 price=final_price,
                 promo_code=promo_code,

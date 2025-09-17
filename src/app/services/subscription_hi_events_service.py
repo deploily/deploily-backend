@@ -14,7 +14,6 @@ class HiEventsSubscriptionRequest:
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
     managed_ressource_id: int
-
     version_selected_id: int
     total_amount: float
     duration: int
@@ -23,6 +22,7 @@ class HiEventsSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -42,6 +42,7 @@ class UpgradeHiEventsSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -57,6 +58,7 @@ class RenewHiEventsSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -111,6 +113,7 @@ class SubscriptionHiEventsService:
             # Create instance of the specified request type
             request_data = request_type(
                 profile_id=int(data["profile_id"]),
+                phone=data.get("phone"),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
@@ -224,6 +227,7 @@ class SubscriptionHiEventsService:
         profile_id: int,
         status: str,
         version_id: int,
+        phone: str,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -245,6 +249,7 @@ class SubscriptionHiEventsService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
+            phone=phone,
             # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:

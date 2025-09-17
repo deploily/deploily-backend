@@ -22,6 +22,7 @@ class TtkEpaySubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -41,6 +42,7 @@ class UpgradeTtkEpaySubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -56,6 +58,7 @@ class RenewTtkEpaySubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -113,6 +116,7 @@ class SubscriptionTtkEpayService:
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
+                phone=data.get("phone"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 client_confirm_url=data.get("client_confirm_url"),
@@ -231,6 +235,7 @@ class SubscriptionTtkEpayService:
         ttk_epay_mvc_satim_server_url: str,
         ttk_epay_mvc_satim_fail_url: str,
         ttk_epay_mvc_satim_confirm_url: str,
+        phone: Optional[str] = None,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -260,6 +265,7 @@ class SubscriptionTtkEpayService:
             ttk_epay_mvc_satim_server_url=ttk_epay_mvc_satim_server_url,
             ttk_epay_mvc_satim_fail_url=ttk_epay_mvc_satim_fail_url,
             ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
+            phone=phone,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

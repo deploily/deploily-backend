@@ -83,6 +83,7 @@ class StatusApi(BaseApi):
                 )
 
             if (
+                # todo add failesd status
                 response_data.get("ERROR_CODE") == "0"
                 and response_data.get("ERROR_MESSAGE") == "Success"
             ):
