@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask_appbuilder import Model
-from flask_appbuilder.models.mixins import AuditMixin
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class ContactUs(Model, AuditMixin):
+class ContactUs(Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)
@@ -14,6 +13,8 @@ class ContactUs(Model, AuditMixin):
     phone = Column(String(20), nullable=True)
     ressource_id = Column(Integer, ForeignKey("ressource_service.id"))
     ressource = relationship("RessourceService", back_populates="contact_us")
+    partner_id = Column(Integer, ForeignKey("ab_user.id"), nullable=True)
+    partner = relationship("User", backref="contact_us")
 
     def __repr__(self):
         return self.name

@@ -10,9 +10,10 @@ from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models.contact_us_models import ContactUs
 from app.core.models.mail_models import Mail
+from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
-_contact_us_display_columns = ["name", "email", "message", "phone", "ressource_id", "created_on"]
+_contact_us_display_columns = ["name", "email", "message", "phone", "ressource_id"]
 
 
 class ContactUSModelApi(ModelRestApi):
@@ -22,7 +23,14 @@ class ContactUSModelApi(ModelRestApi):
     add_columns = ["name", "email", "message", "phone", "ressource_id"]
     list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
-    _exclude_columns = ["changed_by", "changed_on", "created_by.id"]
+
+    def pre_add(self, item: ContactUs):
+        current_user = get_user()
+        if current_user and current_user.is_authenticated:
+            item.partner_id = current_user.id
+            _logger.info(f"[ContactUs] Setting partner_id={current_user.id}")
+        else:
+            _logger.warning("[ContactUs] No authenticated user found")
 
     def post_add(self, item: ContactUs):
         """
@@ -55,10 +63,9 @@ appbuilder.add_api(ContactUSModelApi)
 
 
 class PublicContactUSModelApi(BaseApi):
+    resource_name = "public"
 
-    resource_name = "contact-us-public"
-
-    @expose("/", methods=["POST"])
+    @expose("/contact-us", methods=["POST"])
     def add_contact_us(self):
         """
         Public Contact Us endpoint
@@ -73,12 +80,12 @@ class PublicContactUSModelApi(BaseApi):
                 schema:
                   type: object
                   properties:
-                    ressource_id:
-                      type: integer
-                      description: ressource_id
                     phone:
                       type: string
                       description: phone
+                    ressource_id:
+                      type: integer
+
                     email:
                       type: string
                       description: email
@@ -107,50 +114,34 @@ class PublicContactUSModelApi(BaseApi):
         """
         try:
             data = request.json
+            _logger.info(f"Received contact us data: {data}")
 
-            # create ContactUs object
-            item = ContactUs(
+            contact_us = ContactUs(
                 email=data.get("email"),
                 message=data.get("message"),
                 name=data.get("name"),
                 phone=data.get("phone"),
                 ressource_id=data.get("ressource_id"),
             )
-            db.session.add(item)
+            db.session.add(contact_us)
             db.session.commit()
 
-            contact_us_template = render_template("emails/contact_us.html", item=item)
-
-            email = Mail(
-                title=f"New Contact US Created by {item.name}",
-                body=contact_us_template,
-                email_to=current_app.config["NOTIFICATION_EMAIL"],
-                email_from=current_app.config["NOTIFICATION_EMAIL"],
-                mail_state="outGoing",
-            )
-
-            db.session.add(email)
-            db.session.commit()
-            send_mail.delay(email.id)
-            _logger.info(f"[EMAIL] Queued email for contact us {item.id}")
-
-            # ✅ Return saved object as JSON
+            # ✅ Return saved object fields properly
             return self.response(
                 200,
                 result={
-                    "id": item.id,
-                    "email": item.email,
-                    "message": item.message,
-                    "name": item.name,
-                    "phone": item.phone,
-                    "ressource_id": item.ressource_id,
+                    "name": contact_us.name,
+                    "message": contact_us.message,
+                    "email": contact_us.email,
+                    "phone": contact_us.phone,
+                    "ressource_id": contact_us.ressource_id,
                 },
             )
+
         except Exception as e:
             _logger.error(f"Error in add_contact_us: {e}", exc_info=True)
             db.session.rollback()
             return self.response_500(message="Internal Server Error")
 
 
-# Register API
 appbuilder.add_api(PublicContactUSModelApi)
