@@ -32,6 +32,39 @@ class ServiceRessouceCategory(Model):
         default="vps",
     )
 
+    # @property
+    # def list_providers(self):
+    #     provider_data = {}
+
+    #     for service in self.ressouce_services:
+    #         provider = service.provider
+    #         print("###################################",provider)
+    #         if provider:
+    #             if provider.id not in provider_data:
+    #                 provider_data[provider.id] = {
+    #                     "name": provider.name,
+    #                     "website": provider.website,
+    #                     "logo": provider.logo,
+    #                     "min_price": None,
+    #                     "unity": None,
+    #                 }
+
+    #             for plan in service.service_plans:
+    #                 if plan.is_published and plan.price is not None:
+    #                     current_min = provider_data[provider.id]["min_price"]
+    #                     print(f"###################################",plan.price, current_min)
+    #                     if current_min is None or plan.price < current_min:
+    #                         provider_data[provider.id]["min_price"] = plan.price
+    #                         provider_data[provider.id]["unity"] = plan.unity
+    #                         provider_data[provider.id][
+    #                             "price_category"
+    #                         ] = plan.service.price_category
+    #                         print(f"###################################",provider_data[provider.id] [
+    #                             "price_category"
+    #                         ])
+
+    #     return list(provider_data.values())
+
     @property
     def list_providers(self):
         provider_data = {}
@@ -46,17 +79,25 @@ class ServiceRessouceCategory(Model):
                         "logo": provider.logo,
                         "min_price": None,
                         "unity": None,
+                        "price_category": None,
                     }
 
                 for plan in service.service_plans:
                     if plan.is_published and plan.price is not None:
+                        # Normalize price to monthly
+                        price = plan.price
+                        if plan.service.price_category == "yearly":
+                            normalized_price = price / 12
+                        else:
+                            normalized_price = price
+
                         current_min = provider_data[provider.id]["min_price"]
-                        if current_min is None or plan.price < current_min:
-                            provider_data[provider.id]["min_price"] = plan.price
+                        if current_min is None or normalized_price < current_min:
+                            provider_data[provider.id]["min_price"] = normalized_price
                             provider_data[provider.id]["unity"] = plan.unity
                             provider_data[provider.id][
                                 "price_category"
-                            ] = plan.service.price_category
+                            ] = "monthly"  # always normalized to monthly
 
         return list(provider_data.values())
 
