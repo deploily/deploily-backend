@@ -97,7 +97,11 @@ class ServiceRessouceCategory(Model):
                                 "price_category"
                             ] = plan.service.price_category
 
-        return list(provider_data.values())
+        # return list(provider_data.values())
+        return sorted(
+            provider_data.values(),
+            key=lambda x: x["min_price"] if x["min_price"] is not None else float("inf"),
+        )
 
     @property
     def min_category_price(self):
