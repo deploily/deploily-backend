@@ -84,20 +84,18 @@ class ServiceRessouceCategory(Model):
 
                 for plan in service.service_plans:
                     if plan.is_published and plan.price is not None:
-                        # Normalize price to monthly
-                        price = plan.price
-                        if plan.service.price_category == "yearly":
-                            normalized_price = price / 12
-                        else:
-                            normalized_price = price
+                        # Normalize price to yearly for comparison
+                        plan_price = plan.price
+                        if plan.subscription_category == "monthly":
+                            plan_price = plan.price * 12
 
                         current_min = provider_data[provider.id]["min_price"]
-                        if current_min is None or normalized_price < current_min:
-                            provider_data[provider.id]["min_price"] = normalized_price
+                        if current_min is None or plan_price < current_min:
+                            provider_data[provider.id]["min_price"] = plan_price
                             provider_data[provider.id]["unity"] = plan.unity
                             provider_data[provider.id][
                                 "price_category"
-                            ] = "monthly"  # always normalized to monthly
+                            ] = plan.service.price_category
 
         return list(provider_data.values())
 
