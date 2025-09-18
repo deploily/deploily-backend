@@ -85,9 +85,7 @@ class ServiceRessouceCategory(Model):
                 for plan in service.service_plans:
                     if plan.is_published and plan.price is not None:
                         # Normalize price to yearly for comparison
-                        plan_price = plan.price
-                        if plan.subscription_category == "monthly":
-                            plan_price = plan.price * 12
+                        plan_price = plan.price * 12
 
                         current_min = provider_data[provider.id]["min_price"]
                         if current_min is None or plan_price < current_min:
@@ -95,7 +93,7 @@ class ServiceRessouceCategory(Model):
                             provider_data[provider.id]["unity"] = plan.unity
                             provider_data[provider.id][
                                 "price_category"
-                            ] = plan.service.price_category
+                            ] = plan.subscription_category
 
         # return list(provider_data.values())
         return sorted(
