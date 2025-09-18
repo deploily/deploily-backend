@@ -43,6 +43,9 @@ class SupabaseSubscriptionApi(BaseApi):
                                     type: string
                                     nullable: true
                                     description: Promo code (if applicable)
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -195,6 +198,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
+                phone=subscription_json["phone"],
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
@@ -246,6 +250,9 @@ class SupabaseSubscriptionApi(BaseApi):
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
@@ -411,6 +418,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
+                phone=subscription_json["phone"],
                 # ressource_service_plan=ressource_plan.id,
                 is_upgrade=True,
             )
@@ -467,6 +475,9 @@ class SupabaseSubscriptionApi(BaseApi):
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
                                 payment_method:
                                     type: string
                                     description: Payment method (e.g., "card", "paypal")
@@ -620,6 +631,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 status=subscription_status,
                 is_renew=True,
                 version_id=old_subscription.version_id,
+                phone=request_data.phone,
                 # ressource_service_plan=old_subscription.ressource_service_plan_id,
             )
             subscription.managed_ressource_id = old_subscription.managed_ressource_id

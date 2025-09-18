@@ -23,6 +23,7 @@ class NextCloudSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 @dataclass
@@ -43,6 +44,8 @@ class UpgradeNextCloudSubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
 
+    phone: Optional[str] = None
+
 
 @dataclass
 class RenewNextCloudSubscriptionRequest:
@@ -57,6 +60,7 @@ class RenewNextCloudSubscriptionRequest:
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
+    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -113,6 +117,7 @@ class SubscriptionNextCloudService:
                 profile_id=int(data["profile_id"]),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
+                phone=data.get("phone"),
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -224,6 +229,7 @@ class SubscriptionNextCloudService:
         profile_id: int,
         status: str,
         version_id: int,
+        phone: Optional[str],
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -245,6 +251,7 @@ class SubscriptionNextCloudService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
+            phone=phone,
             # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:

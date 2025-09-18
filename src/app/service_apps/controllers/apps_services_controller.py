@@ -18,6 +18,8 @@ api_columns = [
     "minimal_disk",
     "app_versions",
     "is_subscribed",
+    "sequence",
+    "demo_url",
 ]
 
 
@@ -29,6 +31,7 @@ class AppServiceModelApi(ServiceModelApi):
     list_columns = ServiceModelApi.list_columns + api_columns
     show_columns = ServiceModelApi.show_columns + api_columns
     edit_columns = ServiceModelApi.edit_columns + api_columns
+    base_order = ("sequence", "asc")
 
     @expose("/all", methods=["GET"])
     def get_all_app_services(self):
@@ -85,13 +88,18 @@ class AppServiceModelApi(ServiceModelApi):
             )
 
         # services = query.all()
-        services = query.filter(AppService.is_published.is_(True)).all()
+        services = (
+            query.filter(AppService.is_published.is_(True))
+            .order_by(AppService.sequence.asc())
+            .all()
+        )
 
         def serialize_service(service):
             return {
                 "id": service.id,
                 "name": service.name,
                 "price_category": service.price_category,
+                "demo_url": service.demo_url,
                 "short_description": service.short_description,
                 "description": service.description,
                 "image_service": service.image_service,
@@ -216,6 +224,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                 "image_service": service.image_service,
                 "specifications": service.specifications,
                 "documentation_url": service.documentation_url,
+                "demo_url": service.demo_url,
                 "minimal_cpu": service.minimal_cpu,
                 "minimal_ram": service.minimal_ram,
                 "minimal_disk": service.minimal_disk,
@@ -261,6 +270,86 @@ class PublicAppServiceApi(BaseApi):  # public version
 
         result = serialize_service(service)
         return self.response(200, result=result)
+
+    @expose("/<string:slug>", methods=["GET"])
+    def get_app_service_by_slug(self, slug):
+        """
+        ---
+        get:
+          summary: Get an APP service by slug (base fields + service_plans + medias)
+          description: Returns a specific AppService by service_slug
+          parameters:
+            - in: path
+              name: slug
+              required: true
+              schema:
+                type: string
+          responses:
+            200:
+              description: AppService found
+            404:
+              description: AppService not found
+        """
+        service = db.session.query(AppService).filter_by(service_slug=slug).first()
+        if not service:
+            return self.response(404, message="AppService not found")
+
+        result = self.serialize_service(service)
+        return self.response(200, result=result)
+
+    def serialize_service(self, service):
+        return {
+            "id": service.id,
+            "name": service.name,
+            "price_category": service.price_category,
+            "short_description": service.short_description,
+            "description": service.description,
+            "image_service": service.image_service,
+            "specifications": service.specifications,
+            "documentation_url": service.documentation_url,
+            "demo_url": service.demo_url,
+            "minimal_cpu": service.minimal_cpu,
+            "minimal_ram": service.minimal_ram,
+            "minimal_disk": service.minimal_disk,
+            "service_slug": service.service_slug,
+            "is_subscribed": service.is_subscribed,
+            "app_versions": [
+                {"id": app.id, "version": app.name, "description": app.description}
+                for app in service.app_versions
+            ],
+            "average_rating": service.average_rating,
+            "recommended_apps": [{"id": app.id} for app in service.recommended_apps],
+            "service_plans": [
+                {
+                    "id": plan.id,
+                    "price": plan.price,
+                    "name": plan.plan.name,
+                    "subscription_category": plan.subscription_category,
+                    "is_custom": plan.is_custom,
+                    "options": [
+                        {
+                            "id": option.id,
+                            "option_type": option.option_type,
+                            "option_value": option.option_value,
+                            "icon": option.icon,
+                            "html_content": option.html_content,
+                            "sequence": option.sequence,
+                        }
+                        for option in plan.options
+                    ],
+                    "preparation_time": plan.preparation_time,
+                }
+                for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
+            ],
+            "medias": [
+                {
+                    "id": media.id,
+                    "name": media.title,
+                    "image": media.image,
+                }
+                for media in service.medias
+            ],
+        }
 
 
 # Register the API with Flask AppBuilder

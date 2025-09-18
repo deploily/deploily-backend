@@ -52,6 +52,9 @@ class HiEventsSubscriptionApi(BaseApi):
                                 captcha_token:
                                     type: string
                                     description: Google reCAPTCHA token
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
 
                                 ressource_service_plan_selected_id:
                                     type: integer
@@ -187,6 +190,7 @@ class HiEventsSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
+                phone=subscription_json["phone"],
             )
             managed_ressource = subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
@@ -229,6 +233,9 @@ class HiEventsSubscriptionApi(BaseApi):
                                 service_plan_selected_id:
                                     type: integer
                                     description: ID of the selected service plan
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
 
                                 promo_code:
                                     type: string
@@ -402,6 +409,7 @@ class HiEventsSubscriptionApi(BaseApi):
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
                 is_upgrade=True,
+                phone=subscription_json["phone"],
             )
             subscription_service_base.get_or_create_managed_ressource(
                 ressource_plan=subscription_json["ressource_plan"],
@@ -445,7 +453,9 @@ class HiEventsSubscriptionApi(BaseApi):
                                 profile_id:
                                     type: integer
                                     description: ID of the user's profile
-
+                                phone:
+                                    type: string
+                                    description: Phone number of the user
 
                                 promo_code:
                                     type: string
@@ -607,6 +617,7 @@ class HiEventsSubscriptionApi(BaseApi):
                 status=subscription_status,
                 is_renew=True,
                 version_id=old_subscription.version_id,
+                phone=request_data.phone,
                 # ressource_service_plan=old_subscription.ressource_service_plan_id,
             )
             subscription.managed_ressource_id = old_subscription.managed_ressource_id

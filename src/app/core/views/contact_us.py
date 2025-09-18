@@ -10,11 +10,8 @@ from app.core.models.contact_us_models import ContactUs
 class ContactUsModelView(ModelView):
     route_base = "/admin/contact-us"
     datamodel = SQLAInterface(ContactUs)
-    list_columns = ["id", "created_by", "name", "email", "message"]
+    list_columns = ["id", "name", "email", "message"]
     base_order = ("id", "desc")
-    _exclude_columns = ["created_on", "changed_on"]
-    add_exclude_columns = _exclude_columns
-    edit_exclude_columns = _exclude_columns
 
 
 db.create_all()
