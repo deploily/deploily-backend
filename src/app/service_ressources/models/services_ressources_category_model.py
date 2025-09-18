@@ -104,7 +104,7 @@ class ServiceRessouceCategory(Model):
         )
         print(f"###################################", providers_list)
 
-        return list(provider_data.values())
+        return list(providers_list.values())
 
     @property
     def min_category_price(self):
