@@ -96,15 +96,8 @@ class ServiceRessouceCategory(Model):
                             provider_data[provider.id][
                                 "price_category"
                             ] = plan.service.price_category
-        print(f"###################################", provider_data)
-        # Convert dict to list and sort by min_price ascending
-        providers_list = list(provider_data.values())
-        providers_list.sort(
-            key=lambda x: (x["min_price"] if x["min_price"] is not None else float("inf"))
-        )
-        print(f"###################################", providers_list)
 
-        return list(providers_list.values())
+        return list(provider_data.values())
 
     @property
     def min_category_price(self):
