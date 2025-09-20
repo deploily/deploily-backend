@@ -12,7 +12,7 @@ from app.services.apisix_service import ApiSixService
 logger = logging.getLogger(__name__)
 
 
-@scheduler.task("cron", id="delete_consumer", max_instances=1, minute="*/1")
+@scheduler.task("cron", id="delete_consumer", max_instances=1, hour=2, minute=0)
 def delete_expired_consumers():
     print(">>> [CRON] delete_expired_consumers() running")
     with app.app_context():
