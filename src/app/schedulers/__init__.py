@@ -6,8 +6,7 @@ if appbuilder.get_app.config["SCHEDULER_ENABLED"] in [
     "t",
     "1",
 ]:
-    from . import send_pending_emails
 
     from . import delete_consumer
 
-    # from . import notify_subscription_expiration
+    from . import notify_subscription_expiration
