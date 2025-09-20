@@ -30,7 +30,10 @@ def delete_expired_consumers():
                 func.now()
                 > (
                     ApiServiceSubscription.start_date
-                    + cast(func.concat(ApiServiceSubscription.duration_month, " month"), INTERVAL)
+                    + cast(
+                        func.concat(ApiServiceSubscription.duration_month, " month"),
+                        INTERVAL,
+                    )
                 ),
                 or_(
                     ApiServiceSubscription.is_upgrade == False,
@@ -41,7 +44,7 @@ def delete_expired_consumers():
         )
 
         for sub in subscriptions:
-            if sub.is_expired:
+            if sub.is_expired and sub.status == "active":
                 user = sub.created_by
                 if not user.id:
                     user = db.session.query(User).filter_by(username=user.username).first()
@@ -60,6 +63,8 @@ def delete_expired_consumers():
 
                 apisix.delete_consumer(username=consumer_username)
                 print(f"[CRON] Deleted consumer: {consumer_username}")
+
+                # TODO add set sub.status to `inactive`
 
             else:
                 print("[CRON] No expired subscriptions found.")
