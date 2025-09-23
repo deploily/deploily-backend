@@ -7,14 +7,14 @@ from app.core.models import Service
 from app.core.models.rating_models import Score
 
 
-class CicdService(Service):
+class DeploymentService(Service):
 
-    __tablename__ = "cicd_service"
+    __tablename__ = "deployment_service"
     id = Column(Integer, ForeignKey("service.id"), primary_key=True)
     __mapper_args__ = {
-        "polymorphic_identity": "cicd_service",
+        "polymorphic_identity": "deployment_service",
     }
-    cicd_field = Column(Text)
+    deployment_field = Column(Text)
 
     @property
     def average_rating(self):
@@ -24,4 +24,4 @@ class CicdService(Service):
         return round(result, 2) if result is not None else 0.0
 
     def __repr__(self):
-        return f"CicdService: {self.name} "
+        return f"DeploymentService: {self.name} "
