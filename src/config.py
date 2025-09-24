@@ -92,6 +92,7 @@ FAB_OPENAPI_SERVERS = [
     {"url": "http://192.168.1.22:5000"},
     {"url": "http://192.168.1.21:5000"},
     {"url": "http://192.168.1.15:5000"},
+    {"url": "http://192.168.1.16:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -266,8 +267,14 @@ FAB_ROLES = {
         ["NextCloudAppServiceSubscriptionModelApi", "can_get"],
         ["HiEventsAppServiceSubscriptionModelApi", "can_get"],
         ["DeploymentServiceModelApi", "can_get"],
+        ["DeploymentServiceModelApi", "can_post"],
+        ["DeploymentServiceModelApi", "can_put"],
         ["CustomParameterModelApi", "can_get"],
         ["CustomParameterModelApi", "can_post"],
+        ["CustomParameterModelApi", "can_put"],
+        ["DeploymentServiceSubscriptionModelApi", "can_get"],
+        ["DeploymentServiceSubscriptionModelApi", "can_post"],
+        ["DeploymentServiceSubscriptionModelApi", "can_put"],
     ]
 }
 

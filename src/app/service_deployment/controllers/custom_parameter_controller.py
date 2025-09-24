@@ -8,7 +8,13 @@ from app.service_deployment.models.custom_parameter_model import CustomParameter
 
 api_columns = ["deployment_field", "average_rating"]
 
-_deployment_service_display_columns = ["id", "name", "description", "value"]
+_deployment_service_display_columns = [
+    "id",
+    "name",
+    "description",
+    "value",
+    "deployment_subscription_id",
+]
 
 
 class CustomParameterModelApi(ModelRestApi):
