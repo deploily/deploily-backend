@@ -15,6 +15,7 @@ class DeploymentService(Service):
         "polymorphic_identity": "deployment_service",
     }
     deployment_field = Column(Text)
+    sequence = Column(Integer)
 
     @property
     def average_rating(self):

@@ -265,6 +265,9 @@ FAB_ROLES = {
         ["HiEventsSubscriptionApi", "can_renew_app_subscription"],
         ["NextCloudAppServiceSubscriptionModelApi", "can_get"],
         ["HiEventsAppServiceSubscriptionModelApi", "can_get"],
+        ["DeploymentServiceModelApi", "can_get"],
+        ["CustomParameterModelApi", "can_get"],
+        ["CustomParameterModelApi", "can_post"],
     ]
 }
 

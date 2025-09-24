@@ -82,7 +82,7 @@ class DeploymentServiceView(ModelView):
 
 appbuilder.add_view(
     DeploymentServiceView,
-    "Cicd",
+    "Deployment service",
     icon="fa-cogs",
     category="Master",
 )
