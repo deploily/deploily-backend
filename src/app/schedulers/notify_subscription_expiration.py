@@ -17,7 +17,7 @@ sent_notifications = set()
 last_reset_date = None  # Pour nettoyer le cache chaque jour
 
 
-@scheduler.task("cron", id="notify_expiring_subscriptions", max_instances=1, minute="*/1")
+@scheduler.task("cron", id="notify_expiring_subscriptions", max_instances=1, hour=2, minute=0)
 def notify_expiring_subscriptions():
     global sent_notifications, last_reset_date
 
@@ -30,6 +30,7 @@ def notify_expiring_subscriptions():
         print("[RESET] sent_notifications cleared for new day")
 
     try:
+        # TODO when subscriotion is expired `status` should change to `inactive`
         with app.app_context():
             notice_days = [3, 5, 6, 7, 15, 30]
 

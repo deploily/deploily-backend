@@ -6,11 +6,11 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from slugify import slugify
 
 from app import appbuilder, db
-from app.service_cicd.models.cicd_services_model import CicdService
+from app.service_deployment.models.deployment_services_model import DeploymentService
 
 
-class CicdServiceView(ModelView):
-    datamodel = SQLAInterface(CicdService)
+class DeploymentServiceView(ModelView):
+    datamodel = SQLAInterface(DeploymentService)
 
     list_columns = [
         "tags",
@@ -33,7 +33,7 @@ class CicdServiceView(ModelView):
         "service_slug",
         "service_unity",
         "price_category",
-        "cicd_field",
+        "deployment_field",
         "ratings",
     ]
     edit_columns = [
@@ -52,7 +52,7 @@ class CicdServiceView(ModelView):
         "service_slug",
         "service_unity",
         "price_category",
-        "cicd_field",
+        "deployment_field",
         "ratings",
     ]
     show_columns = [
@@ -71,7 +71,7 @@ class CicdServiceView(ModelView):
         "service_slug",
         "service_unity",
         "price_category",
-        "cicd_field",
+        "deployment_field",
         "ratings",
     ]
 
@@ -81,8 +81,8 @@ class CicdServiceView(ModelView):
 
 
 appbuilder.add_view(
-    CicdServiceView,
-    "Cicd",
+    DeploymentServiceView,
+    "Deployment service",
     icon="fa-cogs",
     category="Master",
 )

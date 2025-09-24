@@ -12,7 +12,7 @@ from app.services.apisix_service import ApiSixService
 logger = logging.getLogger(__name__)
 
 
-@scheduler.task("cron", id="delete_consumer", max_instances=1, minute="*/1")
+@scheduler.task("cron", id="delete_consumer", max_instances=1, hour=2, minute=0)
 def delete_expired_consumers():
     print(">>> [CRON] delete_expired_consumers() running")
     with app.app_context():
@@ -30,7 +30,10 @@ def delete_expired_consumers():
                 func.now()
                 > (
                     ApiServiceSubscription.start_date
-                    + cast(func.concat(ApiServiceSubscription.duration_month, " month"), INTERVAL)
+                    + cast(
+                        func.concat(ApiServiceSubscription.duration_month, " month"),
+                        INTERVAL,
+                    )
                 ),
                 or_(
                     ApiServiceSubscription.is_upgrade == False,
@@ -41,7 +44,7 @@ def delete_expired_consumers():
         )
 
         for sub in subscriptions:
-            if sub.is_expired:
+            if sub.is_expired and sub.status == "active":
                 user = sub.created_by
                 if not user.id:
                     user = db.session.query(User).filter_by(username=user.username).first()
@@ -60,6 +63,8 @@ def delete_expired_consumers():
 
                 apisix.delete_consumer(username=consumer_username)
                 print(f"[CRON] Deleted consumer: {consumer_username}")
+
+                # TODO add set sub.status to `inactive`
 
             else:
                 print("[CRON] No expired subscriptions found.")
