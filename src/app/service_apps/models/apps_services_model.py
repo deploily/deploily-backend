@@ -16,7 +16,6 @@ class AppService(Service):
     __mapper_args__ = {
         "polymorphic_identity": "app_service",
     }
-    contact_us = relationship("ContactUs", back_populates="app_service")
 
     minimal_cpu = Column(Integer, nullable=False)
     minimal_ram = Column(Integer, nullable=False)

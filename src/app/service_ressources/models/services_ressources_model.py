@@ -19,7 +19,6 @@ class RessourceService(Service):
     provider = relationship("ProvidersRessourceService", back_populates="ressource_services")
     ressouce_category_id = Column(Integer, ForeignKey("service_ressouce_category.id"))
     ressouce_category = relationship("ServiceRessouceCategory", back_populates="ressouce_services")
-    contact_us = relationship("ContactUs", back_populates="ressource")
 
     def __repr__(self):
         return f"{self.provider} / {self.name}"
