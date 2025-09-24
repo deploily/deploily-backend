@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session as SASession
 from sqlalchemy.orm import object_session, relationship
 
 from app import db
-from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.models import Subscription
 from app.core.models.mail_models import Mail
 
@@ -109,6 +108,7 @@ _pending_deployed_apps = {}
 
 @event.listens_for(SubscriptionAppService, "after_update")
 def mark_for_email(mapper, connection, target):
+
     if target.application_status in ["deployed", "error"]:
         session = object_session(target)
         if session:
@@ -118,6 +118,8 @@ def mark_for_email(mapper, connection, target):
 
 @event.listens_for(db.session.__class__, "after_commit")
 def send_deployed_app_emails(session):
+    from app.core.celery_tasks.send_mail_task import send_mail
+
     session_id = id(session)
     targets = _pending_deployed_apps.pop(session_id, [])
 
