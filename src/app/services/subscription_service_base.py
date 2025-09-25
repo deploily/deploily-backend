@@ -149,7 +149,12 @@ class SubscriptionServiceBase:
         return payment
 
     def process_payment(
-        self, invoice, total_amount: float, is_mvc_call, client_confirm_url, client_fail_url
+        self,
+        invoice,
+        total_amount: float,
+        is_mvc_call,
+        client_confirm_url,
+        client_fail_url,
     ) -> Tuple[bool, str, dict]:
         """Process payment through external service"""
         # payment.order_id = "PAY" + str(payment.id)
@@ -158,7 +163,11 @@ class SubscriptionServiceBase:
         try:
             payment_service = PaymentService()
             payment_response = payment_service.post_payement(
-                invoice.id, total_amount, is_mvc_call, client_confirm_url, client_fail_url
+                invoice.id,
+                total_amount,
+                is_mvc_call,
+                client_confirm_url,
+                client_fail_url,
             )[0]
 
             # Parse response if it's a string
@@ -387,47 +396,50 @@ class SubscriptionServiceBase:
             type(request_data) == ApiSubscriptionRequest
             or type(request_data) == UpgradeApiSubscriptionRequest
         ):
-            ressource_plan = None
-        elif request_data.ressource_service_plan_selected_id is None:
-            ressource_plan = None
-        else:
-            is_valid, error_msg, ressource_plan = self.validate_ressource_service_plan(
-                request_data.ressource_service_plan_selected_id
-            )
-        if not is_valid:
-            return False, error_msg, None
+            pass
+        # ! MUSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+        # elif request_data.ressource_service_plan_selected_id is None:
+        #     ressource_plan = None
+        # else:
+        #     is_valid, error_msg, ressource_plan = self.validate_ressource_service_plan(
+        #         request_data.ressource_service_plan_selected_id
+        #     )
+        # if not is_valid:
+        #     return False, error_msg, None
 
         #  Validate managed ressource
-        if (
-            type(request_data) == ApiSubscriptionRequest
-            or type(request_data) == UpgradeApiSubscriptionRequest
-        ):
-            managed_ressource = None
-        elif request_data.managed_ressource_id is None:
-            managed_ressource = None
-        else:
-            is_valid, error_msg, managed_ressource = self.validate_managed_ressource(
-                request_data.managed_ressource_id
-            )
-            if not is_valid:
-                return False, error_msg, None
+        # if (
+        #     type(request_data) == ApiSubscriptionRequest
+        #     or type(request_data) == UpgradeApiSubscriptionRequest
+        # ):
+        #     managed_ressource = None
+        # elif request_data.managed_ressource_id is None:
+        #     managed_ressource = None
+        # else:
+        #     is_valid, error_msg, managed_ressource = self.validate_managed_ressource(
+        #         request_data.managed_ressource_id
+        #     )
+        #     if not is_valid:
+        #         return False, error_msg, None
 
         # Validate service plan
-        if (
-            type(request_data) == ApiSubscriptionRequest
-            or type(request_data) == UpgradeApiSubscriptionRequest
-        ):
-            version = None
-        else:
-            is_valid, error_msg, version = self.validate_version(request_data.version_selected_id)
-            if not is_valid:
-                return False, error_msg, None
+        # if (
+        #     type(request_data) == ApiSubscriptionRequest
+        #     or type(request_data) == UpgradeApiSubscriptionRequest
+        # ):
+        #     version = None
+        # else:
+        #     is_valid, error_msg, version = self.validate_version(
+        #         request_data.version_selected_id
+        #     )
+        #     if not is_valid:
+        #         return False, error_msg, None
 
         # Calculate pricing
         total_amount = plan.price * request_data.duration
 
-        if ressource_plan:
-            total_amount += ressource_plan.price * request_data.duration
+        # if ressource_plan:
+        #     total_amount += ressource_plan.price * request_data.duration
 
         promo_code, discount_amount = self.validate_promo_code(
             request_data.promo_code, total_amount
@@ -439,7 +451,7 @@ class SubscriptionServiceBase:
         # subscription_status = "active" if has_sufficient_balance else "inactive"
         subscription_json = {
             "plan": plan,
-            "ressource_plan": ressource_plan if ressource_plan else None,
+            # "ressource_plan": ressource_plan if ressource_plan else None,
             "duration": request_data.duration,
             "total_amount": total_amount,
             "price": final_price,
@@ -447,8 +459,8 @@ class SubscriptionServiceBase:
             "profile": profile,
             "phone": request_data.phone,
             # "status": subscription_status,
-            "version_id": version.id if version else None,
-            "managed_ressource": managed_ressource if managed_ressource else None,
+            # "version_id": version.id if version else None,
+            # "managed_ressource": managed_ressource if managed_ressource else None,
             # "has_sufficient_balance": has_sufficient_balance,
         }
         return True, "success", subscription_json
