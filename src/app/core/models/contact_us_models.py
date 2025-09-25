@@ -11,8 +11,8 @@ class ContactUs(Model):
     email = Column(String(255), nullable=False)
     message = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=True)
-    ressource_id = Column(Integer, ForeignKey("ressource_service.id"))
-    ressource = relationship("RessourceService", back_populates="contact_us")
+    service_id = Column(Integer, ForeignKey("service.id"))
+    service = relationship("Service", back_populates="contact_us")
     partner_id = Column(Integer, ForeignKey("ab_user.id"), nullable=True)
     partner = relationship("User", backref="contact_us")
 

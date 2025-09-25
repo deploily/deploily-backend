@@ -35,6 +35,7 @@ class Service(Model):
     is_published = Column(Boolean, default=False)
     service_unity = Column(Text)
     price_category = Column(Enum("monthly", "yearly", name="price_category"))
+    contact_us = relationship("ContactUs", back_populates="service")
 
     @property
     def is_in_favorite(self):

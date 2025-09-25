@@ -13,14 +13,14 @@ from app.core.models.mail_models import Mail
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
-_contact_us_display_columns = ["name", "email", "message", "phone", "ressource_id"]
+_contact_us_display_columns = ["name", "email", "message", "phone", "service_id"]
 
 
 class ContactUSModelApi(ModelRestApi):
     resource_name = "contact-us"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ContactUs)
-    add_columns = ["name", "email", "message", "phone", "ressource_id"]
+    add_columns = ["name", "email", "message", "phone", "service_id"]
     list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
 
@@ -83,7 +83,7 @@ class PublicContactUSModelApi(BaseApi):
                     phone:
                       type: string
                       description: phone
-                    ressource_id:
+                    service_id:
                       type: integer
 
                     email:
@@ -121,7 +121,7 @@ class PublicContactUSModelApi(BaseApi):
                 message=data.get("message"),
                 name=data.get("name"),
                 phone=data.get("phone"),
-                ressource_id=data.get("ressource_id"),
+                service_id=data.get("service_id"),
             )
             db.session.add(contact_us)
             db.session.commit()
@@ -134,7 +134,7 @@ class PublicContactUSModelApi(BaseApi):
                     "message": contact_us.message,
                     "email": contact_us.email,
                     "phone": contact_us.phone,
-                    "ressource_id": contact_us.ressource_id,
+                    "service_id": contact_us.service_id,
                 },
             )
 
