@@ -23,6 +23,7 @@ class Service(Model):
     tags = relationship(
         "ServiceTag", secondary="service_tag_association", back_populates="services"
     )
+    contact_us = relationship("ContactUs", back_populates="service")
     service_plans = relationship("ServicePlan")
     myfavorites = relationship("MyFavorites", back_populates="service", overlaps="service")
     ratings = relationship("Score", back_populates="service", overlaps="service")

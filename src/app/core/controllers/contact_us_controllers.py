@@ -13,14 +13,14 @@ from app.core.models.mail_models import Mail
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
-_contact_us_display_columns = ["name", "email", "message", "phone", "service_id"]
-
-
+_contact_us_display_columns = ["name", "email", "message", "phone", "service"]
 class ContactUSModelApi(ModelRestApi):
     resource_name = "contact-us"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ContactUs)
-    add_columns = ["name", "email", "message", "phone", "service_id"]
+
+    add_columns = ["name", "email", "message", "phone", "service"]
+
     list_columns = _contact_us_display_columns
     edit_columns = _contact_us_display_columns
 
