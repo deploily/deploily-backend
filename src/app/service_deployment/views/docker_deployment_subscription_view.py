@@ -25,6 +25,7 @@ class DockerDeploymentServiceSubscriptionView(ModelView):
         "is_upgrade",
         "is_renew",
         "description",
+        "deployment_status",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on", "type"]
