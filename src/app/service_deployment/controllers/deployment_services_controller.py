@@ -247,6 +247,7 @@ class PublicDeploymentServiceApi(BaseApi):  # public version
                 # "minimal_disk": service.minimal_disk,
                 "service_slug": service.service_slug,
                 "is_subscribed": service.is_subscribed,
+                "unit_price": service.unit_price,
                 # "app_versions": [
                 #     {"id": app.id, "version": app.name, "description": app.description}
                 #     for app in service.app_versions
