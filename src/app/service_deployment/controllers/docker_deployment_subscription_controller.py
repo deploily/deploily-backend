@@ -10,7 +10,7 @@ from app.service_deployment.models.docker_deployment_subscription_model import (
     DockerSubscriptionDeploymentService,
 )
 
-api_columns = []
+docker_service_columns = []
 
 
 class DockerDeploymentServiceSubscriptionModelApi(DeploymentServiceSubscriptionModelApi):
@@ -18,10 +18,10 @@ class DockerDeploymentServiceSubscriptionModelApi(DeploymentServiceSubscriptionM
     resource_name = "docker-deployment-service-subscription"
     datamodel = SQLAInterface(DockerSubscriptionDeploymentService)
 
-    add_columns = DeploymentServiceSubscriptionModelApi.add_columns + api_columns
-    list_columns = DeploymentServiceSubscriptionModelApi.list_columns + api_columns
-    show_columns = DeploymentServiceSubscriptionModelApi.show_columns + api_columns
-    edit_columns = DeploymentServiceSubscriptionModelApi.edit_columns + api_columns
+    add_columns = DeploymentServiceSubscriptionModelApi.add_columns + docker_service_columns
+    list_columns = DeploymentServiceSubscriptionModelApi.list_columns + docker_service_columns
+    show_columns = DeploymentServiceSubscriptionModelApi.show_columns + docker_service_columns
+    edit_columns = DeploymentServiceSubscriptionModelApi.edit_columns + docker_service_columns
 
 
 appbuilder.add_api(DockerDeploymentServiceSubscriptionModelApi)

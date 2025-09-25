@@ -14,7 +14,13 @@ from app.service_deployment.models.deployment_service_subscription_model import 
 )
 from app.utils.utils import get_user
 
-deployment_columns = ["required_restart", "access_url", "deployment_error", "custom_paramters"]
+deployment_columns = [
+    "deployment_status",
+    "required_restart",
+    "access_url",
+    "deployment_error",
+    "custom_paramters",
+]
 
 edit_columns = ["deployment_status"]
 
@@ -101,7 +107,10 @@ class DeploymentServiceSubscriptionModelApi(SubscriptionModelApi):
         notify_email = current_app.config.get("NOTIFICATION_EMAIL")
 
         # Check if a restart is required but hasn't been flagged yet
-        if not item.required_restart and item.deployment_status in ["deployed", "error"]:
+        if not item.required_restart and item.deployment_status in [
+            "deployed",
+            "error",
+        ]:
             item.required_restart = True
             db.session.commit()
 
