@@ -35,6 +35,8 @@ class DeploymentServiceView(ModelView):
         "price_category",
         "deployment_field",
         "ratings",
+        "is_published",
+        "is_eligible",
     ]
     edit_columns = [
         # "category",
@@ -54,6 +56,8 @@ class DeploymentServiceView(ModelView):
         "price_category",
         "deployment_field",
         "ratings",
+        "is_published",
+        "is_eligible",
     ]
     show_columns = [
         # "category",
@@ -73,6 +77,8 @@ class DeploymentServiceView(ModelView):
         "price_category",
         "deployment_field",
         "ratings",
+        "is_published",
+        "is_eligible",
     ]
 
     def post_add(self, item):
