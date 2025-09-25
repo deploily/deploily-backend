@@ -12,9 +12,9 @@ class DockerDeploymentSubscriptionRequest:
 
     profile_id: int
     service_plan_selected_id: int
-    # ressource_service_plan_selected_id: int
+    ressource_service_plan_selected_id: int
     # version_selected_id: int
-    # managed_ressource_id: int
+    managed_ressource_id: int
     total_amount: float
     duration: int
     payment_method: str
@@ -32,9 +32,8 @@ class UpgradeDockerDeploymentSubscriptionRequest:
     profile_id: int
     old_subscription_id: int
     service_plan_selected_id: int
-    # ressource_service_plan_selected_id: int
-    # ! i don't know if we need it
-    # managed_ressource_id: int
+    ressource_service_plan_selected_id: int
+    managed_ressource_id: int
     # version_selected_id: int
     total_amount: float
     duration: int
@@ -114,7 +113,7 @@ class SubscriptionDockerDeploymentService:
             # Create instance of the specified request type
             request_data = request_type(
                 profile_id=int(data["profile_id"]),
-                service_plan_selected_id=int(data["service_plan_selected_id"]),
+                # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
@@ -129,51 +128,47 @@ class SubscriptionDockerDeploymentService:
                     else {}
                 ),
                 # Todo check this
-                # **(
-                #     {
-                #         "ressource_service_plan_selected_id": (
-                #             int(data["ressource_service_plan_selected_id"])
-                #             if "ressource_service_plan_selected_id" in data
-                #             and data["ressource_service_plan_selected_id"] is not None
-                #             else None
-                #         ),
-                #         "managed_ressource_id": (
-                #             int(data["managed_ressource_id"])
-                #             if "managed_ressource_id" in data
-                #             and data["managed_ressource_id"] is not None
-                #             else None
-                #         ),
-                #         "version_selected_id": int(data["version_selected_id"]),
-                #         "service_plan_selected_id": int(
-                #             data["service_plan_selected_id"]
-                #         ),
-                #     }
-                #     if request_type == DockerDeploymentSubscriptionRequest
-                #     else {}
-                # ),
-                # **(
-                #     {
-                #         "ressource_service_plan_selected_id": (
-                #             int(data["ressource_service_plan_selected_id"])
-                #             if "ressource_service_plan_selected_id" in data
-                #             and data["ressource_service_plan_selected_id"] is not None
-                #             else None
-                #         ),
-                #         "managed_ressource_id": (
-                #             int(data["managed_ressource_id"])
-                #             if "managed_ressource_id" in data
-                #             and data["managed_ressource_id"] is not None
-                #             else None
-                #         ),
-                #         "version_selected_id": int(data["version_selected_id"]),
-                #         "old_subscription_id": int(data["old_subscription_id"]),
-                #         "service_plan_selected_id": int(
-                #             data["service_plan_selected_id"]
-                #         ),
-                #     }
-                #     if request_type == UpgradeDockerDeploymentSubscriptionRequest
-                #     else {}
-                # ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
+                        ),
+                        # "version_selected_id": int(data["version_selected_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == DockerDeploymentSubscriptionRequest
+                    else {}
+                ),
+                **(
+                    {
+                        "ressource_service_plan_selected_id": (
+                            int(data["ressource_service_plan_selected_id"])
+                            if "ressource_service_plan_selected_id" in data
+                            and data["ressource_service_plan_selected_id"] is not None
+                            else None
+                        ),
+                        "managed_ressource_id": (
+                            int(data["managed_ressource_id"])
+                            if "managed_ressource_id" in data
+                            and data["managed_ressource_id"] is not None
+                            else None
+                        ),
+                        # "version_selected_id": int(data["version_selected_id"]),
+                        "old_subscription_id": int(data["old_subscription_id"]),
+                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
+                    }
+                    if request_type == UpgradeDockerDeploymentSubscriptionRequest
+                    else {}
+                ),
             )
             # ✅ Custom validation: enforce duration > 3
 
@@ -235,7 +230,7 @@ class SubscriptionDockerDeploymentService:
         profile_id: int,
         status: str,
         # version_id: int,
-        # managed_ressource:int,
+        # managed_ressource: int,
         phone: Optional[str] = None,
         # ressource_service_plan,
         is_upgrade: bool = False,

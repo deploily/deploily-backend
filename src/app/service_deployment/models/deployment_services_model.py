@@ -19,6 +19,11 @@ class DeploymentService(Service):
     deployment_field = Column(Text)
     sequence = Column(Integer)
 
+    # app_versions = relationship(
+    #     "Version",
+    #     secondary="app_service_version",
+    #     back_populates="app_services",
+    # )
     @property
     def is_subscribed(self):
 
