@@ -20,6 +20,7 @@ class AffiliationView(ModelView):
         "phone_number",
         "provider",
         "service_plan",
+        "internal_note",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

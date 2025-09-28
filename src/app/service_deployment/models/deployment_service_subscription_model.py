@@ -27,6 +27,7 @@ class SubscriptionDeploymentService(Subscription):
         back_populates="deployment_subscription",
         overlaps="deployment_subscription",
     )
+    internal_note = Column(Text, nullable=True)
 
     def to_dict(self):
         return {

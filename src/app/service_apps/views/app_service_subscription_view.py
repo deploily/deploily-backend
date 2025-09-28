@@ -28,6 +28,7 @@ class SubscriptionAppServiceView(ModelView):
         "version",
         "console_url",
         "application_status",
+        "internal_note",
         # "ressource_service_plan",
     ]
 

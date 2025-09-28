@@ -10,7 +10,7 @@ from app.core.models.contact_us_models import ContactUs
 class ContactUsModelView(ModelView):
     route_base = "/admin/contact-us"
     datamodel = SQLAInterface(ContactUs)
-    list_columns = ["id", "name", "email", "message"]
+    list_columns = ["id", "name", "email", "message", "internal_note"]
     base_order = ("id", "desc")
 
 

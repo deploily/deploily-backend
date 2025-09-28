@@ -2,7 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -19,6 +19,7 @@ class Affiliation(Model, AuditMixin):
 
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship("ServicePlan")
+    internal_note = Column(Text, nullable=True)
 
     def __repr__(self):
         return f" {self.id} "

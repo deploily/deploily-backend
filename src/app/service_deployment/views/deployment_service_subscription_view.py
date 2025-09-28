@@ -27,6 +27,7 @@ class SubscriptionDeploymentServiceView(ModelView):
         "required_restart",
         "deployment_status",
         "is_published",
+        "internal_note",
     ]
 
     base_order = ("id", "desc")
