@@ -64,55 +64,7 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
     @expose("/<int:item_id>", methods=["GET"])
     @protect()
     def get_by_id(self, item_id):
-        """
-        Get a specific subscription by ID (only if it belongs to the current user).
 
-        ---
-        get:
-            summary: Retrieve a subscription by its ID
-            description: |
-                This endpoint returns the details of a specific subscription that belongs to the authenticated user.
-                If the subscription is expired, access is denied.
-            parameters:
-                - name: item_id
-                in: path
-                required: true
-                description: ID of the subscription
-                schema:
-                    type: integer
-            security:
-                - apiKeyAuth: []  # or BearerAuth, depending on your setup
-            responses:
-                200:
-                    description: Subscription retrieved successfully
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    id:
-                                        type: integer
-                                        example: 12
-                                    name:
-                                        type: string
-                                        example: "Pro Monthly Plan"
-                                    total_amount:
-                                        type: number
-                                        format: float
-                                        example: 49.99
-                                    payment_status:
-                                        type: string
-                                        example: "paid"
-                                    is_expired:
-                                        type: boolean
-                                        example: false
-                401:
-                    description: Unauthorized — user not logged in
-                403:
-                    description: Forbidden — subscription expired
-                404:
-                    description: Subscription not found
-        """
         user = get_user()
         if not user:
             return self.response(401, message="Unauthorized")
