@@ -393,19 +393,17 @@ class SubscriptionServiceBase:
             return False, error_msg, None
 
         # Validate service plan
+        ressource_plan = None
         if (
-            type(request_data) == ApiSubscriptionRequest
-            or type(request_data) == UpgradeApiSubscriptionRequest
+            type(request_data) != ApiSubscriptionRequest
+            and type(request_data) != UpgradeApiSubscriptionRequest
+            and request_data.ressource_service_plan_selected_id is not None
         ):
-            pass
-        elif request_data.ressource_service_plan_selected_id is None:
-            ressource_plan = None
-        else:
             is_valid, error_msg, ressource_plan = self.validate_ressource_service_plan(
                 request_data.ressource_service_plan_selected_id
             )
-        if not is_valid:
-            return False, error_msg, None
+            if not is_valid:
+                return False, error_msg, None
 
         #  Validate managed ressource
         if (
