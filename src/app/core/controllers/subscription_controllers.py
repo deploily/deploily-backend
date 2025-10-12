@@ -29,6 +29,7 @@ _subscribe_display_columns = [
     "managed_ressource",
     "managed_ressource_details",
     "phone",
+    "get_plan_details",
 ]
 
 _subscribe_edit_columns = [
@@ -44,6 +45,7 @@ _subscribe_edit_columns = [
     "service_plan_id",
     "managed_ressource_details",
     "phone",
+    "get_plan_details",
 ]
 
 
@@ -84,6 +86,27 @@ class SubscriptionModelApi(ModelRestApi):
                 "id": sub.service_plan.id,
                 "price": sub.service_plan.price,
                 "subscription_category": sub.service_plan.subscription_category,
+                "service_plan_options": (
+                    {
+                        "id": getattr(sub.service_plan.service_plan_options, "id", None),
+                        "html_content": getattr(
+                            sub.service_plan.service_plan_options, "html_content", None
+                        ),
+                        "option_type": getattr(
+                            sub.service_plan.service_plan_options, "option_type", None
+                        ),
+                        "option_value": getattr(
+                            sub.service_plan.service_plan_options, "option_value", None
+                        ),
+                        "sequence": getattr(
+                            sub.service_plan.service_plan_options, "sequence", None
+                        ),
+                        "icon": getattr(sub.service_plan.service_plan_options, "icon", None),
+                    }
+                    if sub.service_plan and getattr(sub.service_plan, "service_plan_options", None)
+                    else None
+                ),
+                "name": getattr(sub.service_plan, "name", None),
             },
             "service_details": {
                 "id": sub.service_details.get("id"),

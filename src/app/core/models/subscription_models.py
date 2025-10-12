@@ -156,6 +156,37 @@ class Subscription(Model, AuditMixin):
         details = self.service_details
         return details.get("name") if isinstance(details, dict) else None
 
+    @property
+    def get_plan_details(self):
+        if not self.service_plan:
+            return None
+
+        plan = self.service_plan.plan
+        options = self.service_plan.options
+
+        return {
+            "service_plan_id": self.service_plan.id,
+            "service_plan_type": self.service_plan.service_plan_type,
+            "subscription_category": self.service_plan.subscription_category,
+            "price": self.service_plan.price,
+            "plan": {
+                "id": plan.id if plan else None,
+                "name": plan.name if plan else None,
+                # add any other plan fields you have
+            },
+            "options": [
+                {
+                    "id": opt.id,
+                    "type": opt.option_type,
+                    "value": opt.option_value,
+                    "icon": opt.icon,
+                    "html_content": opt.html_content,
+                    "sequence": opt.sequence,
+                }
+                for opt in options
+            ],
+        }
+
     # @property
     # def is_expired(self):
     #     is_subscription_expired = False

@@ -61,29 +61,6 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
 
         return self.response(200, result=result)
 
-    @expose("/<int:item_id>", methods=["GET"])
-    @protect()
-    def get_by_id(self, item_id):
-
-        user = get_user()
-        if not user:
-            return self.response(401, message="Unauthorized")
-
-        item = (
-            self.datamodel.session.query(self.datamodel.obj)
-            .filter_by(id=item_id, created_by=user)
-            .first()
-        )
-
-        if not item:
-            return self.response(404, message="Subscription not found")
-
-        # Optional: block expired subscriptions
-        if item.is_expired:
-            return self.response(403, message="Subscription has expired")
-
-        return self.response(200, result=item.to_dict())
-
     @protect()
     @jwt_required()
     @expose("/<int:subscribe_id>/token", methods=["POST"])

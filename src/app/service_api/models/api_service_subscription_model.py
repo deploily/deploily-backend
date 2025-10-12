@@ -28,28 +28,6 @@ class ApiServiceSubscription(Subscription):
                 "id": self.service_plan.id,
                 "price": self.service_plan.price,
                 "subscription_category": self.service_plan.subscription_category,
-                "service_plan_options": (
-                    {
-                        "id": getattr(self.service_plan.service_plan_options, "id", None),
-                        "html_content": getattr(
-                            self.service_plan.service_plan_options, "html_content", None
-                        ),
-                        "option_type": getattr(
-                            self.service_plan.service_plan_options, "option_type", None
-                        ),
-                        "option_value": getattr(
-                            self.service_plan.service_plan_options, "option_value", None
-                        ),
-                        "sequence": getattr(
-                            self.service_plan.service_plan_options, "sequence", None
-                        ),
-                        "icon": getattr(self.service_plan.service_plan_options, "icon", None),
-                    }
-                    if self.service_plan
-                    and getattr(self.service_plan, "service_plan_options", None)
-                    else None
-                ),
-                "name": getattr(self.service_plan, "name", None),
             },
             "promo_code_id": self.promo_code.id if self.promo_code else None,
             "promo_code_name": self.promo_code.code if self.promo_code else None,
