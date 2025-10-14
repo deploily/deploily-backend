@@ -89,6 +89,7 @@ CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
+    {"url": "http://localhost:5001/"},
     {"url": "http://192.168.1.22:5000"},
     {"url": "http://192.168.1.21:5000"},
     {"url": "http://192.168.1.15:5000"},

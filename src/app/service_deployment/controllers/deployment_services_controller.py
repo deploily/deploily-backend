@@ -241,6 +241,7 @@ class PublicDeploymentServiceApi(BaseApi):  # public version
                 "image_service": service.image_service,
                 "specifications": service.specifications,
                 "documentation_url": service.documentation_url,
+                "unit_price": service.unit_price,
                 # "demo_url": service.demo_url,
                 # "minimal_cpu": service.minimal_cpu,
                 # "minimal_ram": service.minimal_ram,

@@ -29,6 +29,7 @@ _subscribe_display_columns = [
     "managed_ressource",
     "managed_ressource_details",
     "phone",
+    "get_plan_details",
 ]
 
 _subscribe_edit_columns = [
@@ -44,6 +45,7 @@ _subscribe_edit_columns = [
     "service_plan_id",
     "managed_ressource_details",
     "phone",
+    "get_plan_details",
 ]
 
 
