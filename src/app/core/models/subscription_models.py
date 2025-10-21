@@ -187,6 +187,37 @@ class Subscription(Model, AuditMixin):
             ],
         }
 
+    @property
+    def get_managed_ressource_plan_details(self):
+        if not self.managed_ressource.ressource_service_plan:
+            return None
+
+        plan = self.managed_ressource.ressource_service_plan.plan
+        options = self.managed_ressource.ressource_service_plan.options
+
+        return {
+            "service_plan_id": self.managed_ressource.ressource_service_plan.id,
+            "service_plan_type": self.managed_ressource.ressource_service_plan.service_plan_type,
+            "subscription_category": self.managed_ressource.ressource_service_plan.subscription_category,
+            "price": self.managed_ressource.ressource_service_plan.price,
+            "plan": {
+                "id": plan.id if plan else None,
+                "name": plan.name if plan else None,
+                # add any other plan fields you have
+            },
+            "options": [
+                {
+                    "id": opt.id,
+                    "type": opt.option_type,
+                    "value": opt.option_value,
+                    "icon": opt.icon,
+                    "html_content": opt.html_content,
+                    "sequence": opt.sequence,
+                }
+                for opt in options
+            ],
+        }
+
     # @property
     # def is_expired(self):
     #     is_subscription_expired = False
