@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, timedelta
+
 from flask_appbuilder import Model
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -20,3 +22,32 @@ class ManagedRessource(Model):
 
     def __repr__(self):
         return f"{self.host_name} ({self.ip})"
+
+    from datetime import datetime, timedelta
+
+    @property
+    def time_remaining(self):
+        """Return only the number of full months remaining for the first subscription."""
+        if not self.subscriptions:
+            return 0
+
+        # ✅ Take the first (earliest) subscription
+        first_subscription = min(self.subscriptions, key=lambda s: s.start_date)
+
+        start_date = first_subscription.start_date
+        duration_months = first_subscription.duration_month or 0
+
+        # Compute end date
+        end_date = start_date + timedelta(days=30 * duration_months)
+        now = datetime.now()
+
+        # Calculate remaining days
+        remaining_days = (end_date - now).days
+
+        if remaining_days <= 0:
+            return 0  # expired
+
+        # Convert to full months
+        remaining_months = remaining_days // 30
+
+        return remaining_months
