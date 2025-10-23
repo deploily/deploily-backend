@@ -21,6 +21,11 @@ class SubscriptionDeploymentService(Subscription):
     required_restart = Column(Boolean, default=False)
     access_url = Column(String(100))
     deployment_error = Column("error", Text())
+    argocd_url = Column(String(255))
+    argocd_user_name = Column(String(255))
+    argocd_password = Column(String(255))
+    backend_url = Column(String(255))
+    frontend_url = Column(String(255))
 
     custom_paramters = relationship(
         "CustomParameter",

@@ -27,6 +27,11 @@ class SubscriptionDeploymentServiceView(ModelView):
         "required_restart",
         "deployment_status",
         "is_published",
+        "argocd_url",
+        "argocd_user_name",
+        "argocd_password",
+        "backend_url",
+        "frontend_url",
     ]
 
     base_order = ("id", "desc")
