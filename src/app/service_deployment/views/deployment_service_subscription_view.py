@@ -32,6 +32,7 @@ class SubscriptionDeploymentServiceView(ModelView):
         "argocd_password",
         "backend_url",
         "frontend_url",
+        "internal_note",
     ]
 
     base_order = ("id", "desc")
