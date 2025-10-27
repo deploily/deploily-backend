@@ -17,6 +17,7 @@ display_columns = [
     "operator_system",
     "subscriptions",
     "ressource_service_plan",
+    "time_remaining",
 ]
 
 
@@ -72,6 +73,7 @@ class ManagedRessourceModelApi(BaseApi):
                 result.append(
                     {
                         "id": service_plan.id,
+                        "managed_ressource_id": res.id,
                         "plan_name": service_plan.plan.name if service_plan.plan else None,
                         "service_name": service_plan.service.name if service_plan.service else None,
                         "service_id": service_plan.service.id if service_plan.service else None,
@@ -79,6 +81,7 @@ class ManagedRessourceModelApi(BaseApi):
                         "service_plan_type": service_plan.service_plan_type,
                         "preparation_time": service_plan.preparation_time,
                         "unity": service_plan.unity,
+                        "time_remaining": res.time_remaining,
                         "options": [
                             {
                                 "id": opt.id,

@@ -20,6 +20,11 @@ deployment_columns = [
     "access_url",
     "deployment_error",
     "custom_paramters",
+    "argocd_url",
+    "argocd_user_name",
+    "argocd_password",
+    "backend_url",
+    "frontend_url",
 ]
 
 edit_columns = ["deployment_status"]
