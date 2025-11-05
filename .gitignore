@@ -170,3 +170,4 @@ celerybeat-schedule
 celerybeat.pid
 
 scheduler.db
+!.gitkeep

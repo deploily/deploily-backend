@@ -19,8 +19,8 @@ class ContactUs(Model):
     partner = relationship("User", backref="contact_us")
     internal_note = Column(Text, nullable=True)
 
-    contact_us_status = Column(Enum("pending", "lead", "junk", name="contact_us_status"))
-    created_on = Column(DateTime, default=lambda: datetime.now(), nullable=False)
+    contact_us_status = Column(Enum("new", "lead", "junk", name="contact_us_status"), default="new")
+    created_on = Column(DateTime, default=lambda: datetime.now(), nullable=True)
 
     def __repr__(self):
         return self.name
