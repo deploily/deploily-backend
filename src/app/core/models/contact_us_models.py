@@ -19,7 +19,7 @@ class ContactUs(Model):
     partner = relationship("User", backref="contact_us")
     internal_note = Column(Text, nullable=True)
 
-    status = Column(Enum("pending", "lead", "junk", name="status"))
+    contact_us_status = Column(Enum("pending", "lead", "junk", name="contact_us_status"))
     created_on = Column(DateTime, default=lambda: datetime.now(), nullable=False)
 
     def __repr__(self):
