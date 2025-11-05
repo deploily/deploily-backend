@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from flask_appbuilder import Model
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -16,6 +18,9 @@ class ContactUs(Model):
     partner_id = Column(Integer, ForeignKey("ab_user.id"), nullable=True)
     partner = relationship("User", backref="contact_us")
     internal_note = Column(Text, nullable=True)
+
+    status = Column(Enum("pending", "lead", "junk", name="status"))
+    created_on = Column(DateTime, default=lambda: datetime.now(), nullable=False)
 
     def __repr__(self):
         return self.name
