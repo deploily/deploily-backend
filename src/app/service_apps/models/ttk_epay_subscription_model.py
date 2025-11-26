@@ -38,6 +38,15 @@ class TtkEpaySubscriptionAppService(SubscriptionAppService):
     ttk_epay_mvc_satim_fail_url = Column(String, nullable=True)
     ttk_epay_mvc_satim_confirm_url = Column(String, nullable=True)
 
+    ttk_epay_email_from = Column(String, nullable=True)
+    ttk_epay_email_host = Column(String, nullable=True)
+    ttk_epay_email_smtp_server = Column(String, nullable=True)
+    ttk_epay_email_port = Column(Integer, nullable=True)
+    ttk_epay_email_username = Column(String, nullable=True)
+    ttk_epay_email_password = Column(String, nullable=True)
+    ttk_epay_recaptcha_secret_key = Column(String, nullable=True)
+    ttk_epay_recaptcha_site_key = Column(String, nullable=True)
+
 
 # _pending_deployed_apps = {}
 

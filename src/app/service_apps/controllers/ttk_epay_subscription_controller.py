@@ -35,6 +35,14 @@ api_columns = [
     "ttk_epay_mvc_satim_server_url",
     "ttk_epay_mvc_satim_fail_url",
     "ttk_epay_mvc_satim_confirm_url",
+    "ttk_epay_email_from",
+    "ttk_epay_email_host",
+    "ttk_epay_email_smtp_server",
+    "ttk_epay_email_port",
+    "ttk_epay_email_username",
+    "ttk_epay_email_password",
+    "ttk_epay_recaptcha_secret_key",
+    "ttk_epay_recaptcha_site_key",
 ]
 
 
