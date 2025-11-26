@@ -43,6 +43,11 @@ api_columns = [
     "ttk_epay_email_password",
     "ttk_epay_recaptcha_secret_key",
     "ttk_epay_recaptcha_site_key",
+    "ttk_epay_address",
+    "ttk_epay_commercial_register",
+    "ttk_epay_tax_article",
+    "ttk_epay_nif",
+    "ttk_epay_nis",
 ]
 
 

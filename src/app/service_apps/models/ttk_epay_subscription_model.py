@@ -46,6 +46,11 @@ class TtkEpaySubscriptionAppService(SubscriptionAppService):
     ttk_epay_email_password = Column(String, nullable=True)
     ttk_epay_recaptcha_secret_key = Column(String, nullable=True)
     ttk_epay_recaptcha_site_key = Column(String, nullable=True)
+    ttk_epay_address = Column(String(255), nullable=True)
+    ttk_epay_commercial_register = Column(String(100), nullable=True)
+    ttk_epay_tax_article = Column(String(100), nullable=True)
+    ttk_epay_nif = Column(String(50), nullable=True)
+    ttk_epay_nis = Column(String(50), nullable=True)
 
 
 # _pending_deployed_apps = {}
