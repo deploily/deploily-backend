@@ -25,6 +25,18 @@ deployment_columns = [
     "argocd_password",
     "backend_url",
     "frontend_url",
+    "pod_name_1",
+    "pod_name_2",
+    "pod_name_3",
+    "pod_name_4",
+    "pod_name_5",
+    "pod_name_6",
+    "pod_url_1",
+    "pod_url_2",
+    "pod_url_3",
+    "pod_url_4",
+    "pod_url_5",
+    "pod_url_6",
 ]
 
 edit_columns = ["deployment_status"]

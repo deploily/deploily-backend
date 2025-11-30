@@ -26,6 +26,18 @@ class SubscriptionDeploymentService(Subscription):
     argocd_password = Column(String(255))
     backend_url = Column(String(255))
     frontend_url = Column(String(255))
+    pod_name_1 = Column(String(255))
+    pod_name_2 = Column(String(255))
+    pod_name_3 = Column(String(255))
+    pod_name_4 = Column(String(255))
+    pod_name_5 = Column(String(255))
+    pod_name_6 = Column(String(255))
+    pod_url_1 = Column(String(255))
+    pod_url_2 = Column(String(255))
+    pod_url_3 = Column(String(255))
+    pod_url_4 = Column(String(255))
+    pod_url_5 = Column(String(255))
+    pod_url_6 = Column(String(255))
 
     custom_paramters = relationship(
         "CustomParameter",
