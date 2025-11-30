@@ -39,7 +39,21 @@ deployment_columns = [
     "pod_url_6",
 ]
 
-edit_columns = ["deployment_status"]
+edit_columns = [
+    "deployment_status",
+    "pod_name_1",
+    "pod_name_2",
+    "pod_name_3",
+    "pod_name_4",
+    "pod_name_5",
+    "pod_name_6",
+    "pod_url_1",
+    "pod_url_2",
+    "pod_url_3",
+    "pod_url_4",
+    "pod_url_5",
+    "pod_url_6",
+]
 
 
 class DeploymentServiceSubscriptionModelApi(SubscriptionModelApi):
