@@ -221,6 +221,7 @@ class SubscriptionTtkEpayService:
     def create_ttk_epay_subscription(
         self,
         plan,
+        ressource_plan,
         duration: int,
         total_amount: float,
         price: float,
@@ -251,6 +252,7 @@ class SubscriptionTtkEpayService:
             total_amount=total_amount,
             price=price,
             service_plan_id=plan.id,
+            ressource_service_plan_id=ressource_plan.id,
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,
             status=status,

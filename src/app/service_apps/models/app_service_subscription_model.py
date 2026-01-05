@@ -31,8 +31,8 @@ class SubscriptionAppService(Subscription):
     console_url = Column(String(50))
     demo_url = Column(String(255), nullable=True)
     internal_note = Column(Text, nullable=True)
-    # ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
-    # ressource_service_plan = relationship("ServicePlan")
+    ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
+    ressource_service_plan = relationship("ServicePlan")
 
     def to_dict(self):
         return {

@@ -221,6 +221,7 @@ class SubscriptionOdooService:
     def create_odoo_subscription(
         self,
         plan,
+        ressource_plan,
         duration: int,
         total_amount: float,
         price: float,
@@ -251,7 +252,7 @@ class SubscriptionOdooService:
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             version_id=version_id,
-            # ressource_service_plan_id=ressource_service_plan,
+            ressource_service_plan_id=ressource_plan.id,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

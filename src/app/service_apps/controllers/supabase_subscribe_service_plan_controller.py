@@ -191,6 +191,7 @@ class SupabaseSubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_supabase_service.create_supabase_subscription(
                 plan=subscription_json["plan"],
+                ressource_plan=subscription_json["ressource_plan"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -200,11 +201,11 @@ class SupabaseSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
             )
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
-            )
+            # managed_ressource = subscription_service_base.get_or_create_managed_ressource(
+            #     ressource_plan=subscription_json["ressource_plan"],
+            #     managed_ressource=subscription_json["managed_ressource"],
+            #     subscription=subscription,
+            # )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
                 user, subscription, request_data, has_sufficient_balance

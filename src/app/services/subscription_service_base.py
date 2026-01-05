@@ -434,9 +434,10 @@ class SubscriptionServiceBase:
 
         # Calculate pricing
         total_amount = plan.price * request_data.duration
+        # TODO: Remove resource plan price from the calculation logic
 
-        if ressource_plan:
-            total_amount += ressource_plan.price * request_data.duration
+        # if ressource_plan:
+        #     total_amount += ressource_plan.price * request_data.duration
 
         promo_code, discount_amount = self.validate_promo_code(
             request_data.promo_code, total_amount
