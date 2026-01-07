@@ -33,6 +33,7 @@ class SubscriptionDeploymentServiceView(ModelView):
         "backend_url",
         "frontend_url",
         "internal_note",
+        "ressource_service_plan",
     ]
 
     base_order = ("id", "desc")

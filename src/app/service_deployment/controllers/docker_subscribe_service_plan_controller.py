@@ -183,7 +183,7 @@ class DockerDeploymentSubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_docker_deployment_service.create_docker_deployment_subscription(
                 plan=subscription_json["plan"],
-                ressource_service_plan=subscription_json["ressource_service_plan"],
+                ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
