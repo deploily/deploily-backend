@@ -329,14 +329,14 @@ class SubscriptionServiceBase:
             self.db.commit()
             return existing
 
-        # Create new
-        new_managed = self.create_managed_ressource(
-            ressource_service_plan=ressource_plan.id, subscription=subscription
-        )
-        subscription.managed_ressource_id = new_managed.id
-        self.db.commit()
-        _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
-        return new_managed
+        # Todo Create new managed ressource  Manuell
+        # new_managed = self.create_managed_ressource(
+        #     ressource_service_plan=ressource_plan.id, subscription=subscription
+        # )
+        # subscription.managed_ressource_id = new_managed.id
+        # self.db.commit()
+        # _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
+        # return new_managed
 
     def get_date_diff_in_days(self, date1, date2):
         """

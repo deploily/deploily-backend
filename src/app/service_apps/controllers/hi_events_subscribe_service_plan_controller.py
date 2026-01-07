@@ -183,6 +183,8 @@ class HiEventsSubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_hi_events_service.create_hi_events_subscription(
                 plan=subscription_json["plan"],
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
