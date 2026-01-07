@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import Column, ForeignKey, Integer, Text, func
+from sqlalchemy.orm import relationship
 
 from app import db
 from app.core.models import Service
@@ -18,6 +19,8 @@ class DeploymentService(Service):
     }
     deployment_field = Column(Text)
     sequence = Column(Integer)
+    ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
+    ressource_service_plan = relationship("ServicePlan")
 
     # app_versions = relationship(
     #     "Version",

@@ -204,7 +204,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
                 plan=subscription_json["plan"],
                 ressource_plan=subscription_json["ressource_plan"],
-                # managed_ressource=managed_ressource.id,
+                managed_ressource=subscription_json["managed_ressource"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -221,11 +221,11 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
             )
 
-            # managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-            #     ressource_plan=subscription_json["ressource_plan"],
-            #     managed_ressource=subscription_json["managed_ressource"],
-            #     subscription=subscription,
-            # )
+            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
+                subscription=subscription,
+            )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
                 user, subscription, request_data, has_sufficient_balance

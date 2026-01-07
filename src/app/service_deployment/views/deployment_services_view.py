@@ -37,6 +37,7 @@ class DeploymentServiceView(ModelView):
         "ratings",
         "is_published",
         "is_eligible",
+        "ressource_service_plan",
     ]
     edit_columns = [
         # "category",
@@ -58,6 +59,7 @@ class DeploymentServiceView(ModelView):
         "ratings",
         "is_published",
         "is_eligible",
+        "ressource_service_plan",
     ]
     show_columns = [
         # "category",
@@ -79,6 +81,7 @@ class DeploymentServiceView(ModelView):
         "ratings",
         "is_published",
         "is_eligible",
+        "ressource_service_plan",
     ]
 
     def post_add(self, item):
