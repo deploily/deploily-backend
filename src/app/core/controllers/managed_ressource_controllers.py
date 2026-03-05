@@ -57,12 +57,12 @@ class ManagedRessourceModelApi(BaseApi):
             # Step 1: Get all ManagedRessource linked to this user's subscriptions
             user = get_user()
 
-            managed_ressources = (
-                db.session.query(ManagedRessource)
-                .join(Subscription, ManagedRessource.subscriptions)
-                .filter(Subscription.created_by.has(id=user.id))
-                .all()
-            )
+            # managed_ressources = (
+            #     db.session.query(ManagedRessource)
+            #     .join(Subscription, ManagedRessource.subscriptions)
+            #     .filter(Subscription.created_by.has(id=user.id))
+            #     .all()
+            # )
             managed_ressources = (
                 db.session.query(ManagedRessource)
                 .join(ManagedRessource.subscriptions)
@@ -194,6 +194,7 @@ class ManagedRessourceModelApi(BaseApi):
                 )
                 .all()
             )
+
             if not managed_ressources:
                 return self.response(200, result=[])
 
