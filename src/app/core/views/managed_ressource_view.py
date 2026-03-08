@@ -10,7 +10,14 @@ from app.core.models.managed_ressource_models import ManagedRessource
 class ManagedRessourcelView(ModelView):
     route_base = "/admin/managed_ressource"
     datamodel = SQLAInterface(ManagedRessource)
-    list_columns = ["id", "ip", "host_name", "operator_system"]
+    list_columns = [
+        "id",
+        "ip",
+        "host_name",
+        "operator_system",
+        "ressource_type",
+        "access_user.username",
+    ]
     base_order = ("id", "desc")
 
 

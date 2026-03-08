@@ -27,6 +27,7 @@ class ServiceRessouceCategory(Model):
             "backup_vps",
             "dedicated_server",
             "web_hosting",
+            "dns",
             name="category_type",
         ),
         default="vps",
