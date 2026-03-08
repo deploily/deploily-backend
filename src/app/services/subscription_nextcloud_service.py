@@ -222,6 +222,8 @@ class SubscriptionNextCloudService:
     def create_nextcloud_subscription(
         self,
         plan,
+        ressource_plan,
+        managed_ressource,
         duration: int,
         total_amount: float,
         price: float,
@@ -252,7 +254,8 @@ class SubscriptionNextCloudService:
             profile_id=profile_id,
             version_id=version_id,
             phone=phone,
-            # ressource_service_plan_id=ressource_service_plan,
+            ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
+            managed_ressource_id=managed_ressource.id if managed_ressource else None,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

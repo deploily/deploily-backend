@@ -183,6 +183,8 @@ class NextCloudSubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_nextcloud_service.create_nextcloud_subscription(
                 plan=subscription_json["plan"],
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],

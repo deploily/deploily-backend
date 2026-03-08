@@ -45,6 +45,8 @@ class SubscriptionDeploymentService(Subscription):
         overlaps="deployment_subscription",
     )
     internal_note = Column(Text, nullable=True)
+    ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
+    ressource_service_plan = relationship("ServicePlan")
 
     def to_dict(self):
         return {

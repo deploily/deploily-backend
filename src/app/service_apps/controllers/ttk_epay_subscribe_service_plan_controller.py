@@ -203,8 +203,8 @@ class TtkEpaySubscriptionApi(BaseApi):
             # Create subscription
             subscription = subscription_ttk_epay_service.create_ttk_epay_subscription(
                 plan=subscription_json["plan"],
-                # ressource_service_plan=ressource_plan.id,
-                # managed_ressource=managed_ressource.id,
+                ressource_plan=subscription_json["ressource_plan"],
+                managed_ressource=subscription_json["managed_ressource"],
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],

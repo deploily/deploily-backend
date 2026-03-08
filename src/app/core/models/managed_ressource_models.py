@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 
 from flask_appbuilder import Model
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -19,6 +19,26 @@ class ManagedRessource(Model):
     )
     ressource_service_plan = relationship("ServicePlan", back_populates="managed_ressources")
     ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
+
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
+    ressource_type = Column(
+        Enum(
+            "vps",
+            "web_hosting",
+            "dns",
+            name="ressource_type",
+        ),
+        default="vps",
+    )
+    dns = Column(String(100))
+    argocd = Column(String(100))
+    eso = Column(String(100))  #
+    backup_automation = Column(String(100))
+    monitoring = Column(Text())
+    ks3 = Column(String(100))
+    access_user_id = Column(Integer, ForeignKey("ab_user.id"))
+    access_user = relationship("User", backref="managed_ressources")
 
     def __repr__(self):
         return f"{self.host_name} ({self.ip})"
