@@ -281,6 +281,7 @@ FAB_ROLES = {
         ["DockerDeploymentServiceSubscriptionModelApi", "can_post"],
         ["DockerDeploymentSubscriptionApi", "can_post"],
         ["DockerDeploymentSubscriptionApi", "can_subscribe_to_plan"],
+        ["DashboardApi", "can_dashboard"],
     ]
 }
 

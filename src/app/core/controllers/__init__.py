@@ -19,4 +19,5 @@ from . import (
     comment_controllerrs,
     rating_controllers,
     managed_ressource_controllers,
+    dashborad_controllers,
 )
