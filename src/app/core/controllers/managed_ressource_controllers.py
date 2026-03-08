@@ -313,7 +313,7 @@ class ManagedRessourceModelApi(BaseApi):
                     .join(RessourceService.ressouce_category)
                     .filter(
                         RessourceService.type == "ressource_service",
-                        RessourceService.is_published.is_(True),
+                        RessourceService.is_published.is_(False),
                         ServiceRessouceCategory.category_type == "dns",
                     )
                     .all()
@@ -347,7 +347,7 @@ class ManagedRessourceModelApi(BaseApi):
             result = []
             for res in managed_ressources:
                 service_plan = res.ressource_service_plan
-                if not service_plan or not service_plan.display_on_app or service_plan.is_custom:
+                if not service_plan:
 
                     continue
 
