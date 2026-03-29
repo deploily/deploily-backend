@@ -72,7 +72,7 @@ class ServiceRessouceCategory(Model):
 
         for service in self.ressouce_services:
             provider = service.provider
-            if provider:
+            if provider and service.is_published:
                 if provider.id not in provider_data:
                     provider_data[provider.id] = {
                         "name": provider.name,

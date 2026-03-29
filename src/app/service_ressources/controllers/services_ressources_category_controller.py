@@ -108,6 +108,10 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
 
         result = []
         for cat in categories:
+            providers_list = cat.list_providers
+            if not providers_list:
+                continue
+
             result.append(
                 {
                     "id": cat.id,
@@ -117,7 +121,7 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "min_category_price": cat.min_category_price,
                     "description": cat.description,
                     "unity_category_price_details": cat.unity_category_price_details,
-                    "providers_list": cat.list_providers,
+                    "providers_list": providers_list,
                     # "ressource_services": [
                     #     serialize_sqlalchemy_obj(s) for s in cat.ressouce_services
                     # ],
