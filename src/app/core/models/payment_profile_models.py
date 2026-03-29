@@ -37,6 +37,18 @@ class PaymentProfile(Model, AuditMixin):
     # user = relationship("MyUser", back_populates="profiles")
     subscriptions = relationship("Subscription", back_populates="profile", overlaps="profile")
     nin = Column(String(255), nullable=True, unique=True)
+    status = Column(
+        Enum(
+            "active",
+            "inactive",
+            "suspended",
+            "pending_verification",
+            "rejected",
+            name="payment_profile_status",
+        ),
+        default="pending_verification",
+        nullable=True,
+    )
 
     @property
     def balance(self):

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
 from flask_appbuilder import Model
-from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy import Column, DateTime, Enum, Integer, String
 
 
 class Mail(Model):
@@ -11,6 +13,7 @@ class Mail(Model):
     mail_state = Column(Enum("outGoing", "sent", "error", "canceled", name="mail_state"))
     email_from = Column(String(255), default="")
     email_to = Column(String(255), default="")
+    created_on = Column(DateTime, default=lambda: datetime.now(), nullable=True)
 
     def __repr__(self):
         return str(self.id)

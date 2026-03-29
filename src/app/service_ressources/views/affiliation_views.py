@@ -14,6 +14,7 @@ class AffiliationView(ModelView):
     route_base = "/admin/affiliation"
 
     list_columns = [
+        "created_on",
         "created_by",
         "total_price",
         "affiliation_state",

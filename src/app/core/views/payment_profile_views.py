@@ -12,12 +12,13 @@ class PaymentProfileModelView(ModelView):
     route_base = "/admin/profile"
     datamodel = SQLAInterface(PaymentProfile)
     list_columns = [
-        "id",
+        "created_on",
         "created_by",
         "name",
         "profile_type",
         "balance",
         "nin",
+        "status",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -10,6 +11,11 @@ class SupportTicketResponse(Model, AuditMixin):
     message = Column(String(255))
     support_ticket_id = Column(Integer, ForeignKey("support_ticket.id"))
     support_ticket = relationship("SupportTicket", cascade="all,delete")
+    status = Column(
+        Enum("pending", "sent", "seen", "rejected", name="support_ticket_response_status"),
+        default="pending",
+        nullable=False,
+    )
 
     def __repr__(self):
         return str(self.id)
