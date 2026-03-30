@@ -99,64 +99,10 @@ class AppServiceModelApi(ServiceModelApi):
                 "id": service.id,
                 "name": service.name,
                 "price_category": service.price_category,
-                "demo_url": service.demo_url,
                 "short_description": service.short_description,
-                "description": service.description,
                 "image_service": service.image_service,
-                "specifications": service.specifications,
-                "min_app_price": service.min_app_price,
-                "minimal_cpu": service.minimal_cpu,
-                "minimal_ram": service.minimal_ram,
-                "minimal_disk": service.minimal_disk,
                 "service_slug": service.service_slug,
-                "average_rating": service.average_rating,
-                "is_subscribed": service.is_subscribed,
-                "documentation_url": service.documentation_url,
                 "unit_price": service.unit_price,
-                "recommended_apps": [
-                    {
-                        "id": app.id,
-                    }
-                    for app in service.recommended_apps
-                ],
-                "app_versions": [
-                    {"id": app.id, "version": app.name, "description": app.description}
-                    for app in service.app_versions
-                ],
-                "service_plans": [
-                    {
-                        "id": plan.id,
-                        "price": plan.price,
-                        "unity": plan.unity,
-                        "name": plan.plan.name,
-                        "subscription_category": plan.subscription_category,
-                        "is_custom": plan.is_custom,
-                        "options": [
-                            {
-                                "id": option.id,
-                                "option_type": option.option_type,
-                                "option_value": option.option_value,
-                                "icon": option.icon,
-                                "html_content": option.html_content,
-                                "sequence": option.sequence,
-                            }
-                            for option in plan.options
-                        ],
-                        "preparation_time": plan.preparation_time,
-                    }
-                    for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
-                ],
-                "medias": [
-                    {
-                        "id": media.id,
-                        "name": media.title,
-                        "image": media.image,
-                        "horizontal_image": media.horizontal_image,
-                        "vertical_image": media.vertical_image,
-                        "square_image": media.square_image,
-                    }
-                    for media in service.medias
-                ],
             }
 
         result = [serialize_service(s) for s in services]

@@ -1,5 +1,3 @@
-from app.service_api.controllers import api_services_apii
-
 from . import (
     contact_us_controllers,
     my_favorites_controller,

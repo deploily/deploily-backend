@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
 from sqlalchemy import Column, Enum, ForeignKey, Integer, String
