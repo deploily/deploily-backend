@@ -16,6 +16,15 @@ class ManagedRessourcelView(ModelView):
         "host_name",
         "operator_system",
         "ressource_type",
+        "start_date",
+        "end_date",
+        "dns",
+        "gitops_tool",
+        "secret_management",
+        "backup_automation",
+        "monitoring",
+        "kubernetis_distribution",
+        "cd_agent",
         "access_user.username",
     ]
     base_order = ("id", "desc")
