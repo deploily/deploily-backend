@@ -3,7 +3,7 @@
 import logging
 
 from flask import request
-from flask_appbuilder.api import ModelRestApi, expose
+from flask_appbuilder.api import BaseApi, ModelRestApi, expose
 from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from sqlalchemy import or_
@@ -119,16 +119,96 @@ class ServiceRessouceCategoryModelApi(ModelRestApi):
                     "short_description": cat.short_description,
                     "logo": cat.logo,
                     "min_category_price": cat.min_category_price,
-                    "description": cat.description,
                     "unity_category_price_details": cat.unity_category_price_details,
-                    "providers_list": providers_list,
-                    # "ressource_services": [
-                    #     serialize_sqlalchemy_obj(s) for s in cat.ressouce_services
-                    # ],
-                    "medias": [serialize_sqlalchemy_obj(m) for m in cat.medias],
                 }
             )
         return self.response(200, result=result)
 
 
 appbuilder.add_api(ServiceRessouceCategoryModelApi)
+
+
+class PublicServiceRessouceCategoryApi(BaseApi):  # public version
+    resource_name = "service-resource-category-public"
+
+    @expose("/<int:id>", methods=["GET"])
+    def get_category_by_id(self, id):
+        """
+        ---
+        get:
+          summary: Get a service resource category by ID
+          description: Returns a specific published ServiceRessouceCategory with ressource_services and medias
+          parameters:
+            - in: path
+              name: id
+              required: true
+              schema:
+                type: integer
+          responses:
+            200:
+              description: ServiceRessouceCategory found
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      short_description:
+                        type: string
+                      description:
+                        type: string
+                      ressource_services:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+                      medias:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+            404:
+              description: Category not found or not published
+            500:
+              description: Internal server error
+        """
+        category = (
+            db.session.query(ServiceRessouceCategory)
+            .filter(
+                ServiceRessouceCategory.id == id,
+                ServiceRessouceCategory.is_published.is_(True),
+            )
+            .first()
+        )
+
+        if not category:
+            return self.response(404, message="ServiceRessouceCategory not found")
+
+        def serialize_sqlalchemy_obj(obj):
+            result = {}
+            for key in obj.__mapper__.c.keys():
+                result[key] = getattr(obj, key)
+            if hasattr(obj, "provider") and obj.provider is not None:
+                result["provider"] = serialize_sqlalchemy_obj(obj.provider)
+            return result
+
+        result = {
+            "id": category.id,
+            "name": category.name,
+            "short_description": category.short_description,
+            "logo": category.logo,
+            "min_category_price": category.min_category_price,
+            "description": category.description,
+            "unity_category_price_details": category.unity_category_price_details,
+            "providers_list": category.list_providers,
+            "ressource_services": [serialize_sqlalchemy_obj(s) for s in category.ressouce_services],
+            "medias": [serialize_sqlalchemy_obj(m) for m in category.medias],
+        }
+
+        return self.response(200, result=result)
+
+
+appbuilder.add_api(PublicServiceRessouceCategoryApi)
