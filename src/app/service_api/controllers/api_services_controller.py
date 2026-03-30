@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import request
-from flask_appbuilder.api import expose
+from flask_appbuilder.api import BaseApi, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from sqlalchemy import or_
 
@@ -89,33 +89,9 @@ class ApiServiceModelApi(ServiceModelApi):
                 "id": service.id,
                 "name": service.name,
                 "short_description": service.short_description,
-                "description": service.description,
                 "image_service": service.image_service,
-                "documentation_url": service.documentation_url,
                 "min_api_price": service.min_api_price,
-                "service_unity": service.service_unity,
                 "price_category": service.price_category,
-                "specifications": service.specifications,
-                "service_plans": [
-                    {
-                        "id": plan.id,
-                        "name": plan.plan.name,
-                        "price": plan.price,
-                        "unity": plan.unity,
-                    }
-                    for plan in service.service_plans
-                ],
-                "medias": [
-                    {
-                        "id": media.id,
-                        "name": media.title,
-                        "image": media.image,
-                        "horizontal_image": media.horizontal_image,
-                        "vertical_image": media.vertical_image,
-                        "square_image": media.square_image,
-                    }
-                    for media in service.medias
-                ],
             }
 
         result = [serialize_service(s) for s in services]
@@ -127,3 +103,102 @@ class ApiServiceModelApi(ServiceModelApi):
 
 
 appbuilder.add_api(ApiServiceModelApi)
+
+
+class PublicApiServiceApi(BaseApi):  # public version
+    resource_name = "api-service-public"
+
+    @expose("/<int:id>", methods=["GET"])
+    def get_api_service_by_id(self, id):
+        """
+        ---
+        get:
+          summary: Get an API service by ID (base fields + service_plans + medias)
+          description: Returns a specific ApiService with name, short_description, description, service_plans and medias
+          parameters:
+            - in: path
+              name: id
+              required: true
+              schema:
+                type: integer
+          responses:
+            200:
+              description: ApiService found
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      short_description:
+                        type: string
+                      description:
+                        type: string
+                      service_plans:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+                      medias:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+            404:
+              description: ApiService not found
+            500:
+              description: Internal server error
+        """
+        service = db.session.query(ApiService).get(id)
+        if not service:
+            return self.response(404, message="ApiService not found")
+
+        def serialize_service(service):
+            return {
+                "name": service.name,
+                "price_category": service.price_category,
+                "short_description": service.short_description,
+                "description": service.description,
+                "image_service": service.image_service,
+                "specifications": service.specifications,
+                "documentation_url": service.documentation_url,
+                "average_rating": service.average_rating,
+                "min_api_price": service.min_api_price,
+                "service_plans": [
+                    {
+                        "id": plan.id,
+                        "price": plan.price,
+                        "name": plan.plan.name,
+                        "subscription_category": plan.subscription_category,
+                        "is_custom": plan.is_custom,
+                        "options": [
+                            {
+                                "id": option.id,
+                                "option_type": option.option_type,
+                                "option_value": option.option_value,
+                                "icon": option.icon,
+                                "html_content": option.html_content,
+                                "sequence": option.sequence,
+                            }
+                            for option in plan.options
+                        ],
+                        "preparation_time": plan.preparation_time,
+                    }
+                    for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
+                ],
+                "medias": [
+                    {
+                        "id": media.id,
+                        "name": media.title,
+                        "image": media.image,
+                    }
+                    for media in service.medias
+                ],
+            }
+
+        result = serialize_service(service)
+        return self.response(200, result=result)
+
+
+appbuilder.add_api(PublicApiServiceApi)
