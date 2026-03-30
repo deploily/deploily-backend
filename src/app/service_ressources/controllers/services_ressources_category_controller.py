@@ -129,7 +129,7 @@ appbuilder.add_api(ServiceRessouceCategoryModelApi)
 
 
 class PublicServiceRessouceCategoryApi(BaseApi):  # public version
-    resource_name = "service-resource-category-public"
+    resource_name = "service-ressource-category-public"
 
     @expose("/<int:id>", methods=["GET"])
     def get_category_by_id(self, id):
