@@ -65,7 +65,6 @@ class ManagedRessourceModelApi(BaseApi):
                     .join(RessourceService.ressouce_category)
                     .filter(
                         RessourceService.type == "ressource_service",
-                        RessourceService.is_published.is_(True),
                         ServiceRessouceCategory.category_type == "vps",
                     )
                     .all()
@@ -108,25 +107,11 @@ class ManagedRessourceModelApi(BaseApi):
                         "managed_ressource_id": res.id,
                         "plan_name": service_plan.plan.name if service_plan.plan else None,
                         "service_name": service_plan.service.name if service_plan.service else None,
-                        "service_id": service_plan.service.id if service_plan.service else None,
-                        "price": service_plan.price,
-                        "service_plan_type": service_plan.service_plan_type,
-                        "preparation_time": service_plan.preparation_time,
-                        "unity": service_plan.unity,
-                        "time_remaining": res.time_remaining,
-                        "options": [
-                            {
-                                "id": opt.id,
-                                "option_type": opt.option_type,
-                                "option_value": opt.option_value,
-                                "icon": opt.icon,
-                                "html_content": opt.html_content,
-                                "sequence": opt.sequence,
-                            }
-                            for opt in service_plan.options
-                        ],
-                        "provider_info": service_plan.provider_info,
-                        "subscription_ids": [sub.id for sub in res.subscriptions],
+                        "provider_name": service_plan.provider_info.name,
+                        "host_name": res.host_name,
+                        "ip": res.ip,
+                        "start_date": res.start_date,
+                        "end_date": res.end_date,
                     }
                 )
 
@@ -134,40 +119,6 @@ class ManagedRessourceModelApi(BaseApi):
 
         except Exception as e:
             return self.response(500, message=str(e))
-
-    # def pre_get_list(self, filters):
-    #     print("pre_get_list called with filters:", filters)
-
-    # @expose('/', methods=["GET"])
-    # @has_access_api
-    # def get_list(self):
-    #     user = get_user()
-
-    #     query = self.datamodel.session.query(ManagedRessource).join(ManagedRessource.subscriptions)
-    #     print(f"User: {user}")
-    #     print(f"###################################Query: {query}")
-
-    #     # Assume one subscription per resource
-    #     query = query.filter(ManagedRessource.subscriptions.any(created_by=user))
-    #     print(f"Filtered Query--------------------------------------: {query}")
-
-    #     # Pagination
-    #     page = request.args.get("page", 1, type=int)
-    #     page_size = request.args.get("page_size", self.page_size, type=int)
-    #     count = query.count()
-
-    #     results = query.offset((page - 1) * page_size).limit(page_size).all()
-    #       # Marshal the results
-    #     items = [self.response_model.dump(item) for item in results]
-
-    #     # Return a standard response
-    #     return jsonify({
-    #         "count": count,
-    #         "page": page,
-    #         "page_size": page_size,
-    #         "result": items,
-    #         "ids": [item["id"] for item in items],
-    #     })
 
     @expose("/web-hosting", methods=["GET"])
     @protect()
@@ -205,7 +156,6 @@ class ManagedRessourceModelApi(BaseApi):
                     .join(RessourceService.ressouce_category)
                     .filter(
                         RessourceService.type == "ressource_service",
-                        RessourceService.is_published.is_(True),
                         ServiceRessouceCategory.category_type == "web_hosting",
                     )
                     .all()
@@ -249,25 +199,12 @@ class ManagedRessourceModelApi(BaseApi):
                         "managed_ressource_id": res.id,
                         "plan_name": service_plan.plan.name if service_plan.plan else None,
                         "service_name": service_plan.service.name if service_plan.service else None,
-                        "service_id": service_plan.service.id if service_plan.service else None,
-                        "price": service_plan.price,
-                        "service_plan_type": service_plan.service_plan_type,
-                        "preparation_time": service_plan.preparation_time,
-                        "unity": service_plan.unity,
-                        "time_remaining": res.time_remaining,
-                        "options": [
-                            {
-                                "id": opt.id,
-                                "option_type": opt.option_type,
-                                "option_value": opt.option_value,
-                                "icon": opt.icon,
-                                "html_content": opt.html_content,
-                                "sequence": opt.sequence,
-                            }
-                            for opt in service_plan.options
-                        ],
-                        "provider_info": service_plan.provider_info,
-                        "subscription_ids": [sub.id for sub in res.subscriptions],
+                        "provider_name": service_plan.provider_info.name,
+                        "host_name": res.host_name,
+                        "dns": res.dns,
+                        "ip": res.ip,
+                        "start_date": res.start_date,
+                        "end_date": res.end_date,
                     }
                 )
             print(result)
@@ -313,7 +250,6 @@ class ManagedRessourceModelApi(BaseApi):
                     .join(RessourceService.ressouce_category)
                     .filter(
                         RessourceService.type == "ressource_service",
-                        RessourceService.is_published.is_(False),
                         ServiceRessouceCategory.category_type == "dns",
                     )
                     .all()
@@ -357,25 +293,11 @@ class ManagedRessourceModelApi(BaseApi):
                         "managed_ressource_id": res.id,
                         "plan_name": service_plan.plan.name if service_plan.plan else None,
                         "service_name": service_plan.service.name if service_plan.service else None,
-                        "service_id": service_plan.service.id if service_plan.service else None,
-                        "price": service_plan.price,
-                        "service_plan_type": service_plan.service_plan_type,
-                        "preparation_time": service_plan.preparation_time,
-                        "unity": service_plan.unity,
-                        "time_remaining": res.time_remaining,
-                        "options": [
-                            {
-                                "id": opt.id,
-                                "option_type": opt.option_type,
-                                "option_value": opt.option_value,
-                                "icon": opt.icon,
-                                "html_content": opt.html_content,
-                                "sequence": opt.sequence,
-                            }
-                            for opt in service_plan.options
-                        ],
-                        "provider_info": service_plan.provider_info,
-                        "subscription_ids": [sub.id for sub in res.subscriptions],
+                        "provider_name": service_plan.provider_info.name,
+                        "host_name": res.host_name,
+                        "dns": res.dns,
+                        "start_date": res.start_date,
+                        "end_date": res.end_date,
                     }
                 )
             print(result)

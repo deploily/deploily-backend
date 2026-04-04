@@ -15,16 +15,16 @@ class DockerDeploymentServiceSubscriptionView(ModelView):
 
     list_columns = [
         "id",
+        "name",
         "created_by",
-        "price",
+        # "price",
         "total_amount",
-        "status",
-        "is_expired",
         "start_date",
         "duration_month",
-        "is_upgrade",
-        "is_renew",
-        "description",
+        "status",
+        "is_expired",
+        # "is_upgrade",
+        # "is_renew",
         "deployment_status",
     ]
     base_order = ("id", "desc")
