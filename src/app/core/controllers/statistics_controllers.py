@@ -61,7 +61,13 @@ class StatisticsApi(BaseApi):
             users_count = (
                 db.session.query(User).join(User.roles).filter(Role.name != "Admin").count()
             )
-            providers_count = db.session.query(ProvidersRessourceService).count()
+            providers_count = (
+                db.session.query(ProvidersRessourceService)
+                .filter(
+                    ProvidersRessourceService.is_published.is_(True),
+                )
+                .count()
+            )
             ressources_count = db.session.query(ServicePlan).count()
             return (
                 jsonify(

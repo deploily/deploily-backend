@@ -3,6 +3,7 @@
 import logging
 
 from flask_appbuilder.api import ModelRestApi
+from flask_appbuilder.models.sqla.filters import FilterEqual
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
@@ -37,6 +38,7 @@ class ProvidersRessourceServiceModelApi(ModelRestApi):
     list_columns = _service_ressources_providers_value_display_columns
     show_columns = _service_ressources_providers_value_display_columns
     edit_columns = _service_ressources_providers_value_display_columns
+    base_filters = [["is_published", FilterEqual, True]]
 
 
 appbuilder.add_api(ProvidersRessourceServiceModelApi)

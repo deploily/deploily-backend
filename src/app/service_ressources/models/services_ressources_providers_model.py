@@ -2,7 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import ImageColumn
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Boolean, Column, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
@@ -28,6 +28,7 @@ class ProvidersRessourceService(Model):
     subscription_url = Column(String(255))
     ressource_services = relationship("RessourceService", back_populates="provider")
     affiliations = relationship("Affiliation", back_populates="provider")
+    is_published = Column(Boolean, default=False)
 
     def __repr__(self):
         return f"{self.name} "

@@ -14,11 +14,10 @@ class ProvidersRessourceServiceView(ModelView):
     list_columns = [
         "name",
         "contact_number",
-        "mail_support",
-        "mail_sales",
-        "mail_partnership",
-        "phone_sales",
         "phone_partnership",
+        "mail_partnership",
+        "mail_support",
+        "is_published",
     ]
 
 
