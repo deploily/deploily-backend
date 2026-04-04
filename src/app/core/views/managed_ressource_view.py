@@ -12,20 +12,14 @@ class ManagedRessourcelView(ModelView):
     datamodel = SQLAInterface(ManagedRessource)
     list_columns = [
         "id",
-        "ip",
         "host_name",
-        "operator_system",
         "ressource_type",
-        "start_date",
-        "end_date",
-        "dns",
-        "gitops_tool",
-        "secret_management",
+        "ip",
+        "cd_agent",
         "backup_automation",
         "monitoring",
-        "kubernetis_distribution",
-        "cd_agent",
-        "access_user.username",
+        "start_date",
+        "end_date",
     ]
     base_order = ("id", "desc")
 
