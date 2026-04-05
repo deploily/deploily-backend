@@ -18,4 +18,11 @@ class SupportTicketResponse(Model, AuditMixin):
     )
 
     def __repr__(self):
-        return str(self.id)
+        return f"[{self.id} | {self.status}] {self.message_shortened}"
+
+    @property
+    def message_shortened(self):
+        _COL_LENGTH = 40
+        return (
+            self.message[:_COL_LENGTH] + "..." if len(self.message) > _COL_LENGTH else self.message
+        )

@@ -10,7 +10,7 @@ from app.service_apps.models.app_version_model import Version
 class AppVersionModelView(ModelView):
     route_base = "/admin/app-version"
     datamodel = SQLAInterface(Version)
-    list_columns = ["id", "app_services"]
+    list_columns = ["id", "name", "app_services"]
     base_order = ("id", "desc")
 
 

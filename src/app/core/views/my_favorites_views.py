@@ -20,7 +20,7 @@ class MyFavoritesModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     MyFavoritesModelView,
-    "MyFavorites",
+    "My Favorites",
     icon="fa-solid fa-heart",
     category="Operations",
 )

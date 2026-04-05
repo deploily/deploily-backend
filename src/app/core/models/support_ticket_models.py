@@ -17,4 +17,9 @@ class SupportTicket(Model, AuditMixin):
     support_ticket_responses = relationship("SupportTicketResponse")
 
     def __repr__(self):
-        return f"{self.title}"
+        return f"[{self.id} | {self.status}] {self.title_shortened}"
+
+    @property
+    def title_shortened(self):
+        _COL_LENGTH = 40
+        return self.title[:_COL_LENGTH] + "..." if len(self.title) > _COL_LENGTH else self.title

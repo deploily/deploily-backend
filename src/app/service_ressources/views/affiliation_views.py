@@ -14,14 +14,12 @@ class AffiliationView(ModelView):
     route_base = "/admin/affiliation"
 
     list_columns = [
-        "created_on",
         "created_by",
-        "total_price",
-        "affiliation_state",
-        "phone_number",
         "provider",
         "service_plan",
-        "internal_note",
+        "created_on",
+        "phone_number",
+        "affiliation_state",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

@@ -10,7 +10,7 @@ from app.core.models.comment_models import Comment
 class CommentModelView(ModelView):
     route_base = "/admin/comment"
     datamodel = SQLAInterface(Comment)
-    list_columns = ["created_on", "comment", "created_by", "status"]
+    list_columns = ["created_by", "created_on", "comment", "status"]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns

@@ -13,9 +13,12 @@ class DeploymentServiceView(ModelView):
     datamodel = SQLAInterface(DeploymentService)
 
     list_columns = [
-        "tags",
+        "id",
         "name",
+        "service_slug",
         "unit_price",
+        "is_published",
+        "sequence",
     ]
     add_columns = [
         # "category",

@@ -14,13 +14,12 @@ class SubscriptionModelView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "service_plan",
-        "total_amount",
-        "status",
-        "is_expired",
+        "type",
+        "byor",
         "start_date",
         "end_date",
-        "duration_month",
+        "is_expired",
+        "status",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]

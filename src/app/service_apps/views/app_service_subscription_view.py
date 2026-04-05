@@ -16,20 +16,14 @@ class SubscriptionAppServiceView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
-        "start_date",
-        "duration_month",
-        "access_url",
         "service_name",
-        "required_restart",
-        "version",
-        "console_url",
+        "byor",
+        "start_date",
+        "end_date",
+        "is_expired",
+        "status",
         "application_status",
-        "internal_note",
-        "ressource_service_plan",
+        "required_restart",
     ]
 
     base_order = ("id", "desc")

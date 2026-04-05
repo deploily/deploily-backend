@@ -16,12 +16,11 @@ class NextCloudAppServiceSubscriptionView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
+        "byor",
         "start_date",
-        "duration_month",
+        "end_date",
+        "is_expired",
+        "status",
         "is_upgrade",
         "is_renew",
     ]

@@ -10,7 +10,7 @@ from app.core.models.support_ticket_models import SupportTicket
 class SupportTicketModelView(ModelView):
     route_base = "/admin/supportticket"
     datamodel = SQLAInterface(SupportTicket)
-    list_columns = ["created_on", "title", "status", "created_by"]
+    list_columns = ["created_by", "created_on", "title_shortened", "subscription", "status"]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
@@ -20,7 +20,7 @@ class SupportTicketModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     SupportTicketModelView,
-    "Support Ticket",
+    "Support Tickets",
     icon="fa-solid fa-ticket",
     category="Operations",
 )

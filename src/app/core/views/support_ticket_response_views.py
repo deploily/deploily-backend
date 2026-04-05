@@ -10,7 +10,7 @@ from app.core.models.support_ticket_response_models import SupportTicketResponse
 class SupportTicketResponseModelView(ModelView):
     route_base = "/admin/supportticket-response"
     datamodel = SQLAInterface(SupportTicketResponse)
-    list_columns = ["created_on", "message", "support_ticket", "status"]
+    list_columns = ["created_by", "created_on", "support_ticket", "message_shortened", "status"]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
@@ -20,7 +20,7 @@ class SupportTicketResponseModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     SupportTicketResponseModelView,
-    "SupportTicketMessage",
+    "Support Ticket Messages",
     icon="fa-solid fa-comments",
     category="Operations",
 )

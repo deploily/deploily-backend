@@ -12,8 +12,9 @@ class ManagedRessourcelView(ModelView):
     datamodel = SQLAInterface(ManagedRessource)
     list_columns = [
         "id",
-        "host_name",
         "ressource_type",
+        "byor",
+        "host_name",
         "ip",
         "cd_agent",
         "backup_automation",

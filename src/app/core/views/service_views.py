@@ -13,9 +13,10 @@ class ServiceModelView(ModelView):
     list_columns = [
         "id",
         "name",
-        "documentation_url",
+        "type",
+        "service_slug",
         "unit_price",
-        "is_in_favorite",
+        "price_category",
         "is_eligible",
         "is_published",
     ]
