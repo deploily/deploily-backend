@@ -33,7 +33,7 @@ class SupabaseAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     SupabaseAppServiceSubscriptionView,
-    "Supabase  Subscriptions ",
+    "Supabase Subscriptions ",
     icon="fa-cogs",
-    category="Applications",
+    category="Subscriptions",
 )

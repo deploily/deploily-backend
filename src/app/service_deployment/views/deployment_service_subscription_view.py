@@ -47,5 +47,5 @@ appbuilder.add_view(
     SubscriptionDeploymentServiceView,
     "Subscription Deployment Services",
     icon="fa-cogs",
-    category="Deployments",
+    category="Subscriptions",
 )

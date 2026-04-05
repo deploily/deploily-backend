@@ -33,7 +33,7 @@ class HiEventsAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     HiEventsAppServiceSubscriptionView,
-    "Hi Events  Subscriptions ",
+    "Hi Events Subscriptions ",
     icon="fa-cogs",
-    category="Applications",
+    category="Subscriptions",
 )

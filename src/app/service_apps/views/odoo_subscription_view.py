@@ -31,7 +31,7 @@ class OdooAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     OdooAppServiceSubscriptionView,
-    "Odoo  Subscriptions ",
+    "Odoo Subscriptions ",
     icon="fa-cogs",
-    category="Applications",
+    category="Subscriptions",
 )

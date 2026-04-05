@@ -37,5 +37,5 @@ appbuilder.add_view(
     DockerDeploymentServiceSubscriptionView,
     "Docker Deployment Subscription",
     icon="fa-cog",
-    category="Deployments",
+    category="Subscriptions",
 )
