@@ -19,5 +19,5 @@ appbuilder.add_view(
     AppVersionModelView,
     "App Version",
     icon="fa-solid fa-cogs",
-    category="Operations",
+    category="Master",
 )

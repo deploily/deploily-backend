@@ -71,10 +71,10 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 from .service_ressources import models, views, controllers
-from .service_deployment import models, views, controllers
-from .service_apps import models, views, controllers
-from .service_api import models, views, controllers
 from .core import models, views, controllers
+from .service_api import models, views, controllers
+from .service_apps import models, views, controllers
+from .service_deployment import models, views, controllers
 from .promo_code import models, views, controllers
 from . import services, schedulers
 

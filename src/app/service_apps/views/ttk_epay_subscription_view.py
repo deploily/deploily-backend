@@ -33,7 +33,7 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     TtkEpayAppServiceSubscriptionView,
-    "TTK Epay Subscriptions ",
-    icon="fa-cogs",
+    "App TTK Epay Subscriptions",
+    icon="fa-shopping-bag",
     category="Subscriptions",
 )

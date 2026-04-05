@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     RatingModelView,
     "Rating",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-star",
     category="Operations",
 )

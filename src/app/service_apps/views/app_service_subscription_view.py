@@ -42,6 +42,6 @@ class SubscriptionAppServiceView(ModelView):
 appbuilder.add_view(
     SubscriptionAppServiceView,
     "Application Services Subscriptions",
-    icon="fa-cogs",
+    icon="fa-shopping-bag",
     category="Subscriptions",
 )

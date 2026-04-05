@@ -45,7 +45,7 @@ class SubscriptionDeploymentServiceView(ModelView):
 
 appbuilder.add_view(
     SubscriptionDeploymentServiceView,
-    "Subscription Deployment Services",
-    icon="fa-cogs",
+    "Deployment Services Subscriptions",
+    icon="fa-cart-plus",
     category="Subscriptions",
 )

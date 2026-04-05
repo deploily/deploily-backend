@@ -33,6 +33,6 @@ db.create_all()
 appbuilder.add_view(
     SubscriptionModelView,
     "Subscription",
-    icon="fa-solid fa-sliders",
+    icon="fa-solid fa-shopping-basket",
     category="Subscriptions",
 )

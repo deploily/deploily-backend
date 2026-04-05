@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     ServiceTagModelView,
     "ServiceTag",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-tag ",
     category="Master",
 )

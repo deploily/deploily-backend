@@ -82,6 +82,6 @@ class AffiliationView(ModelView):
 appbuilder.add_view(
     AffiliationView,
     "Affiliation",
-    icon="fa-solid fa-sliders",
+    icon="fa-cart-arrow-down",
     category="Operations",
 )

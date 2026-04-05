@@ -31,6 +31,6 @@ db.create_all()
 appbuilder.add_view(
     ServiceModelView,
     "Service",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-gift",
     category="Master",
 )

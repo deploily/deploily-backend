@@ -28,6 +28,6 @@ db.create_all()
 appbuilder.add_view(
     ManagedRessourcelView,
     "Managed Ressources",
-    icon="fa-solid fa-cogs",
-    category="Operations",
+    icon="fa-solid fa-briefcase",
+    category="Subscriptions",
 )

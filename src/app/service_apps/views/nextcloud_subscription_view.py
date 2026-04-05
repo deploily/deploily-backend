@@ -33,7 +33,7 @@ class NextCloudAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     NextCloudAppServiceSubscriptionView,
-    "NextCloud Subscriptions ",
-    icon="fa-cogs",
+    "App NextCloud Subscriptions",
+    icon="fa-shopping-bag",
     category="Subscriptions",
 )

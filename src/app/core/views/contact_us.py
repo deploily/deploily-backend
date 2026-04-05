@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     ContactUsModelView,
     "Contact Us ",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-life-ring ",
     category="Operations",
 )

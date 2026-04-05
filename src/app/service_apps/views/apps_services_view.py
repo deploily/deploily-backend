@@ -112,6 +112,6 @@ class AppServiceView(ModelView):
 appbuilder.add_view(
     AppServiceView,
     "Application Services",
-    icon="fa-cogs",
+    icon="fa-gift",
     category="Master",
 )

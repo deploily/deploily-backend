@@ -87,6 +87,6 @@ class RessourceServiceView(ModelView):
 appbuilder.add_view(
     RessourceServiceView,
     "Ressources",
-    icon="fa-cogs",
+    icon="fa-plug",
     category="Master",
 )

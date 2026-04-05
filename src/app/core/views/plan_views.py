@@ -19,6 +19,6 @@ db.create_all()
 appbuilder.add_view(
     PlanModelView,
     "Plan",
-    icon="fa-solid fa-sliders",
+    icon="fa-solid fa-play",
     category="Master",
 )

@@ -28,6 +28,6 @@ db.create_all()
 appbuilder.add_view(
     PaymentModelView,
     "Payments",
-    icon="fa-solid fa-sliders",
+    icon="fa-solid fa-money",
     category="Billing",
 )

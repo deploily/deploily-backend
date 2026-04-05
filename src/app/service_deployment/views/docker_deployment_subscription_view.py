@@ -35,7 +35,7 @@ class DockerDeploymentServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     DockerDeploymentServiceSubscriptionView,
-    "Docker Deployment Subscription",
-    icon="fa-cog",
+    "Deployment Docker Subscriptions",
+    icon="fa-cart-plus",
     category="Subscriptions",
 )

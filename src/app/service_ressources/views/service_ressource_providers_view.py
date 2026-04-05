@@ -24,6 +24,6 @@ class ProvidersRessourceServiceView(ModelView):
 appbuilder.add_view(
     ProvidersRessourceServiceView,
     "Ressource Providers",
-    icon="fa-users",
+    icon="fa-building-o",
     category="Master",
 )

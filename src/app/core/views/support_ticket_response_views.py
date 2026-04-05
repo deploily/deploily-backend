@@ -21,6 +21,6 @@ db.create_all()
 appbuilder.add_view(
     SupportTicketResponseModelView,
     "SupportTicketMessage",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-comments",
     category="Operations",
 )

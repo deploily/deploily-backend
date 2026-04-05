@@ -22,6 +22,6 @@ db.create_all()
 appbuilder.add_view(
     ServiceRessourceCategoryModelView,
     "Reesource Category",
-    icon="fa-solid fa-cogs",
+    icon="fa-object-group",
     category="Master",
 )

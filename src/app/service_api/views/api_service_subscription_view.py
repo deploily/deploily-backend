@@ -29,6 +29,6 @@ class ApiServiceSubscriptionView(ModelView):
 appbuilder.add_view(
     ApiServiceSubscriptionView,
     "Api Service Subscriptions",
-    icon="fa-cogs",
+    icon="fa-link",
     category="Subscriptions",
 )

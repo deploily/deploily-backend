@@ -21,6 +21,6 @@ db.create_all()
 appbuilder.add_view(
     MyFavoritesModelView,
     "MyFavorites",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-heart",
     category="Operations",
 )
