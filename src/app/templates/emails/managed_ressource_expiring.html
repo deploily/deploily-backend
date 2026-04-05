@@ -51,7 +51,7 @@
                 <li>Type: {{ resource.ressource_type }}</li>
                 <li>Start Date: {{ resource.start_date.strftime("%Y-%m-%d") if resource.start_date else "N/A" }}</li>
                 <li>End Date: {{ expiration_date }}</li>
-                <li>Operator System: {{ resource.operator_system or "N/A" }}</li>
+                <li>Operator System: {{ resource.operating_system or "N/A" }}</li>
             </ul>
 
             <p>Please make sure to renew or take the necessary actions before the expiration date to avoid any service interruptions.</p>

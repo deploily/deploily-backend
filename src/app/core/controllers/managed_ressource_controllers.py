@@ -19,7 +19,7 @@ display_columns = [
     "id",
     "ip",
     "host_name",
-    "operator_system",
+    "operating_system",
     "subscriptions",
     "ressource_service_plan",
     "time_remaining",

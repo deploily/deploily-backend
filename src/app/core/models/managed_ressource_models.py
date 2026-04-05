@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 
 from flask_appbuilder import Model
-from sqlalchemy import Column, Date, Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Date, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
@@ -13,7 +13,7 @@ class ManagedRessource(Model):
     id = Column(Integer, primary_key=True)
     ip = Column(String(100), nullable=False)  # e.g. "v1.0.0"
     host_name = Column(String(100))
-    operator_system = Column(String(100))
+    operating_system = Column(String(100))
     subscriptions = relationship(
         "Subscription", back_populates="managed_ressource", cascade="all, delete-orphan"
     )
@@ -32,17 +32,18 @@ class ManagedRessource(Model):
         default="vps",
     )
     dns = Column(String(100))
-    gitops_tool = Column(String(100))
+    gitops_tool = Column(String(100), default="ArgoCD")
     secret_management = Column(String(100))
-    backup_automation = Column(String(100))
-    monitoring = Column(String(100))
-    kubernetis_distribution = Column(String(100))
+    backup_automation = Column(String(100), default="k8up")
+    monitoring = Column(String(100), default="Kuma")
+    kubernetes_distribution = Column(String(100), default="k3s")
     access_user_id = Column(Integer, ForeignKey("ab_user.id"))
     access_user = relationship("User", backref="managed_ressources")
     cd_agent = Column(String(100))
+    byor = Column(Boolean, default=False)  # Bring Your Own Ressource
 
     def __repr__(self):
-        return f"{self.host_name} ({self.ip})"
+        return f"{self.ressource_type} - {self.host_name} ({self.ip})"
 
     from datetime import datetime, timedelta
 
