@@ -288,16 +288,16 @@ class SubscriptionServiceBase:
             ressource_service_plan_id=ressource_service_plan,
             ip="000.000.000.000",
             host_name=f"{slugify(subscription.profile.name)}-({subscription.id})",
-            operator_system="Debian 12",
+            operating_system="Debian 12",
         )
         self.db.add(managed_ressource)
         self.db.flush()
         return managed_ressource
 
     def get_or_create_managed_ressource(self, ressource_plan, managed_ressource, subscription):
+        # ! UNUSED
         """
         Assigns a managed ressource to the subscription.
-
         """
         _logger.info(f"🛠 Getting or creating managed ressource for subscription {subscription.id}")
 
@@ -329,14 +329,14 @@ class SubscriptionServiceBase:
             self.db.commit()
             return existing
 
-        # Todo Create new managed ressource  Manuell
-        # new_managed = self.create_managed_ressource(
-        #     ressource_service_plan=ressource_plan.id, subscription=subscription
-        # )
-        # subscription.managed_ressource_id = new_managed.id
-        # self.db.commit()
-        # _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
-        # return new_managed
+        # Todo Create new managed ressource Manually
+        new_managed = self.create_managed_ressource(
+            ressource_service_plan=ressource_plan.id, subscription=subscription
+        )
+        subscription.managed_ressource_id = new_managed.id
+        self.db.commit()
+        _logger.info(f"🆕 Created new managed ressource ID: {new_managed.id}")
+        return new_managed
 
     def get_date_diff_in_days(self, date1, date2):
         """

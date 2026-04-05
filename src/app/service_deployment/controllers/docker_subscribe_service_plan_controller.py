@@ -142,7 +142,6 @@ class DockerDeploymentSubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_docker_deployment_service = SubscriptionDockerDeploymentService(
                 db.session, _logger
             )
@@ -193,12 +192,6 @@ class DockerDeploymentSubscriptionApi(BaseApi):
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 # version_id=subscription_json["version_id"],
-            )
-
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
