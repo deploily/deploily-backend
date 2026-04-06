@@ -27,6 +27,7 @@ class ManagedRessource(Model):
             "vps",
             "web_hosting",
             "dns",
+            "s3",
             name="ressource_type",
         ),
         default="vps",

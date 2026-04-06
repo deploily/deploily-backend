@@ -39,11 +39,31 @@ flask db upgrade
 ```bash
 flask fab create-admin
 ```
-## Run  flask
+## Run flask
 
 ```bash
 cd src
 flask run 
+```
+
+## add value to ENUM
+
+Connect to the database
+```bash
+docker exec -it  deploily-backend-db psql -U postgres -d deploily
+```
+Add new type 
+```sql
+SELECT 
+    column_name, 
+    udt_name AS enum_type_name
+FROM 
+    information_schema.columns 
+WHERE 
+    table_name = 'managed_ressource' 
+    AND data_type = 'USER-DEFINED';
+
+ALTER TYPE <data_type_name> ADD VALUE IF NOT EXISTS '<value>';
 ```
 
 ## Run Test
