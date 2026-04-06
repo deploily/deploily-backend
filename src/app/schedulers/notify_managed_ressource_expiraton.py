@@ -8,7 +8,7 @@ from app.services.mail_service import send_and_log_email
 
 sent_ressource_notifications = set()
 last_reset_date_ressource = None
-notice_days = [3, 5, 6, 7, 15, 30]
+notice_days = [1, 3, 7, 15, 30]
 
 
 @scheduler.task("cron", id="notify_managed_ressource_expiration", max_instances=1, hour=7, minute=0)
@@ -27,14 +27,16 @@ def notify_managed_ressource_expiration():
             resources = db.session.query(ManagedRessource).all()
             for res in resources:
                 try:
-
+                    # TODO move this condition as filter in the query to reduce the number of resources we need to process
                     if not res.end_date:
                         continue  # skip resources without an end date
 
                     days_remaining = (res.end_date - today).days
 
+                    # TODO move this condition as filter in the query to reduce the number of resources we need to process
                     if days_remaining not in notice_days:
                         continue
+                    # TODO check if the related subscription has the same end date to avoid sending multiple notifications for the same resource
 
                     key = (res.id, days_remaining, today)
                     if key in sent_ressource_notifications:

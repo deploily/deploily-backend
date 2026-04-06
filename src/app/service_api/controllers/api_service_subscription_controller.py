@@ -93,8 +93,6 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
               description: Internal server error
         """
         user = get_user()
-        user_name = user.username
-        slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
 
         subscribe = (
             db.session.query(ApiServiceSubscription)
@@ -112,16 +110,15 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
         if not base_service:
             return Response("Service not found", status=400)
 
-        plan_name = subscribe.service_plan.plan.name.lower()
-        re.sub(r"[^a-zA-Z0-9]", "", plan_name)
+        # Compute consumer username
+        user_name = user.username
+        slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
+        consumer_username = f"{service.service_slug}_{slug_user_name}"
 
-        service = db.session.query(ApiService).filter(ApiService.id == base_service.id).first()
         api_key = uuid.uuid4().hex[:32]
 
         try:
-            # consumer_username = f"{service.service_slug}_{slug_plan_name}_{slug_user_name}"
-            consumer_username = f"{service.service_slug}_{slug_user_name}"
-            apisix_service = ApiSixService()
+            service = db.session.query(ApiService).filter(ApiService.id == base_service.id).first()
             service_plan_option = (
                 db.session.query(ServicePlanOption)
                 .filter(
@@ -148,6 +145,8 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
                 "key": "consumer_name",
                 "policy": "local",
             }
+
+            apisix_service = ApiSixService()
             response = apisix_service.create_consumer(
                 username=consumer_username,
                 api_key=api_key,
