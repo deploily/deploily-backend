@@ -12,7 +12,7 @@ from app.services.apisix_service import ApiSixService
 logger = logging.getLogger(__name__)
 
 
-@scheduler.task("cron", id="delete_consumer", max_instances=1, hour=2, minute=0)
+@scheduler.task("cron", id="delete_consumer", max_instances=1, hour="*", minute=0)
 def delete_expired_consumers():
     print(">>> [CRON] delete_expired_consumers() running")
     with app.app_context():
@@ -44,6 +44,9 @@ def delete_expired_consumers():
         )
 
         for sub in subscriptions:
+            print(
+                f"[CRON] Processing subscription: {sub.id} - is_expired: {sub.is_expired} and status: {sub.status == 'active'}"
+            )
             if sub.is_expired and sub.status == "active":
                 user = sub.created_by
                 if not user.id:
@@ -51,12 +54,17 @@ def delete_expired_consumers():
                     if not user or not user.id:
                         logger.error(f"User ID not found for subscription ID {sub.id}")
                         continue
+
                 user_name = user.username
+
+                # TODO Move this logic to a utility function if used in multiple places
+                # Update in src/app/service_api/controllers/api_service_subscription_controller.py
                 slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
                 service_slug = sub.service_plan.service.service_slug
                 re.sub(r"[^a-zA-Z0-9]", "", sub.service_plan.plan.name.lower())
-                # consumer_username = f"{service_slug}_{plan_name}_{slug_user_name}"
                 consumer_username = f"{service_slug}_{slug_user_name}"
+                # ------------------------------------------
+
                 if not user:
                     logger.warning(f"No user found for subscription ID {sub.id}")
                     continue
