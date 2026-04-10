@@ -20,7 +20,7 @@ class SubscriptionAppServiceView(ModelView):
         "byor",
         "start_date",
         "end_date",
-        "is_expired",
+        "total_amount",
         "status",
         "application_status",
         "required_restart",
@@ -30,7 +30,6 @@ class SubscriptionAppServiceView(ModelView):
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show"]  # only allow viewing
 
 
 appbuilder.add_view(

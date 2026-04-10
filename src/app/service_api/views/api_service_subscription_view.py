@@ -15,11 +15,10 @@ class ApiServiceSubscriptionView(ModelView):
         "id",
         "created_by",
         "service_plan",
-        "total_amount",
         "start_date",
         "end_date",
         "duration_month",
-        "is_expired",
+        "total_amount",
         "status",
     ]
     base_order = ("id", "desc")

@@ -19,14 +19,13 @@ class SubscriptionModelView(ModelView):
         "byor",
         "start_date",
         "end_date",
-        "is_expired",
+        "total_amount",
         "status",
     ]
-    base_order = ("id", "desc")
+    base_order = ("start_date", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show", "can_delete"]  # only allow viewing
 
 
 db.create_all()
@@ -48,14 +47,12 @@ class ActiveSubscriptionModelView(ModelView):
         "byor",
         "start_date",
         "end_date",
-        "is_expired",
-        "status",
+        "total_amount",
     ]
-    base_order = ("type", "desc")
+    base_order = ("start_date", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show", "can_delete"]  # only allow viewing
     base_filters = [["status", FilterEqual, "active"]]
 
 
