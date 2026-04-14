@@ -3,23 +3,33 @@ import os
 import urllib.request
 from datetime import timedelta
 
-from flask_appbuilder.security.manager import AUTH_OAUTH, AUTH_DB
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Here we define the supported langages in the database
 
-# Whenever you add a new language, you need to add it here and update 
+# Whenever you add a new language, you need to add it here and update
 # the database so the fields are created and can be edited
-DB_LANGUAGES = ["en","fr", "ar"]
+DB_LANGUAGES = ["en", "fr", "ar"]
 
-KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", " https://auth.dev.deploily.cloud")
 
-# TODO  add KEYCLOAK_... prefix to the variables
-REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET", "bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW")
-CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
+KEYKCLOAK_URL = os.getenv("KEYKCLOAK_URL", "")
+KEYKCLOAK_REALM_NAME = os.getenv("KEYCLOAK_REALM_NAME", "myrealm")
+KEYKCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+
+
+KEYKCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "deploily")
+KEYKCLOAK_LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/logout"
+)
+
+
+# REALM_NAME = os.getenv("REALM_NAME", "myrealm")
+# CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
+# CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
+# LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
 
 OAUTH_PROVIDERS = [
     {
@@ -27,18 +37,18 @@ OAUTH_PROVIDERS = [
         "token_key": "access_token",
         "icon": "fa-address-card",
         "remote_app": {
-            "jwks_uri": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/certs",
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "api_base_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect",
-            "access_token_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token",
-            "authorize_url": f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/auth",
+            "jwks_uri": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/certs",
+            "client_id": KEYKCLOAK_CLIENT_ID,
+            "client_secret": KEYKCLOAK_CLIENT_SECRET,
+            "api_base_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect",
+            "access_token_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/token",
+            "authorize_url": f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/auth",
             "client_kwargs": {"scope": "openid email profile roles"},
         },
     }
 ]
 
-public_key_url = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}"
+public_key_url = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}"
 
 JWT_ALGORITHM = "RS256"
 
@@ -65,6 +75,18 @@ FAB_ADD_SECURITY_API = False
 # Your App secret key
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
+
+JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+JWT_ALGORITHM = "RS256"
+AUTH_TYPE = AUTH_OAUTH
+LOGOUT_REDIRECT_URL = (
+    f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/logout"
+)
+
+
+RECAPTCHA_PUBLIC_KEY = ""
+RECAPTCHA_PRIVATE_KEY = ""
+
 # The SQLAlchemy connection string.
 SQLLITE_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "app.db")
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_URI)
@@ -75,7 +97,11 @@ CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
+    {"url": "http://localhost:5001/"},
     {"url": "http://192.168.1.22:5000"},
+    {"url": "http://192.168.1.21:5000"},
+    {"url": "http://192.168.1.15:5000"},
+    {"url": "http://192.168.1.16:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -128,9 +154,15 @@ FAB_ROLES = {
         ["MyFavoritesModelApi", "can_add_remove_favorite"],
         ["ConsumerApi", "can_post"],
         ["ContactUSModelApi", "can_get"],
+        ["ContactUSModelApi", "can_info"],
         # ["ContactUSModelApi", "can_put"],
         ["ContactUSModelApi", "can_post"],
         # ["ContactUSModelApi", "can_delete"],
+        ["CommentModelApi", "can_get"],
+        ["CommentModelApi", "can_post"],
+        ["CommentModelApi", "can_info"],
+        ["CommentModelApi", "can_put"],
+        ["CommentModelApi", "can_delete"],
         ["MyFavoritesApi", "can_post"],
         ["MyFavoritesModelApi", "can_get"],
         ["MyFavoritesModelApi", "can_put"],
@@ -142,19 +174,45 @@ FAB_ROLES = {
         ["PaymentModelApi", "can_upload_receipt"],
         # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
+        ["RatingApi", "can_create_or_update_rating"],
         ["PaymentProfileModelApi", "can_get"],
         ["PaymentProfileModelApi", "can_put"],
         ["PaymentProfileModelApi", "can_post"],
         ["PaymentProfileModelApi", "can_delete"],
         ["PromoCodeApi", "can_post"],
         ["ServiceModelApi", "can_get"],
-        ["ServiceModelApi", "can_put"],
-        ["ServiceModelApi", "can_post"],
-        ["ServiceModelApi", "can_delete"],
+        # ["ServiceModelApi", "can_put"],
+        # ["ServiceModelApi", "can_post"],
+        # ["ServiceModelApi", "can_delete"],
+        ["ApiServiceModelApi", "can_get"],
+        # ["ApiServiceModelApi", "can_put"],
+        # ["ApiServiceModelApi", "can_post"],
+        # ["ApiServiceModelApi", "can_delete"],
+        ["AppServiceModelApi", "can_get"],
+        # ["AppServiceModelApi", "can_put"],
+        # ["AppServiceModelApi", "can_post"],
+        # ["AppServiceModelApi", "can_delete"],
+        ["CicdServiceModelApi", "can_get"],
+        # ["CicdServiceModelApi", "can_put"],
+        # ["CicdServiceModelApi", "can_post"],
+        # ["CicdServiceModelApi", "can_delete"],
+        ["RessourcesServiceModelApi", "can_get"],
+        # ["RessourcesServiceModelApi", "can_put"],
+        # ["RessourcesServiceModelApi", "can_post"],
+        # ["RessourcesServiceModelApi", "can_delete"],
+        ["ProvidersRessourceServiceModelApi", "can_get"],
+        # ["ProvidersRessourceServiceModelApi", "can_put"],
+        # ["ProvidersRessourceServiceModelApi", "can_post"],
+        # ["ProvidersRessourceServiceModelApi", "can_delete"],
+        ["AffiliationModelApi", "can_get"],
+        ["AffiliationModelApi", "can_put"],
+        ["AffiliationModelApi", "can_post"],
+        ["AffiliationModelApi", "can_delete"],
+        ["AffiliationModelApi", "can_create_affiliation"],
         ["ServicePlanModelApi", "can_get"],
-        ["ServicePlanModelApi", "can_put"],
-        ["ServicePlanModelApi", "can_post"],
-        ["ServicePlanModelApi", "can_delete"],
+        # ["ServicePlanModelApi", "can_put"],
+        # ["ServicePlanModelApi", "can_post"],
+        # ["ServicePlanModelApi", "can_delete"],
         ["ServiceTagModelApi", "can_get"],
         # ["ServiceTagModelApi", "can_put"],
         # ["ServiceTagModelApi", "can_post"],
@@ -162,8 +220,13 @@ FAB_ROLES = {
         ["SubscriptionModelApi", "can_get"],
         ["SubscriptionModelApi", "can_put"],
         ["SubscriptionModelApi", "can_post"],
+        # ["ServiceTagModelApi", "can_delete"],
         ["SubscriptionModelApi", "can_delete"],
         ["SubscriptionModelApi", "can_create_my_service_consumer"],
+        ["ServiceRessouceCategoryModelApi", "can_get"],
+        # ["ServiceRessouceCategoryModelApi", "can_put"],
+        # ["ServiceRessouceCategoryModelApi", "can_post"],
+        # ["ServiceRessouceCategoryModelApi", "can_delete"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
         ["AccountFundingApi", "can_fund_balance"],
@@ -176,6 +239,57 @@ FAB_ROLES = {
         ["SupportTicketModelApi", "can_post"],
         ["SupportTicketModelApi", "can_delete"],
         ["UserModelApi", "can_get"],
+        ["AppRecommendationModelApi", "can_get"],
+        ["AppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_get"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_put"],
+        ["TtkEpayAppServiceSubscriptionModelApi", "can_post"],
+        ["TtkEpaySubscriptionApi", "can_post"],
+        ["ApiServiceSubscriptionModelApi", "can_get"],
+        ["ApiServiceSubscriptionModelApi", "can_put"],
+        ["ApiServiceSubscriptionModelApi", "can_post"],
+        ["ApiServiceSubscriptionModelApi", "can_delete"],
+        ["ApiServiceSubscriptionModelApi", "can_create_my_service_consumer"],
+        ["TtkEpaySubscriptionApi", "can_subscribe_to_plan"],
+        ["PromoCodeApi", "can_check_promo_code"],
+        ["TtkEpaySubscriptionApi", "can_upgrade_app_subscription"],
+        ["SubscriptionApi", "can_upgrade_api_subscription"],
+        ["SubscriptionApi", "can_renew_api_subscription"],
+        ["OdooAppServiceSubscriptionModelApi", "can_get"],
+        ["SupabaseAppServiceSubscriptionModelApi", "can_get"],
+        ["OdooSubscriptionApi", "can_subscribe_to_plan"],
+        ["OdooSubscriptionApi", "can_upgrade_app_subscription"],
+        ["SupabaseSubscriptionApi", "can_subscribe_to_plan"],
+        ["SupabaseSubscriptionApi", "can_upgrade_app_subscription"],
+        ["TtkEpaySubscription", "can_renew_app_subscription"],
+        ["OdooSubscription", "can_renew_app_subscription"],
+        ["SupabaseSubscription", "can_renew_app_subscription"],
+        ["StatusApi", "can_send_pdf_receipt_mail"],
+        ["SubscriptionModelApi", "can_history"],
+        ["NextCloudSubscriptionApi", "can_subscribe_to_plan"],
+        ["NextCloudSubscriptionApi", "can_upgrade_app_subscription"],
+        ["NextCloudSubscriptionApi", "can_renew_app_subscription"],
+        ["ManagedRessourceModelApi", "can_get"],
+        ["HiEventsSubscriptionApi", "can_subscribe_to_plan"],
+        ["HiEventsSubscriptionApi", "can_upgrade_app_subscription"],
+        ["HiEventsSubscriptionApi", "can_renew_app_subscription"],
+        ["NextCloudAppServiceSubscriptionModelApi", "can_get"],
+        ["HiEventsAppServiceSubscriptionModelApi", "can_get"],
+        ["DeploymentServiceModelApi", "can_get"],
+        # ["DeploymentServiceModelApi", "can_post"],
+        # ["DeploymentServiceModelApi", "can_put"],
+        ["CustomParameterModelApi", "can_get"],
+        ["CustomParameterModelApi", "can_post"],
+        ["CustomParameterModelApi", "can_put"],
+        ["DeploymentServiceSubscriptionModelApi", "can_get"],
+        ["DeploymentServiceSubscriptionModelApi", "can_post"],
+        ["DeploymentServiceSubscriptionModelApi", "can_put"],
+        ["DockerDeploymentServiceSubscriptionModelApi", "can_put"],
+        ["DockerDeploymentServiceSubscriptionModelApi", "can_get"],
+        ["DockerDeploymentServiceSubscriptionModelApi", "can_post"],
+        ["DockerDeploymentSubscriptionApi", "can_post"],
+        ["DockerDeploymentSubscriptionApi", "can_subscribe_to_plan"],
+        ["DashboardApi", "can_dashboard"],
     ]
 }
 
@@ -220,8 +334,21 @@ MAIL_USERNAME = os.getenv("MAIL_USER")
 MAIL_PASSWORD = os.getenv("MAIL_PASS")
 MAIL_USE_SSL = True
 
+SCHEDULER_EXECUTORS = {"default": {"type": "threadpool", "max_workers": 1}}
+SCHEDULER_JOB_DEFAULTS = {"coalesce": False, "max_instances": 1}
+
 SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "True")
 
 NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL")
 
-CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY", "6Ldb_i8rAAAAAKHLinX4bNEs8M_kofYlLtDpYuRE")
+CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY")
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "False")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "False")
+
+CACHE_TYPE = os.getenv("CACHE_TYPE", "NullCache")
+CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST", "redis")
+CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT", "6379")
+CACHE_REDIS_DB = os.getenv("CACHE_REDIS_DB", "0")
+CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/0")
+CACHE_DEFAULT_TIMEOUT = os.getenv("CACHE_DEFAULT_TIMEOUT", "500")

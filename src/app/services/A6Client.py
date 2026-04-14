@@ -140,3 +140,8 @@ class A6Client(object):
 
         response = self.do_api(http_verb, url, kwargs)
         return response if response else None
+
+    def del_consumer(self, username):
+        if not username:
+            raise Exception("no username specified")
+        return self.do_api("DELETE", f"consumers/{username}")

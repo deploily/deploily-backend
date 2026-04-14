@@ -10,7 +10,7 @@ cp .env.example .env
 pre-commit install
 ```
 
-Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `CLIENT_SECRET` and the `APISIX_API_KEY`.
+Make any relevant modification to suite you local developement environment in the `.env` file, especially the Keycloak `KEYCLOAK_CLIENT_SECRET` and the `APISIX_API_KEY`.
 
 ## Database Migration steps 
 
@@ -39,11 +39,31 @@ flask db upgrade
 ```bash
 flask fab create-admin
 ```
-## Run  flask
+## Run flask
 
 ```bash
 cd src
 flask run 
+```
+
+## add value to ENUM
+
+Connect to the database
+```bash
+docker exec -it  deploily-backend-db psql -U postgres -d deploily
+```
+Add new type 
+```sql
+SELECT 
+    column_name, 
+    udt_name AS enum_type_name
+FROM 
+    information_schema.columns 
+WHERE 
+    table_name = 'managed_ressource' 
+    AND data_type = 'USER-DEFINED';
+
+ALTER TYPE <data_type_name> ADD VALUE IF NOT EXISTS '<value>';
 ```
 
 ## Run Test
@@ -66,8 +86,13 @@ pre-commit run --all-files
 
 Realm settings -> Token -> Default Signature Algorithm = HS256
 
+## Get Keycloack login token using localhost
+
+Realm settings -> Token -> Default Signature Algorithm = HS256
+
 ```bash
-curl -d 'client_id=deploily'      -d 'username=admin'      -d 'password=admin'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW'      'https://auth.deploily.cloud/realms/myrealm/protocol/openid-connect/token'
+ curl -d 'client_id=deploily'      -d 'username=admin'      -d 'password=admin'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=aYZTRwWfyLTRfqmBsqkfMJ9C68wSp0bO'      'http://localhost:8080/realms/myrealm/protocol/openid-connect/token'
+
 ```
 
 To decode the JWT Token use [https://jwt.io/](https://jwt.io/)

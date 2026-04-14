@@ -62,6 +62,9 @@ services:
     <<: *merged-conf
     network_mode: service:db
 
+  
+
+
   etcd:
     container_name: deploily-backend-etcd
     image: bitnami/etcd:3.5.11
@@ -74,6 +77,14 @@ services:
     volumes:
       - etcd_data:/bitnami/etcd
     <<: *merged-conf
+  
+
+  redis:
+    image: redis:7.2.3-bookworm
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: service:db
+    ports:
+      - "6379:6379"
 
   # prometheus:
   #   container_name: deploily-backend-prometheus
@@ -95,6 +106,8 @@ services:
   
   
 volumes:
+  postgres-data-keycloak:
+
   etcd_data:
     driver: local
   postgres-data:
