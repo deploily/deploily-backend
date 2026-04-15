@@ -2,3 +2,8 @@ from . import service_ressource_providers_view
 from . import service_ressource_category_view
 from . import service_ressource_view
 from . import affiliation_views
+from . import subscription_ressource_service_view
+from . import dns_subscription_view
+from . import email_subscription_view
+from . import s3_subscription_view
+from . import web_hosting_subscription_view
