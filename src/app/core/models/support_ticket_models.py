@@ -2,14 +2,14 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin, ImageColumn
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from sqlalchemy import Column, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 
 class SupportTicket(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
     title = Column(String(255))
-    description = Column(String(255), nullable=False)
+    description = Column(Text, nullable=False)
     image = Column(ImageColumn)
     status = Column(Enum("open", "closed", name="status"))
     subscription_id = Column(Integer, ForeignKey("subscription.id"))
