@@ -2,6 +2,7 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
+from markupsafe import Markup
 from sqlalchemy import Column, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 
@@ -25,4 +26,18 @@ class SupportTicketResponse(Model, AuditMixin):
         _COL_LENGTH = 40
         return (
             self.message[:_COL_LENGTH] + "..." if len(self.message) > _COL_LENGTH else self.message
+        )
+
+    def send_button(self):
+        if self.status == "sent":
+            return Markup('<span class="badge bg-success">Sent</span>')
+
+        return Markup(
+            f"""
+            <form action="/admin/supportticket-response/{self.id}/send" method="POST">
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fa fa-paper-plane"></i> Send
+                </button>
+            </form>
+            """
         )
