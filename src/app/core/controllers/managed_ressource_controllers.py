@@ -18,6 +18,7 @@ display_columns = [
     "start_date",
     "end_date",
     "ressource_type",
+    "service_details",
 ]
 
 
@@ -34,7 +35,7 @@ class FilterBySubscriptionOwner(BaseFilter):
 
 
 class ManagedRessourceModelApi(ModelRestApi):
-    resource_name = "managed_ressource"
+    resource_name = "managed-ressource"
     base_order = ("id", "desc")
     datamodel = SQLAInterface(ManagedRessource)
 

@@ -23,3 +23,30 @@ class SupportTicket(Model, AuditMixin):
     def title_shortened(self):
         _COL_LENGTH = 40
         return self.title[:_COL_LENGTH] + "..." if len(self.title) > _COL_LENGTH else self.title
+
+
+# @event.listens_for(SupportTicket, "before_update")
+# def before_update(mapper, connection, target):
+#     """
+#     Ensure changed_by_fk is ALWAYS set.
+#     Works for:
+#     - HTTP requests
+#     - Background jobs (APScheduler)
+#     """
+
+#     user_id = None
+
+#     # Case 1: HTTP request context
+#     try:
+#         user = getattr(g, "user", None)
+#         if user and getattr(user, "is_authenticated", False):
+#             user_id = user.id
+#     except RuntimeError:
+#         # No app context → scheduler
+#         pass
+
+#     # Case 2: scheduler / background task
+#     if not user_id:
+#         user_id = 1
+
+#     target.changed_by_fk = user_id

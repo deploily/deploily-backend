@@ -1,0 +1,16 @@
+<p>Hello {{ ticket.created_by.first_name }},</p>
+<p>
+  Your support ticket <strong>#{{ ticket.id }}</strong> has been automatically closed due to no response from your side for 7 days.
+</p>
+<p>
+  <strong>Title:</strong> {{ ticket.title_shortened }}<br />
+  <strong>Description:</strong> {{ ticket.description }}
+</p>
+<p>
+  If you still need assistance, please reopen this ticket or open a new one and our support team will be happy to help.</p>
+<p>
+  <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ ticket.id }}" target="_blank">
+    View this support ticket
+  </a>
+</p>
+<p>Best regards,<br />Support Team</p>

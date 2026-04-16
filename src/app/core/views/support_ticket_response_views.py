@@ -22,7 +22,7 @@ class SupportTicketResponseModelView(ModelView):
         "send_button",
     ]
     base_order = ("id", "desc")
-    _exclude_columns = ["created_on", "changed_on"]
+    _exclude_columns = ["created_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
 
@@ -45,8 +45,8 @@ class SupportTicketResponseModelView(ModelView):
             admin_email = Mail(
                 title=f"Support Ticket #{ticket.id} - New Response",
                 body=admin_body,
-                email_to=current_app.config["NOTIFICATION_EMAIL"],
-                email_from=current_app.config["NOTIFICATION_EMAIL"],
+                email_to=current_app.config["support@deploily.cloud"],
+                email_from=current_app.config["support@deploily.cloud"],
                 mail_state="outGoing",
             )
 
@@ -62,7 +62,7 @@ class SupportTicketResponseModelView(ModelView):
                     title=f"Your Support Ticket #{ticket.id} Has a New Response",
                     body=user_body,
                     email_to=user.email,
-                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    email_from=current_app.config["support@deploily.cloud"],
                     mail_state="outGoing",
                 )
 

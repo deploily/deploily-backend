@@ -1,0 +1,16 @@
+<p>Hello Support Team,</p>
+<p>
+  Support ticket <strong>#{{ ticket.id }}</strong> has had no customer response for 6 days and will be automatically closed in 24 hours.
+</p>
+<p>
+  <strong>Title:</strong> {{ ticket.title_shortened }}<br />
+  <strong>Description:</strong> {{ ticket.description }}<br />
+  <strong>Customer:</strong> {{ ticket.created_by.first_name }} {{ ticket.created_by.last_name }}<br />
+  <strong>Email:</strong> {{ ticket.created_by.email }}
+</p>
+<p>
+  <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ ticket.id }}" target="_blank">
+    View this support ticket
+  </a>
+</p>
+<p>Best regards,<br />Deploily System</p>

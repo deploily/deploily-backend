@@ -64,8 +64,8 @@ class SupportTicketModelApi(ModelRestApi):
             email = Mail(
                 title=f"New Support Ticket Created By {user.first_name} {user.last_name}",
                 body=support_tickert_template,
-                email_to=current_app.config["NOTIFICATION_EMAIL"],
-                email_from=current_app.config["NOTIFICATION_EMAIL"],
+                email_to=current_app.config["support@deploily.cloud"],
+                email_from=current_app.config["support@deploily.cloud"],
                 mail_state="outGoing",
             )
             db.session.add(email)
@@ -80,7 +80,7 @@ class SupportTicketModelApi(ModelRestApi):
                     title="Your support ticket has been created successfully",
                     body=user_template,
                     email_to=user.email,  # ✅ USER EMAIL
-                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    email_from=current_app.config["support@deploily.cloud"],
                     mail_state="outGoing",
                 )
 

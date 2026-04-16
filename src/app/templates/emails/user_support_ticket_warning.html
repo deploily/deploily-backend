@@ -1,0 +1,20 @@
+<p>Hello {{ ticket.created_by.first_name }},</p>
+<p>
+  Your support ticket <strong>#{{ ticket.id }}</strong> has had no activity for 6 days.
+</p>
+<p>
+  <strong>Title:</strong> {{ ticket.title }}<br />
+  <strong>Description:</strong> {{ ticket.description }}
+</p>
+<p>
+  <strong>This ticket will be automatically closed in 24 hours</strong> if no reply is received.
+</p>
+<p>
+  Please reply to keep your ticket open.
+</p>
+<p>
+  <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ ticket.id }}" target="_blank">
+    Reply to this support ticket
+  </a>
+</p>
+<p>Best regards,<br />Support Team</p>
