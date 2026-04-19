@@ -31,6 +31,6 @@ class DnsSubscriptionAppServiceView(ModelView):
 appbuilder.add_view(
     DnsSubscriptionAppServiceView,
     "Resource Dns Subscriptions",
-    icon="fa-shopping-bag",
+    icon="fas fa-luggage-cart",
     category="Subscriptions",
 )

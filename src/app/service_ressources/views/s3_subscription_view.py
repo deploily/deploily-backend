@@ -31,6 +31,6 @@ class S3SubscriptionServiceView(ModelView):
 appbuilder.add_view(
     S3SubscriptionServiceView,
     "Resource S3 Subscriptions",
-    icon="fa-shopping-bag",
+    icon="fas fa-luggage-cart",
     category="Subscriptions",
 )

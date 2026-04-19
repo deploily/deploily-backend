@@ -33,6 +33,6 @@ class EmailSubscriptionServiceView(ModelView):
 appbuilder.add_view(
     EmailSubscriptionServiceView,
     "Resource Email Subscriptions",
-    icon="fa-shopping-bag",
+    icon="fas fa-luggage-cart",
     category="Subscriptions",
 )

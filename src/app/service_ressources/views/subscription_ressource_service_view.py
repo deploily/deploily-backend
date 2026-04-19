@@ -25,12 +25,12 @@ class SubscriptionRessourceServiceView(ModelView):
         "application_status",
         "required_restart",
     ]
-    base_permissions = ["can_list", "can_show"]
 
     base_order = ("id", "desc")
     _exclude_columns = [
         "created_on",
         "changed_on",
+        "type",
     ]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
@@ -39,6 +39,6 @@ class SubscriptionRessourceServiceView(ModelView):
 appbuilder.add_view(
     SubscriptionRessourceServiceView,
     "Ressource Services Subscriptions",
-    icon="fa-shopping-bag",
+    icon="fas fa-luggage-cart",
     category="Subscriptions",
 )
