@@ -24,6 +24,7 @@ _affiliation_value_display_columns = [
     "provider.name",
     "service_plan",
     "service_details",
+    "created_on",
 ]
 
 
