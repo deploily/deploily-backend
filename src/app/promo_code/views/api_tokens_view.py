@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     ApiTokensModelView,
     "Api Tokens",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-key",
     category="Billing",
 )

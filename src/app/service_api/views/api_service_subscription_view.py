@@ -15,10 +15,11 @@ class ApiServiceSubscriptionView(ModelView):
         "id",
         "created_by",
         "service_plan",
-        "total_amount",
-        "is_expired",
         "start_date",
+        "end_date",
         "duration_month",
+        "total_amount",
+        "status",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on", "type"]
@@ -29,6 +30,6 @@ class ApiServiceSubscriptionView(ModelView):
 appbuilder.add_view(
     ApiServiceSubscriptionView,
     "Api Service Subscriptions",
-    icon="fa-cogs",
-    category="Apis",
+    icon="fa-link",
+    category="Subscriptions",
 )

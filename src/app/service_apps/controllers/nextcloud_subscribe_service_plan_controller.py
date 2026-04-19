@@ -194,11 +194,6 @@ class NextCloudSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
             )
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
-            )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
                 user, subscription, request_data, has_sufficient_balance
@@ -410,11 +405,6 @@ class NextCloudSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
                 is_upgrade=True,
-            )
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(

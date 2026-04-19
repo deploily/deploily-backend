@@ -16,12 +16,11 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
+        "byor",
         "start_date",
-        "duration_month",
+        "end_date",
+        "is_expired",
+        "status",
         "is_upgrade",
         "is_renew",
     ]
@@ -33,7 +32,7 @@ class TtkEpayAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     TtkEpayAppServiceSubscriptionView,
-    "TTK Epay  Subscriptions ",
-    icon="fa-cogs",
-    category="Applications",
+    "App TTK Epay Subscriptions",
+    icon="fa-shopping-bag",
+    category="Subscriptions",
 )

@@ -44,6 +44,11 @@ class Subscription(Model, AuditMixin):
         default=lambda: datetime.now().replace(microsecond=0),
         nullable=False,
     )
+    end_date = Column(
+        DateTime,
+        default=lambda: datetime.now().replace(microsecond=0),
+        nullable=False,
+    )
     total_amount = Column(Float)
     price = Column(Float)
     payment_status = Column(Enum("unpaid", "paid", name="payment_status"))
@@ -67,6 +72,8 @@ class Subscription(Model, AuditMixin):
     managed_ressource = relationship("ManagedRessource", back_populates="subscriptions")
     phone = Column(String(20), nullable=True)
     type = Column(String(50), default="subscription")
+    byor = Column(Boolean, default=False)  # Bring Your Own Ressource
+
     __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 
     @property
@@ -97,8 +104,6 @@ class Subscription(Model, AuditMixin):
         if self.service_plan and self.service_plan.service:
             service = self.service_plan.service
             service_json = {}
-            # Get all keys from the base (Service)
-            # base_keys = set(Service.__mapper__.c.keys())
 
             # Get all keys from the subclass
             child_keys = set(service.__class__.__mapper__.c.keys())
@@ -111,9 +116,7 @@ class Subscription(Model, AuditMixin):
                     service_json[key] = getattr(service, key)
                 except Exception:
                     service_json[key] = None
-            # for key, value in service.__dict__.items():
-            #     if not key.startswith("_"):
-            #         service_json[key] = value
+
             service_json["is_subscribed"] = self.is_subscribed
 
             return service_json
@@ -128,8 +131,6 @@ class Subscription(Model, AuditMixin):
         if self.managed_ressource and self.managed_ressource.ressource_service_plan:
             ressource_service_plan = self.managed_ressource.ressource_service_plan
             managed_ressource = {}
-            # Get all keys from the base (Service)
-            # base_keys = set(Service.__mapper__.c.keys())
 
             # Get all keys from the subclass
             child_keys = set(ressource_service_plan.__class__.__mapper__.c.keys())
@@ -142,9 +143,6 @@ class Subscription(Model, AuditMixin):
                     managed_ressource[key] = getattr(ressource_service_plan, key)
                 except Exception:
                     managed_ressource[key] = None
-            # for key, value in service.__dict__.items():
-            #     if not key.startswith("_"):
-            #         service_json[key] = value
             return managed_ressource
 
         else:
@@ -217,13 +215,6 @@ class Subscription(Model, AuditMixin):
                 for opt in options
             ],
         }
-
-    # @property
-    # def is_expired(self):
-    #     is_subscription_expired = False
-    #     if self.start_date + relativedelta(months=self.duration_month) < datetime.now():
-    #         is_subscription_expired = True
-    #     return is_subscription_expired
 
     @hybrid_property
     def is_expired(self):

@@ -16,15 +16,12 @@ class DockerDeploymentServiceSubscriptionView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
+        "name",
+        "byor",
         "start_date",
-        "duration_month",
-        "is_upgrade",
-        "is_renew",
-        "description",
+        "end_date",
+        "is_expired",
+        "status",
         "deployment_status",
     ]
     base_order = ("id", "desc")
@@ -35,7 +32,7 @@ class DockerDeploymentServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     DockerDeploymentServiceSubscriptionView,
-    "Docker Deployment Subscription",
-    icon="fa-cog",
-    category="Deployments",
+    "Deployment Docker Subscriptions",
+    icon="fa-cart-plus",
+    category="Subscriptions",
 )

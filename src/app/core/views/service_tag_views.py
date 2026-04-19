@@ -17,7 +17,7 @@ class ServiceTagModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     ServiceTagModelView,
-    "ServiceTag",
-    icon="fa-solid fa-cogs",
+    "Service Tag",
+    icon="fa-solid fa-tag ",
     category="Master",
 )

@@ -24,6 +24,6 @@ db.create_all()
 appbuilder.add_view(
     ServicePlanOptionModelView,
     "Service Plan Option",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-check-circle-o",
     category="Master",
 )

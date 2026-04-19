@@ -19,6 +19,6 @@ db.create_all()
 appbuilder.add_view(
     MediaModelView,
     "Media",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-picture-o",
     category="Master",
 )

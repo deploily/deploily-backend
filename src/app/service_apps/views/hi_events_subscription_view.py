@@ -16,12 +16,11 @@ class HiEventsAppServiceSubscriptionView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
+        "byor",
         "start_date",
-        "duration_month",
+        "end_date",
+        "is_expired",
+        "status",
         "is_upgrade",
         "is_renew",
     ]
@@ -33,7 +32,7 @@ class HiEventsAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     HiEventsAppServiceSubscriptionView,
-    "Hi Events  Subscriptions ",
-    icon="fa-cogs",
-    category="Applications",
+    "App Hi Events Subscriptions",
+    icon="fa-shopping-bag",
+    category="Subscriptions",
 )

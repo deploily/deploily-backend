@@ -16,36 +16,26 @@ class SubscriptionDeploymentServiceView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
+        "name",
+        "byor",
+        "service_name",
+        "start_date",
+        "end_date",
         "total_amount",
         "status",
-        "is_expired",
-        "start_date",
-        "duration_month",
-        "access_url",
-        "service_name",
-        "required_restart",
         "deployment_status",
-        "is_published",
-        "argocd_url",
-        "argocd_user_name",
-        "argocd_password",
-        "backend_url",
-        "frontend_url",
-        "internal_note",
-        "ressource_service_plan",
+        "required_restart",
     ]
 
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show"]  # only allow viewing
 
 
 appbuilder.add_view(
     SubscriptionDeploymentServiceView,
-    "Subscription Deployment Services",
-    icon="fa-cogs",
-    category="Deployments",
+    "Deployment Services Subscriptions",
+    icon="fa-cart-plus",
+    category="Subscriptions",
 )

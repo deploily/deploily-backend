@@ -14,12 +14,11 @@ class OdooAppServiceSubscriptionView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
-        "total_amount",
-        "status",
-        "is_expired",
+        "byor",
         "start_date",
-        "duration_month",
+        "end_date",
+        "is_expired",
+        "status",
         "is_upgrade",
         "is_renew",
     ]
@@ -31,7 +30,7 @@ class OdooAppServiceSubscriptionView(ModelView):
 
 appbuilder.add_view(
     OdooAppServiceSubscriptionView,
-    "Odoo  Subscriptions ",
-    icon="fa-cogs",
-    category="Applications",
+    "App Odoo Subscriptions",
+    icon="fa-shopping-bag",
+    category="Subscriptions",
 )

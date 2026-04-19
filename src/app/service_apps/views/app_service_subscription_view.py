@@ -16,32 +16,25 @@ class SubscriptionAppServiceView(ModelView):
     list_columns = [
         "id",
         "created_by",
-        "price",
+        "service_name",
+        "byor",
+        "start_date",
+        "end_date",
         "total_amount",
         "status",
-        "is_expired",
-        "start_date",
-        "duration_month",
-        "access_url",
-        "service_name",
-        "required_restart",
-        "version",
-        "console_url",
         "application_status",
-        "internal_note",
-        "ressource_service_plan",
+        "required_restart",
     ]
 
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
     add_exclude_columns = _exclude_columns
     edit_exclude_columns = _exclude_columns
-    base_permissions = ["can_list", "can_show"]  # only allow viewing
 
 
 appbuilder.add_view(
     SubscriptionAppServiceView,
-    "Subscription App Services",
-    icon="fa-cogs",
-    category="Operations",
+    "Application Services Subscriptions",
+    icon="fa-shopping-bag",
+    category="Subscriptions",
 )

@@ -10,7 +10,7 @@ from app.core.models.rating_models import Score
 class RatingModelView(ModelView):
     route_base = "/admin/rating"
     datamodel = SQLAInterface(Score)
-    list_columns = ["id", "rating"]
+    list_columns = ["id", "created_by", "created_on", "service", "rating"]
     base_order = ("id", "desc")
 
 
@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     RatingModelView,
     "Rating",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-star",
     category="Operations",
 )

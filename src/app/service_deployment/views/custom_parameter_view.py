@@ -17,4 +17,9 @@ class CustomParameterView(ModelView):
     show_columns = ["name", "description", "value"]
 
 
-appbuilder.add_view(CustomParameterView, "Custom Parameters", icon="fa-cog", category="Operations")
+appbuilder.add_view(
+    CustomParameterView,
+    "Deployment Custom Parameters",
+    icon="fa-cart-plus",
+    category="Subscriptions",
+)

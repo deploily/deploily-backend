@@ -28,6 +28,6 @@ db.create_all()
 appbuilder.add_view(
     ServicePlanModelView,
     "Service Plan",
-    icon="fa-solid fa-sliders",
+    icon="fa-solid fa-list-alt",
     category="Master",
 )

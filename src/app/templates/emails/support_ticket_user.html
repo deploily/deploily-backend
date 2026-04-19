@@ -1,0 +1,21 @@
+<p>Hello {{ user.first_name }},</p>
+
+<p>
+  Your support ticket <strong>#{{ item.id }}</strong> has been created successfully.
+</p>
+
+<p>
+  <strong>Title:</strong> {{ item.title }}<br />
+  <strong>Description:</strong> {{ item.description }}
+</p>
+
+<p>
+  Our support team will get back to you as soon as possible.
+</p>
+<p>
+    <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ item.id }}" target="_blank">
+    View and edit this support ticket
+  </a>
+</p>
+
+<p>Best regards,<br />Support Team</p>

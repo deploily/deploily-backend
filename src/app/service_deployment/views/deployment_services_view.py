@@ -13,9 +13,12 @@ class DeploymentServiceView(ModelView):
     datamodel = SQLAInterface(DeploymentService)
 
     list_columns = [
-        "tags",
+        "id",
         "name",
+        "service_slug",
         "unit_price",
+        "is_published",
+        "sequence",
     ]
     add_columns = [
         # "category",
@@ -88,7 +91,7 @@ class DeploymentServiceView(ModelView):
 
 appbuilder.add_view(
     DeploymentServiceView,
-    "Deployment service",
-    icon="fa-cogs",
+    "Deployment services",
+    icon="fa-gift",
     category="Master",
 )

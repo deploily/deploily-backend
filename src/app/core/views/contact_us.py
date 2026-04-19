@@ -10,7 +10,7 @@ from app.core.models.contact_us_models import ContactUs
 class ContactUsModelView(ModelView):
     route_base = "/admin/contact-us"
     datamodel = SQLAInterface(ContactUs)
-    list_columns = ["created_on", "name", "email", "message", "contact_us_status"]
+    list_columns = ["created_on", "name", "message", "phone", "contact_us_status"]
     base_order = ("id", "desc")
 
 
@@ -18,6 +18,6 @@ db.create_all()
 appbuilder.add_view(
     ContactUsModelView,
     "Contact Us ",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-life-ring ",
     category="Operations",
 )

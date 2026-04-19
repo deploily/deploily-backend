@@ -22,5 +22,14 @@ class Affiliation(Model, AuditMixin):
     service_plan = relationship("ServicePlan")
     internal_note = Column(Text, nullable=True)
 
+    @property
+    def service_details(self):
+
+        if self.service_plan and self.service_plan.service:
+            service = self.service_plan.service
+            return {
+                "name": service.name,
+            }
+
     def __repr__(self):
         return f" {self.id} "

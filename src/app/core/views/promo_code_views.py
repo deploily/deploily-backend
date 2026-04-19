@@ -19,6 +19,6 @@ db.create_all()
 appbuilder.add_view(
     PromoCodeModelView,
     "Promo Code",
-    icon="fa-solid fa-sliders",
+    icon="fa-solid fa-minus-square",
     category="Billing",
 )

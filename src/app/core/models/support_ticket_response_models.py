@@ -2,13 +2,14 @@
 
 from flask_appbuilder import Model
 from flask_appbuilder.models.mixins import AuditMixin
-from sqlalchemy import Column, Enum, ForeignKey, Integer, String
+from markupsafe import Markup
+from sqlalchemy import Column, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 
 
 class SupportTicketResponse(Model, AuditMixin):
     id = Column(Integer, primary_key=True)
-    message = Column(String(255))
+    message = Column(Text)
     support_ticket_id = Column(Integer, ForeignKey("support_ticket.id"))
     support_ticket = relationship("SupportTicket", cascade="all,delete")
     status = Column(
@@ -18,4 +19,25 @@ class SupportTicketResponse(Model, AuditMixin):
     )
 
     def __repr__(self):
-        return str(self.id)
+        return f"[{self.id} | {self.status}] {self.message_shortened}"
+
+    @property
+    def message_shortened(self):
+        _COL_LENGTH = 40
+        return (
+            self.message[:_COL_LENGTH] + "..." if len(self.message) > _COL_LENGTH else self.message
+        )
+
+    def send_button(self):
+        if self.status == "sent":
+            return Markup('<span class="badge bg-success">Sent</span>')
+
+        return Markup(
+            f"""
+            <form action="/admin/supportticket-response/{self.id}/send" method="POST">
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fa fa-paper-plane"></i> Send
+                </button>
+            </form>
+            """
+        )

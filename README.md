@@ -39,11 +39,31 @@ flask db upgrade
 ```bash
 flask fab create-admin
 ```
-## Run  flask
+## Run flask
 
 ```bash
 cd src
 flask run 
+```
+
+## add value to ENUM
+
+Connect to the database
+```bash
+docker exec -it  deploily-backend-db psql -U postgres -d deploily
+```
+Add new type 
+```sql
+SELECT 
+    column_name, 
+    udt_name AS enum_type_name
+FROM 
+    information_schema.columns 
+WHERE 
+    table_name = 'managed_ressource' 
+    AND data_type = 'USER-DEFINED';
+
+ALTER TYPE <data_type_name> ADD VALUE IF NOT EXISTS '<value>';
 ```
 
 ## Run Test
@@ -65,10 +85,6 @@ pre-commit run --all-files
 ## Get Keycloack login token 
 
 Realm settings -> Token -> Default Signature Algorithm = HS256
-
-```bash
-curl -d 'client_id=deploily'      -d 'username=nesrine'      -d 'password=nesrine'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=bVLhkb8ve3RXsCV9H8cIBecnkZHJWtSW'      'https://auth.deploily-staging.xyz/realms/myrealm/protocol/openid-connect/token'
-```
 
 ## Get Keycloack login token using localhost
 

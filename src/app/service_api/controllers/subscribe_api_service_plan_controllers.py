@@ -132,7 +132,6 @@ class SubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             api_subscription_service = ApiSubscriptionService(db.session, _logger)
             # Get and validate user
             user = get_user()
@@ -306,7 +305,6 @@ class SubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             api_subscription_service = ApiSubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
 
@@ -493,7 +491,6 @@ class SubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             api_subscription_service = ApiSubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
 

@@ -13,13 +13,14 @@ class AppServiceView(ModelView):
     datamodel = SQLAInterface(AppService)
 
     list_columns = [
-        "tags",
+        "id",
         "name",
+        "service_slug",
         "unit_price",
-        "average_rating",
+        "is_eligible",
         "is_published",
         "sequence",
-        "demo_url",
+        "app_versions",
     ]
     add_columns = [
         # "category",
@@ -112,6 +113,6 @@ class AppServiceView(ModelView):
 appbuilder.add_view(
     AppServiceView,
     "Application Services",
-    icon="fa-cogs",
+    icon="fa-gift",
     category="Master",
 )

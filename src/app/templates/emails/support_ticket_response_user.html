@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Your Support Ticket Update</title>
+</head>
+<body>
+    <p>Hello {{ ticket.support_ticket.created_by.first_name }},</p>
+
+    <p>Your support ticket has received a new response.</p>
+
+    <hr>
+
+    <p><strong>Ticket ID:</strong> {{ ticket.id }}</p>
+
+    <hr>
+
+    <p><strong>Response:</strong></p>
+    <p>{{ ticket.message }}</p>
+
+    <hr>
+
+    <p>
+        👉 You can reply or view details in your dashboard.
+    </p>
+
+    <br>
+    <p>
+        👉 <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ ticket.id }}" target="_blank">
+            View your support ticket
+        </a>
+    </p>
+
+    <p>Best regards,<br>Support Team</p>
+</body>
+</html>

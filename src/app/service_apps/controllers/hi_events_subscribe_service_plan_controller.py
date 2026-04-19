@@ -194,11 +194,6 @@ class HiEventsSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
             )
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
-            )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
                 user, subscription, request_data, has_sufficient_balance
@@ -275,11 +270,6 @@ class HiEventsSubscriptionApi(BaseApi):
                                     type: string
                                     description: URL to redirect after failure
 
-
-
-
-
-
             responses:
                 200:
                     description: Subscription successful
@@ -319,9 +309,6 @@ class HiEventsSubscriptionApi(BaseApi):
                                             version_selected_id:
                                                 type: integer
                                                 description: ID of the selected version app service
-
-
-
 
                                     order_id:
                                         type: string
@@ -412,11 +399,6 @@ class HiEventsSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 is_upgrade=True,
                 phone=subscription_json["phone"],
-            )
-            subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(

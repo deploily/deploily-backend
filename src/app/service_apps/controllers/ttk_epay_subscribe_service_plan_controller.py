@@ -77,12 +77,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 client_fail_url:
                                     type: string
                                     description: URL to redirect after failure
-
-
-
-
-
-
             responses:
                 200:
                     description: Subscription successful
@@ -126,9 +120,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                                                 type: integer
                                                 description: ID of the selected version app service
 
-
-
-
                                     order_id:
                                         type: string
                                     form_url:
@@ -166,7 +157,6 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
 
             # Get and validate user
@@ -219,12 +209,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_server_url=os.getenv("TTK_EPAY_MVC_SATIM_SERVER_URL", ""),
                 ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
                 ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
-            )
-
-            managed_ressource = subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
@@ -388,7 +372,6 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
             subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
 
@@ -448,12 +431,6 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_server_url=old_subscription.ttk_epay_mvc_satim_server_url,
                 ttk_epay_mvc_satim_fail_url=old_subscription.ttk_epay_mvc_satim_fail_url,
                 ttk_epay_mvc_satim_confirm_url=old_subscription.ttk_epay_mvc_satim_confirm_url,
-            )
-
-            subscription_service_base.get_or_create_managed_ressource(
-                ressource_plan=subscription_json["ressource_plan"],
-                managed_ressource=subscription_json["managed_ressource"],
-                subscription=subscription,
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
@@ -600,7 +577,6 @@ class TtkEpaySubscriptionApi(BaseApi):
 
         try:
             # Initialize services
-            # subscription_service = SubscriptionService(db.session, _logger)
             subscription_service_base = SubscriptionServiceBase(db.session, _logger)
             subscription_ttk_epay_service = SubscriptionTtkEpayService(db.session, _logger)
 

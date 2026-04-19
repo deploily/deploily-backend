@@ -70,10 +70,19 @@ celery.conf.update(app.config)
 if __name__ == "__main__":
     app.run(debug=True)
 
-from .service_ressources import models, views, controllers
-from .service_deployment import models, views, controllers
-from .service_apps import models, views, controllers
-from .service_api import models, views, controllers
+from .service_ressources import models
 from .core import models, views, controllers
+from .service_api import models, views, controllers
+from .service_apps import models, views, controllers
+from .service_deployment import models, views, controllers
 from .promo_code import models, views, controllers
 from . import services, schedulers
+from .service_ressources import views, controllers
+
+
+appbuilder.add_link(
+    name="Swagger documentation",
+    href="/swagger/v1",
+    icon="fa-solid fa-book",
+    category="Configuration",
+)

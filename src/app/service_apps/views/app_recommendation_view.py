@@ -17,7 +17,7 @@ class RecommendationModelView(ModelView):
 db.create_all()
 appbuilder.add_view(
     RecommendationModelView,
-    "Recommendation",
-    icon="fa-solid fa-cogs",
-    category="Operations",
+    "App Recommendation",
+    icon="fa-solid fa-compass",
+    category="Master",
 )

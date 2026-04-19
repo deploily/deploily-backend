@@ -13,9 +13,10 @@ class ServiceModelView(ModelView):
     list_columns = [
         "id",
         "name",
-        "documentation_url",
+        "type",
+        "service_slug",
         "unit_price",
-        "is_in_favorite",
+        "price_category",
         "is_eligible",
         "is_published",
     ]
@@ -31,6 +32,6 @@ db.create_all()
 appbuilder.add_view(
     ServiceModelView,
     "Service",
-    icon="fa-solid fa-cogs",
+    icon="fa-solid fa-gift",
     category="Master",
 )
