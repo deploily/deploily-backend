@@ -25,6 +25,7 @@ _support_ticket_display_columns = [
     "subscription",
     "created_on",
     "responses_with_details",
+    "created_by_fk",
 ]
 
 

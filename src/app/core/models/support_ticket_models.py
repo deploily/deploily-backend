@@ -36,6 +36,7 @@ class SupportTicket(Model, AuditMixin):
                         "username": r.created_by.username,
                         "first_name": r.created_by.first_name,
                         "last_name": r.created_by.last_name,
+                        "id": r.created_by.id,
                     }
                     if r.created_by
                     else None
