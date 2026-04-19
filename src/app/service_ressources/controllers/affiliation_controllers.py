@@ -2,7 +2,7 @@
 
 import logging
 
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, render_template, request
 from flask_appbuilder.api import ModelRestApi, expose, protect
 from flask_appbuilder.models.sqla.filters import FilterEqualFunction
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -21,8 +21,9 @@ _affiliation_value_display_columns = [
     "id",
     "total_price",
     "affiliation_state",
-    "provider",
+    "provider.name",
     "service_plan",
+    "service_name",
 ]
 
 
@@ -30,7 +31,7 @@ class AffiliationModelApi(ModelRestApi):
     resource_name = "affiliation"
     datamodel = SQLAInterface(Affiliation)
     base_filters = [["created_by", FilterEqualFunction, get_user]]
-    exclude_route_methods = ["get", "post", "get_list"]
+    exclude_route_methods = ["get", "post"]
     add_columns = _affiliation_value_display_columns
     list_columns = _affiliation_value_display_columns
     show_columns = _affiliation_value_display_columns
@@ -173,64 +174,6 @@ class AffiliationModelApi(ModelRestApi):
         )
 
         return self.response(201, message="Affiliation créée et emails envoyés.")
-
-    @protect()
-    @jwt_required()
-    @expose("/all", methods=["GET"])
-    def get_all_affiliations(self):
-        """
-        Get all affiliations with details.
-        ---
-        get:
-          summary: List all affiliations
-          description: Returns a list of all affiliations with service and provider details.
-          responses:
-            200:
-              description: A list of affiliations
-              content:
-                application/json:
-                  schema:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        service_name:
-                          type: string
-                        provider_name:
-                          type: string
-                        total_price:
-                          type: number
-                        affiliation_state:
-                          type: string
-                        created_on:
-                          type: string
-                          format: date-time
-            401:
-              description: Unauthorized - JWT token missing or invalid
-            500:
-              description: Internal server error
-        """
-        user = current_user
-        affiliations = db.session.query(Affiliation).filter_by(created_by=user).all()
-        results = []
-        for affiliation in affiliations:
-            result = {
-                "id": affiliation.id,
-                "service_name": (
-                    affiliation.service_plan.service.name
-                    if affiliation.service_plan and affiliation.service_plan.service
-                    else None
-                ),
-                "provider_name": affiliation.provider.name if affiliation.provider else None,
-                "total_price": affiliation.total_price,
-                "affiliation_state": affiliation.affiliation_state,
-                "created_on": affiliation.created_on if affiliation.created_on else None,
-            }
-            results.append(result)
-
-        return jsonify(results), 200
 
 
 appbuilder.add_api(AffiliationModelApi)
