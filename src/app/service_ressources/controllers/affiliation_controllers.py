@@ -23,7 +23,7 @@ _affiliation_value_display_columns = [
     "affiliation_state",
     "provider.name",
     "service_plan",
-    "service_name",
+    "service_details",
 ]
 
 
