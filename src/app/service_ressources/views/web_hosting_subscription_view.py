@@ -32,7 +32,7 @@ class WebHostingSubscriptionServiceView(ModelView):
 
 appbuilder.add_view(
     WebHostingSubscriptionServiceView,
-    "Resource Email Subscriptions",
+    "Resource Web Hosting Subscriptions",
     icon="fa-shopping-bag",
     category="Subscriptions",
 )

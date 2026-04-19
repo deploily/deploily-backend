@@ -25,6 +25,7 @@ class SubscriptionAppServiceView(ModelView):
         "application_status",
         "required_restart",
     ]
+    base_permissions = ["can_list", "can_show"]
 
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on"]
