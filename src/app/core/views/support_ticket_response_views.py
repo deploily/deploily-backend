@@ -45,8 +45,8 @@ class SupportTicketResponseModelView(ModelView):
             admin_email = Mail(
                 title=f"Support Ticket #{ticket.id} - New Response",
                 body=admin_body,
-                email_to=current_app.config["support@deploily.cloud"],
-                email_from=current_app.config["support@deploily.cloud"],
+                email_to=current_app.config["SUPPORT_EMAIL"],
+                email_from=current_app.config["SUPPORT_EMAIL"],
                 mail_state="outGoing",
             )
 
@@ -62,7 +62,7 @@ class SupportTicketResponseModelView(ModelView):
                     title=f"Your Support Ticket #{ticket.id} Has a New Response",
                     body=user_body,
                     email_to=user.email,
-                    email_from=current_app.config["support@deploily.cloud"],
+                    email_from=current_app.config["SUPPORT_EMAIL"],
                     mail_state="outGoing",
                 )
 
