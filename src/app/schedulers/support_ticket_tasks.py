@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import date
 
 from flask import current_app as app
 from flask import render_template
@@ -34,7 +34,7 @@ def _get_ticket_owner_email(ticket: SupportTicket) -> str | None:
     return getattr(user, "email", None) if user else None
 
 
-def _customer_replied_after(ticket: SupportTicket, since: datetime) -> bool:
+def _customer_replied_after(ticket: SupportTicket, since: date) -> bool:
     """
     Return True if the customer added any response AFTER `since`.
     We detect a customer reply as a SupportTicketResponse whose `created_by`
@@ -45,7 +45,7 @@ def _customer_replied_after(ticket: SupportTicket, since: datetime) -> bool:
         return False
     for response in ticket.support_ticket_responses:
         creator = getattr(response, "created_by", None)
-        if creator and creator.id == owner.id and response.created_on > since:
+        if creator and creator.id == owner.id and response.created_on.date() > since.date():
             return True
     return False
 
@@ -65,7 +65,7 @@ def auto_close_support_tickets() -> dict:
     - Tickets open > 7 days since last team response with no customer reply
       → close ticket + send closure email.
     """
-    now = datetime.utcnow()
+    today = date.today()  # Use date to avoid timezone issues; we only care about days
     warned = 0
     closed = 0
     with scheduler.app.app_context():  # <-- wrap everything here
@@ -74,27 +74,24 @@ def auto_close_support_tickets() -> dict:
             db.session.query(SupportTicket).filter(SupportTicket.status == "open").all()
         )
         system_user = _get_system_user()
+        support_mail = app.config.get("SUPPORT_EMAIL")
 
         for ticket in open_tickets:
             last_response = _last_sent_response(ticket)
             if last_response is None:
                 continue  # team hasn't replied yet — nothing to do
 
-            response_time: datetime = last_response.changed_on
-            # Make timezone-aware if naive (depends on your DB setup)
-            if response_time.tzinfo is None:
-                response_time = response_time.replace(tzinfo=timezone.utc)
-
+            response_date: date = last_response.changed_on.date()
             customer_email = _get_ticket_owner_email(ticket)
             if not customer_email:
                 logger.warning("No email found for ticket #%s owner — skipping.", ticket.id)
                 continue
 
-            customer_replied = _customer_replied_after(ticket, since=response_time)
+            customer_replied = _customer_replied_after(ticket, since=response_date)
             if customer_replied:
                 continue  # customer is engaged — leave ticket alone
 
-            days_since_response = (now.date() - response_time.date()).days
+            days_since_response = (today - response_date).days
 
             # ── Day 7+: close the ticket ──────────────────────────────────────────
             if days_since_response >= 7:
@@ -111,13 +108,12 @@ def auto_close_support_tickets() -> dict:
                     ),
                     {
                         "status": "closed",
-                        "changed_on": now,
+                        "changed_on": today,
                         "user_id": system_user.id if system_user else None,
                         "ticket_id": ticket.id,
                     },
                 )
                 # _send_email(customer_email, CLOSURE_SUBJECT, CLOSURE_BODY, ticket)
-                support_mail = app.config.get("SUPPORT_EMAIL")
                 subject = f"Your support ticket #{ticket.id} has been closed"
                 admin_body = render_template(
                     "emails/admin_support_ticket_closed.html",
@@ -134,7 +130,8 @@ def auto_close_support_tickets() -> dict:
                 closed += 1
 
             # ── Day 6: warn the customer ──────────────────────────────────────────
-            elif days_since_response <= 6:
+            elif days_since_response == 6:
+                subject = f"Reminder: Your support ticket #{ticket.id} is awaiting your response"
                 admin_body = render_template(
                     "emails/admin_support_ticket_warning.html",
                     ticket=ticket,
