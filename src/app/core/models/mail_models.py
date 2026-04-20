@@ -3,13 +3,13 @@
 from datetime import datetime
 
 from flask_appbuilder import Model
-from sqlalchemy import Column, DateTime, Enum, Integer, String
+from sqlalchemy import Column, DateTime, Enum, Integer, String, Text
 
 
 class Mail(Model):
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)
-    body = Column(String, default="")
+    body = Column(Text)
     mail_state = Column(Enum("outGoing", "sent", "error", "canceled", name="mail_state"))
     email_from = Column(String(255), default="")
     email_to = Column(String(255), default="")
