@@ -1,6 +1,7 @@
 import json
 import os
 import urllib.request
+import requests
 from datetime import timedelta
 
 from flask_appbuilder.security.manager import AUTH_OAUTH
@@ -46,26 +47,25 @@ JWT_ALGORITHM = "RS256"
 
 
 def fetch_keycloak_rs256_public_cert():
-    with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
-        public_key_url_response = json.load(response)
-    public_key = public_key_url_response["public_key"]
-    if public_key:
-        pem_lines = [
-            "-----BEGIN PUBLIC KEY-----",
-            public_key,
-            "-----END PUBLIC KEY-----",
-        ]
-        cert_pem = "\n".join(pem_lines)
-    else:
-        cert_pem = "No cert found"
-    return cert_pem
+    try:
+        resp = requests.get(public_key_url, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        public_key = data.get("public_key")
+        if not public_key:
+            return "No cert found"
+        return "\n".join(
+            ["-----BEGIN PUBLIC KEY-----", public_key, "-----END PUBLIC KEY-----"]
+        )
+    except Exception:
+        return "No cert found"
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 FAB_ADD_SECURITY_API = False
 
 # Your App secret key
-SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
@@ -85,8 +85,8 @@ SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI", SQLLITE_DATABASE_
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-WTF flag for CSRF
-CSRF_ENABLED = False
-FAB_API_SWAGGER_UI = True
+CSRF_ENABLED = True
+FAB_API_SWAGGER_UI = os.getenv("ENABLE_SWAGGER", "False") == "True"
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
     {"url": "http://localhost:5001/"},
@@ -320,7 +320,8 @@ LANGUAGES = {
 }
 
 APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
-APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL")
+APISIX_API_KEY = os.environ["APISIX_API_KEY"]
 MAIL_HOST = os.getenv("MAIL_HOST")
 MAIL_PORT = int(os.getenv("MAIL_PORT", 465))
 MAIL_USERNAME = os.getenv("MAIL_USER")
