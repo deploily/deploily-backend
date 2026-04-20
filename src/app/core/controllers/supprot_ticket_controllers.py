@@ -45,7 +45,11 @@ class SupportTicketModelApi(ModelRestApi):
         "support_ticket_responses",
     ]
     list_columns = _support_ticket_display_columns
-    edit_columns = _support_ticket_display_columns
+    edit_columns = [
+        "title",
+        "status",
+        "description",
+    ]
     show_columns = _support_ticket_display_columns
     _exclude_columns = [
         "changed_on",
