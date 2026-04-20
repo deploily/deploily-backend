@@ -45,7 +45,7 @@ def _customer_replied_after(ticket: SupportTicket, since: date) -> bool:
         return False
     for response in ticket.support_ticket_responses:
         creator = getattr(response, "created_by", None)
-        if creator and creator.id == owner.id and response.created_on.date() > since.date():
+        if creator and creator.id == owner.id and response.created_on.date() > since:
             return True
     return False
 
