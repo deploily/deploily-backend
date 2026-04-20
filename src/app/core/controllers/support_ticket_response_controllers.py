@@ -18,7 +18,6 @@ _support_ticket_display_columns = [
     "support_ticket",
     "support_ticket_id",
     "created_on",
-    "created_by",
 ]
 
 
@@ -35,6 +34,7 @@ class SupportTicketResponseModelApi(ModelRestApi):
     ]
     list_columns = _support_ticket_display_columns
     edit_columns = _support_ticket_display_columns
+    show_columns = _support_ticket_display_columns
     _exclude_columns = [
         "changed_by",
         "changed_on",

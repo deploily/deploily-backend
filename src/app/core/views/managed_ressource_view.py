@@ -100,3 +100,20 @@ appbuilder.add_view(
     icon="fa-solid fa-briefcase",
     category="Resources",
 )
+
+
+class EmailManagedRessourcelView(ModelView):
+    route_base = "/admin/managed-ressource-email"
+    datamodel = SQLAInterface(ManagedRessource)
+    list_columns = _LIST_COLUMNS
+    base_order = _BASE_ORDER
+    base_filters = [["ressource_type", FilterEqual, "email"]]
+
+
+db.create_all()
+appbuilder.add_view(
+    EmailManagedRessourcelView,
+    "Managed Ressources - Email",
+    icon="fa-solid fa-briefcase",
+    category="Resources",
+)

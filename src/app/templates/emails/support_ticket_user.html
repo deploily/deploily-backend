@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Resource Expiration Notice</title>
+    <title> New support ticket is created </title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -79,27 +79,27 @@
     <div class="email-body">
 
 
-     <div class="header">Attention: Your Managed Resource is Expiring Soon!</div>
+<p>Hello {{ user.first_name }},</p>
 
-        <div class="content">
-            <p>Hi {{ user.username }},</p>
+<p>
+  Your support ticket <strong>#{{ item.id }}</strong> has been created successfully.
+</p>
 
-            <p>This is a friendly reminder that your managed resource <span class="highlight">{{ resource.host_name }} ({{ resource.ip }})</span> is scheduled to expire in <span class="highlight">{{ days }}</span> day{{ 's' if days > 1 else '' }}.</p>
+<p>
+  <strong>Title:</strong> {{ item.title }}<br />
+  <strong>Description:</strong> {{ item.description }}
+</p>
 
-            <p><strong>Resource Details:</strong></p>
-            <ul>
-                <li>Type: {{ resource.ressource_type }}</li>
-                <li>Start Date: {{ resource.start_date.strftime("%Y-%m-%d") if resource.start_date else "N/A" }}</li>
-                <li>End Date: {{ expiration_date }}</li>
-                <li>Operator System: {{ resource.operating_system or "N/A" }}</li>
-            </ul>
+<p>
+  Our support team will get back to you as soon as possible.
+</p>
+<p>
+    <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ item.id }}" target="_blank">
+    View and edit this support ticket
+  </a>
+</p>
 
-            <p>Please make sure to renew or take the necessary actions before the expiration date to avoid any service interruptions.</p>
-
-            <p>Thank you,<br>The Admin Team</p>
-        </div>
-
-       
+<p>Best regards,<br />Support Team</p>
 </div>
   <div class="email-footer">
         <p><strong>Deploily</strong> – Deploy to sovereign infrastructure</p>

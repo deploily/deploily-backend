@@ -28,6 +28,7 @@ class ManagedRessource(Model):
             "web_hosting",
             "dns",
             "s3",
+            "email",
             name="ressource_type",
         ),
         default="vps",
@@ -74,3 +75,17 @@ class ManagedRessource(Model):
         remaining_months = remaining_days // 30
 
         return remaining_months
+
+    @property
+    def service_details(self):
+        sp = self.ressource_service_plan
+        if not sp:
+            return None
+
+        return {
+            "service_name": sp.service.name if sp.service else None,
+            "plan": str(sp.plan) if sp.plan else None,
+            "provider": sp.provider_info,
+            "price": sp.price,
+            "subscription_category": sp.subscription_category,
+        }

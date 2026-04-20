@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import date, timedelta
 
 from flask import render_template
+from sqlalchemy import Date, cast
 
 from app import app, db, scheduler
 from app.core.models.managed_ressource_models import ManagedRessource
@@ -11,12 +12,11 @@ last_reset_date_ressource = None
 notice_days = [1, 3, 7, 15, 30]
 
 
-@scheduler.task("cron", id="notify_managed_ressource_expiration", max_instances=1, hour=7, minute=0)
+@scheduler.task("cron", id="notify_managed_ressource_expiration", max_instances=1, hour=7)
 def notify_managed_ressource_expiration():
     global sent_ressource_notifications, last_reset_date_ressource
 
-    today = datetime.now().date()
-
+    today = date.today()
     # Reset daily sent cache
     if last_reset_date_ressource != today:
         sent_ressource_notifications.clear()
@@ -24,20 +24,23 @@ def notify_managed_ressource_expiration():
 
     try:
         with app.app_context():
-            resources = db.session.query(ManagedRessource).all()
+            notice_dates = [today + timedelta(days=d) for d in notice_days]
+            resources = (
+                db.session.query(ManagedRessource)
+                .filter(
+                    ManagedRessource.byor == False,
+                    ManagedRessource.end_date.isnot(None),
+                    cast(ManagedRessource.end_date, Date).in_(notice_dates),
+                )
+                .all()
+            )
             for res in resources:
+                print(
+                    f"Found resource expiring soon: {res.host_name} ({res.ip}) with end_date {res.end_date}"
+                )
                 try:
-                    # TODO move this condition as filter in the query to reduce the number of resources we need to process
-                    if not res.end_date:
-                        continue  # skip resources without an end date
 
                     days_remaining = (res.end_date - today).days
-
-                    # TODO move this condition as filter in the query to reduce the number of resources we need to process
-                    if days_remaining not in notice_days:
-                        continue
-                    # TODO check if the related subscription has the same end date to avoid sending multiple notifications for the same resource
-
                     key = (res.id, days_remaining, today)
                     if key in sent_ressource_notifications:
                         print(f"[SKIP] Already notified for resource {res.host_name} ({res.ip})")

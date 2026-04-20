@@ -282,6 +282,7 @@ FAB_ROLES = {
         ["DockerDeploymentSubscriptionApi", "can_post"],
         ["DockerDeploymentSubscriptionApi", "can_subscribe_to_plan"],
         ["DashboardApi", "can_dashboard"],
+        ["SupportTicketModelApi", "can_upload_image"],
     ]
 }
 
@@ -332,6 +333,8 @@ SCHEDULER_JOB_DEFAULTS = {"coalesce": False, "max_instances": 1}
 SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "True")
 
 NOTIFICATION_EMAIL = os.getenv("NOTIFICATION_EMAIL")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
+
 
 CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY")
 

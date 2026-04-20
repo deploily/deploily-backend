@@ -2,3 +2,8 @@ from . import services_ressources_model
 from . import services_ressources_providers_model
 from . import affiliation_model
 from . import services_ressources_category_model
+from . import dns_subscription_model
+from . import email_subscriptin_model
+from . import s3_subscription_model
+from . import web_hosting_subscription_model
+from . import subscription_ressource_service_model

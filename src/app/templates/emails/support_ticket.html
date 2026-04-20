@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
 
 <p> New Support Ticket Created BY: {{user.username}} </p>
 
@@ -10,5 +8,8 @@
 <p>
     {{ item.description }}
 </p>
-
-</html>
+<p>
+  👉 <a href="https://admin.deploily.cloud/admin/supportticket/edit/{{ item.id }}" target="_blank">
+    View and edit this support ticket
+  </a>
+</p>

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Resource Expiration Notice</title>
+    <title>Your Support Ticket Update</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -78,29 +78,35 @@
 
     <div class="email-body">
 
+<body>
+    <p>Hello {{ ticket.support_ticket.created_by.first_name }},</p>
 
-     <div class="header">Attention: Your Managed Resource is Expiring Soon!</div>
+    <p>Your support ticket has received a new response.</p>
 
-        <div class="content">
-            <p>Hi {{ user.username }},</p>
+    <hr>
 
-            <p>This is a friendly reminder that your managed resource <span class="highlight">{{ resource.host_name }} ({{ resource.ip }})</span> is scheduled to expire in <span class="highlight">{{ days }}</span> day{{ 's' if days > 1 else '' }}.</p>
+    <p><strong>Ticket ID:</strong> {{ ticket.id }}</p>
 
-            <p><strong>Resource Details:</strong></p>
-            <ul>
-                <li>Type: {{ resource.ressource_type }}</li>
-                <li>Start Date: {{ resource.start_date.strftime("%Y-%m-%d") if resource.start_date else "N/A" }}</li>
-                <li>End Date: {{ expiration_date }}</li>
-                <li>Operator System: {{ resource.operating_system or "N/A" }}</li>
-            </ul>
+    <hr>
 
-            <p>Please make sure to renew or take the necessary actions before the expiration date to avoid any service interruptions.</p>
+    <p><strong>Response:</strong></p>
+    <p>{{ ticket.message }}</p>
 
-            <p>Thank you,<br>The Admin Team</p>
-        </div>
+    <hr>
 
-       
-</div>
+    <p>
+        👉 You can reply or view details in your dashboard.
+    </p>
+
+    <br>
+    <p>
+        👉 <a href="https://console.deploily.cloud/en/portal/support-ticket/{{ ticket.id }}" target="_blank">
+            View your support ticket
+        </a>
+    </p>
+
+    <p>Best regards,<br>Support Team</p>
+    </div>
   <div class="email-footer">
         <p><strong>Deploily</strong> – Deploy to sovereign infrastructure</p>
         <p>📧 <a href="mailto:deploily@transformatek.dz">deploily@transformatek.dz</a> | 🌐 <a href="https://console.deploily.cloud">https://console.deploily.cloud</a></p>
@@ -128,3 +134,4 @@
 </div>
 </body>
 </html>
+
