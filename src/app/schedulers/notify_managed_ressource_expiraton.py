@@ -12,7 +12,7 @@ last_reset_date_ressource = None
 notice_days = [1, 3, 7, 15, 30]
 
 
-@scheduler.task("cron", id="notify_managed_ressource_expiration", max_instances=1, minute="*")
+@scheduler.task("cron", id="notify_managed_ressource_expiration", max_instances=1, hour=7)
 def notify_managed_ressource_expiration():
     global sent_ressource_notifications, last_reset_date_ressource
 
