@@ -55,7 +55,7 @@ def _get_system_user():
     return db.session.query(User).filter_by(username="admin").first()
 
 
-@scheduler.task("cron", id="auto_close_support_tickets", max_instances=1, minute=59)
+@scheduler.task("cron", id="auto_close_support_tickets", max_instances=1, hour=5)
 def auto_close_support_tickets() -> dict:
     """
     Run daily (e.g. via Celery beat).
