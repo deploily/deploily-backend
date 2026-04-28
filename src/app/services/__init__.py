@@ -7,3 +7,4 @@ from . import subscription_odoo_service
 from . import subscription_nextcloud_service
 from . import subscription_hi_events_service
 from . import subscription_supabase_service
+from . import subscription_web_application_service
