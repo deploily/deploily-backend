@@ -62,6 +62,9 @@ class HiEventsSubscriptionApi(BaseApi):
                                 managed_ressource_id:
                                     type: integer
                                     description: ID of the selected managed ressource
+                                byor:
+                                    type: boolean
+                                    description: Whether it's a Bring Your Own Ressource subscription
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -108,6 +111,12 @@ class HiEventsSubscriptionApi(BaseApi):
                                             ressource_service_plan_selected_id:
                                                 type: integer
                                                 description: ID of the selected ressource service plan
+                                            managed_ressource_id:
+                                                type: integer
+                                                description: ID of the selected managed ressource
+                                            byor:
+                                                type: boolean
+                                                description: Whether it's a Bring Your Own Ressource subscription
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -185,6 +194,7 @@ class HiEventsSubscriptionApi(BaseApi):
                 plan=subscription_json["plan"],
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
+                byor=request_data.byor if hasattr(request_data, "byor") else False,
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],

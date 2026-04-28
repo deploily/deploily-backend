@@ -455,9 +455,11 @@ class SubscriptionServiceBase:
             "promo_code": promo_code,
             "profile": profile,
             "phone": request_data.phone,
+            "provider_name": request_data.provider_name,
             "status": subscription_status,
             "version_id": version.id if version else None,
             "managed_ressource": managed_ressource if managed_ressource else None,
+            "byor": request_data.byor if hasattr(request_data, "byor") else False,
             "has_sufficient_balance": has_sufficient_balance,
         }
         return True, "success", subscription_json
