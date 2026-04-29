@@ -6,9 +6,13 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_jwt_extended import jwt_required
 from sqlalchemy import exists
 
-from app import appbuilder
+from app import appbuilder, db
 from app.core.models.managed_ressource_models import ManagedRessource
 from app.core.models.subscription_models import Subscription
+from app.service_ressources.models.services_ressources_category_model import (
+    ServiceRessouceCategory,
+)
+from app.service_ressources.models.services_ressources_model import RessourceService
 from app.utils.utils import get_user
 
 _logger = logging.getLogger(__name__)
