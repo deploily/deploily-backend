@@ -280,7 +280,6 @@ class SubscriptionTtkEpayService:
         #     subscription.is_upgrade = True
         # if is_renew:
         #     subscription.is_renew = True
-        print("#######################Subscription object created, adding to DB session...")
 
         self.db.add(subscription)
         self.db.flush()

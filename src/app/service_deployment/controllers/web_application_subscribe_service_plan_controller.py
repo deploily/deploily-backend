@@ -44,6 +44,9 @@ class WebApplicationDeploymentSubscriptionApi(BaseApi):
                                 phone:
                                     type: string
                                     description: Phone number of the user
+                                provider_name:
+                                    type: string
+                                    description: Provider name
 
                                 promo_code:
                                     type: string
@@ -66,6 +69,9 @@ class WebApplicationDeploymentSubscriptionApi(BaseApi):
                                 managed_ressource_id:
                                     type: integer
                                     description: ID of the selected managed ressource
+                                byor:
+                                    type: boolean
+                                    description: Whether it's a Bring Your Own Ressource subscription
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -193,6 +199,8 @@ class WebApplicationDeploymentSubscriptionApi(BaseApi):
                 promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
+                byor=request_data.byor if hasattr(request_data, "byor") else False,
+                provider_name=subscription_json["provider_name"],
                 # version_id=subscription_json["version_id"],
             )
 

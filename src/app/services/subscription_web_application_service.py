@@ -23,6 +23,7 @@ class WebApplicationDeploymentSubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
+    provider_name: str = None
 
 
 @dataclass
@@ -117,6 +118,7 @@ class SubscriptionWebApplicationDeploymentService:
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
+                provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 client_confirm_url=data.get("client_confirm_url"),
@@ -231,6 +233,8 @@ class SubscriptionWebApplicationDeploymentService:
         promo_code,
         profile_id: int,
         status: str,
+        byor: bool,
+        provider_name: str,
         # version_id: int,
         # managed_ressource: int,
         phone: Optional[str] = None,
@@ -252,12 +256,14 @@ class SubscriptionWebApplicationDeploymentService:
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,
             status=status,
+            byor=byor,
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
             # version_id=version_id,
             ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             phone=phone,
+            provider_name=provider_name,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
