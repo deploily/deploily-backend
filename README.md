@@ -84,17 +84,42 @@ pre-commit run --all-files
 
 ## Get Keycloack login token 
 
-Realm settings -> Token -> Default Signature Algorithm = HS256
+Realm settings -> Token -> Default Signature Algorithm = RS256
 
 ## Get Keycloack login token using localhost
 
-Realm settings -> Token -> Default Signature Algorithm = HS256
+Realm settings -> Token -> Default Signature Algorithm = RS256
 
 ```bash
- curl -d 'client_id=deploily'      -d 'username=admin'      -d 'password=admin'      -d 'grant_type=password'      -d 'scope=email profile roles'      -d 'client_secret=aYZTRwWfyLTRfqmBsqkfMJ9C68wSp0bO'      'http://localhost:8080/realms/myrealm/protocol/openid-connect/token'
-
+curl -d 'client_id=deploily' \
+     -d 'username=admin' \
+     -d 'password=admin' \
+     -d 'grant_type=password' \
+     -d 'scope=email profile roles' \
+     -d "client_secret=${KEYCLOAK_CLIENT_SECRET}" \
+     'http://localhost:8080/realms/myrealm/protocol/openid-connect/token'
 ```
+
+## Local Keycloak (dev)
+- Démarrer Keycloak local (par ex. via docker) et créer un realm `myrealm`.
+- Créer un client confidentiel `deploily` avec scope `openid email profile roles`.
+- Conserver l’algorithme par défaut RS256; récupérer la clé publique via l’endpoint realm (`/realms/<realm>` ou JWKS).
+- Renseigner dans `.env`:
+  - `KEYKCLOAK_URL="http://localhost:8080"`
+  - `KEYCLOAK_REALM_NAME="myrealm"`
+  - `KEYCLOAK_CLIENT_SECRET="<secret local>"`
+
+## Local APISIX (dev)
+- Démarrer APISIX local (et etcd) via `.devcontainer/docker-compose.yml`.
+- Définir une clé admin locale et sécurisée; ne pas utiliser les clés de démo.
+- Renseigner dans `.env`:
+  - `APISIX_ADMIN_URL="http://localhost:9180"`
+  - `APISIX_API_KEY="<clé admin locale>"`
 
 To decode the JWT Token use [https://jwt.io/](https://jwt.io/)
 
 ## Useful links
+
+## Development Guides
+- Guide local Keycloak/APISIX: [dev-local-deployment.md](file:///c:/PythonProjects/transformatek/deploily-backend/docs/dev-local-deployment.md)
+- Checklist sécurité CI/CD: [security-checklist.md](file:///c:/PythonProjects/transformatek/deploily-backend/docs/security-checklist.md)
