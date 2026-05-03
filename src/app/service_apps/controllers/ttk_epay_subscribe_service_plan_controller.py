@@ -43,7 +43,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 phone:
                                     type: string
                                     description: Phone number of the user
-
+                                provider_name:
+                                    type: string
+                                    description: Provider name
                                 promo_code:
                                     type: string
                                     nullable: true
@@ -64,6 +66,10 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 managed_ressource_id:
                                     type: integer
                                     description: ID of the selected managed ressource
+                                byor:
+                                    type: boolean
+                                    description: Whether it's a Bring Your Own Ressource subscription
+
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -113,6 +119,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             managed_ressource_id:
                                                 type: integer
                                                 description: ID of the selected managed ressource
+                                            byor:
+                                                type: boolean
+                                                description: Whether it's a Bring Your Own Ressource subscription
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -195,10 +204,12 @@ class TtkEpaySubscriptionApi(BaseApi):
                 plan=subscription_json["plan"],
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
+                byor=request_data.byor if hasattr(request_data, "byor") else False,
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
                 phone=subscription_json["phone"],
+                provider_name=subscription_json["provider_name"],
                 promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,

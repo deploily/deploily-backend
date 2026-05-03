@@ -73,6 +73,7 @@ class Subscription(Model, AuditMixin):
     phone = Column(String(20), nullable=True)
     type = Column(String(50), default="subscription")
     byor = Column(Boolean, default=False)  # Bring Your Own Ressource
+    provider_name = Column(String(100))
 
     __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 

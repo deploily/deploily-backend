@@ -23,6 +23,7 @@ class HiEventsSubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
+    provider_name: Optional[str] = None
 
 
 @dataclass
@@ -114,6 +115,7 @@ class SubscriptionHiEventsService:
             request_data = request_type(
                 profile_id=int(data["profile_id"]),
                 phone=data.get("phone"),
+                provider_name=data.get("provider_name"),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
@@ -222,6 +224,7 @@ class SubscriptionHiEventsService:
         plan,
         ressource_plan,
         managed_ressource,
+        byor: bool,
         duration: int,
         total_amount: float,
         price: float,
@@ -230,6 +233,7 @@ class SubscriptionHiEventsService:
         status: str,
         version_id: int,
         phone: str,
+        provider_name: str,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -254,6 +258,8 @@ class SubscriptionHiEventsService:
             profile_id=profile_id,
             version_id=version_id,
             phone=phone,
+            provider_name=provider_name,
+            byor=byor,
             # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:

@@ -89,3 +89,8 @@ class ManagedRessource(Model):
             "price": sp.price,
             "subscription_category": sp.subscription_category,
         }
+
+    @property
+    def provider_name(self):
+        if self.ressource_service_plan and self.ressource_service_plan.provider_info:
+            return self.ressource_service_plan.provider_info.get("name", "N/A")

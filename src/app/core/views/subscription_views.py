@@ -17,7 +17,7 @@ class SubscriptionModelView(ModelView):
         "created_by",
         "type",
         "byor",
-        "start_date",
+        "provider_name" "start_date",
         "end_date",
         "total_amount",
         "status",

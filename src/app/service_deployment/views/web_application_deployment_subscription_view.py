@@ -5,25 +5,24 @@ from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 
 from app import appbuilder
-from app.service_apps.models.hi_events_subscription_model import (
-    HiEventSubscriptionAppService,
+from app.service_deployment.models.web_application_deployment_subscription_model import (
+    WebApplicationSubscriptionDeploymentService,
 )
 
 
-class HiEventsAppServiceSubscriptionView(ModelView):
-    datamodel = SQLAInterface(HiEventSubscriptionAppService)
+class WebApplicationDeploymentServiceSubscriptionView(ModelView):
+    datamodel = SQLAInterface(WebApplicationSubscriptionDeploymentService)
 
     list_columns = [
         "id",
         "created_by",
+        "name",
         "byor",
-        "ressource_service_plan",
         "start_date",
         "end_date",
         "is_expired",
         "status",
-        "is_upgrade",
-        "is_renew",
+        "deployment_status",
     ]
     base_order = ("id", "desc")
     _exclude_columns = ["created_on", "changed_on", "type"]
@@ -32,8 +31,8 @@ class HiEventsAppServiceSubscriptionView(ModelView):
 
 
 appbuilder.add_view(
-    HiEventsAppServiceSubscriptionView,
-    "App Hi Events Subscriptions",
-    icon="fa-shopping-bag",
+    WebApplicationDeploymentServiceSubscriptionView,
+    "Deployment web Application Subscriptions",
+    icon="fa-cart-plus",
     category="Subscriptions",
 )

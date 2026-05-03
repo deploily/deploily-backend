@@ -24,6 +24,7 @@ class OdooSubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
+    provider_name: Optional[str] = None
 
 
 @dataclass
@@ -118,6 +119,7 @@ class SubscriptionOdooService:
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
+                provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
                 client_confirm_url=data.get("client_confirm_url"),
@@ -223,6 +225,7 @@ class SubscriptionOdooService:
         plan,
         ressource_plan,
         managed_ressource,
+        byor: bool,
         duration: int,
         total_amount: float,
         price: float,
@@ -231,6 +234,7 @@ class SubscriptionOdooService:
         status: str,
         version_id: int,
         phone: Optional[str] = None,
+        provider_name: Optional[str] = None,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
@@ -246,6 +250,7 @@ class SubscriptionOdooService:
             total_amount=total_amount,
             price=price,
             phone=phone,
+            provider_name=provider_name,
             service_plan_id=plan.id,
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,
@@ -255,6 +260,7 @@ class SubscriptionOdooService:
             version_id=version_id,
             ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
+            byor=byor,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

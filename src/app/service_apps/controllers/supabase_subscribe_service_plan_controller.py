@@ -46,6 +46,10 @@ class SupabaseSubscriptionApi(BaseApi):
                                 phone:
                                     type: string
                                     description: Phone number of the user
+                                provider_name:
+                                    type: string
+                                    description: Provider name
+
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -62,6 +66,10 @@ class SupabaseSubscriptionApi(BaseApi):
                                 managed_ressource_id:
                                     type: integer
                                     description: ID of the selected managed ressource
+                                byor:
+                                    type: boolean
+                                    description: Whether it's a Bring Your Own Ressource subscription
+
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -108,6 +116,13 @@ class SupabaseSubscriptionApi(BaseApi):
                                             ressource_service_plan_selected_id:
                                                 type: integer
                                                 description: ID of the selected ressource service plan
+                                            managed_ressource_id:
+                                                type: integer
+                                                description: ID of the selected managed ressource
+                                            byor:
+                                                type: boolean
+                                                description: Whether it's a Bring Your Own Ressource subscription
+
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -185,6 +200,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 plan=subscription_json["plan"],
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
+                byor=request_data.byor if hasattr(request_data, "byor") else False,
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -193,6 +209,7 @@ class SupabaseSubscriptionApi(BaseApi):
                 status=subscription_status,
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
+                provider_name=subscription_json["provider_name"],
             )
 
             success, error_msg, result = subscription_service_base.handle_payment_process(
