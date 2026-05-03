@@ -25,6 +25,7 @@ class OdooSubscriptionRequest:
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
     provider_name: Optional[str] = None
+    byor: bool = None
 
 
 @dataclass
@@ -119,6 +120,7 @@ class SubscriptionOdooService:
                 total_amount=float(data.get("total_amount", 0)),
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
+                byor=data.get("byor"),
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
