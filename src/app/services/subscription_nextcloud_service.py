@@ -25,6 +25,7 @@ class NextCloudSubscriptionRequest:
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
     provider_name: Optional[str] = None
+    byor = Bool = None
 
 
 @dataclass
@@ -119,6 +120,7 @@ class SubscriptionNextCloudService:
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
                 phone=data.get("phone"),
+                byor=data.get("byor"),
                 provider_name=data.get("provider_name"),
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
