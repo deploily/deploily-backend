@@ -62,7 +62,7 @@ class RenewSupabaseSubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
-    byor = bool = None
+    byor: bool = None
 
 
 T = TypeVar("T")
