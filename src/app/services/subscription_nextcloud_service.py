@@ -25,7 +25,7 @@ class NextCloudSubscriptionRequest:
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
     provider_name: Optional[str] = None
-    byor = Bool = None
+    byor: bool = None
 
 
 @dataclass

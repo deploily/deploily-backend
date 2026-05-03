@@ -24,7 +24,7 @@ class TtkEpaySubscriptionRequest:
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
     provider_name: str = None
-    byor = bool = None
+    byor: bool = None
 
 
 @dataclass
