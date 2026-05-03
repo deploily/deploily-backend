@@ -17,6 +17,7 @@ class SupabaseAppServiceSubscriptionView(ModelView):
         "id",
         "created_by",
         "byor",
+        "ressource_service_plan",
         "start_date",
         "end_date",
         "is_expired",

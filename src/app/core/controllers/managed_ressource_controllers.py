@@ -23,7 +23,6 @@ display_columns = [
     "start_date",
     "end_date",
     "ressource_type",
-    "service_details",
     "time_remaining",
     "service_details",
 ]

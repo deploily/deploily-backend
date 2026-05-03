@@ -44,10 +44,6 @@ class ManagedRessource(Model):
     cd_agent = Column(String(100))
     byor = Column(Boolean, default=False)  # Bring Your Own Ressource
 
-    # In ManagedRessource model
-    provider_id = Column(Integer, ForeignKey("providers_ressource_service.id"), nullable=True)
-    provider = relationship("ProvidersRessourceService", backref="managed_ressources")
-
     def __repr__(self):
         return f"{self.ressource_type} - {self.host_name} ({self.ip})"
 
@@ -93,3 +89,8 @@ class ManagedRessource(Model):
             "price": sp.price,
             "subscription_category": sp.subscription_category,
         }
+
+    @property
+    def provider_name(self):
+        if self.ressource_service_plan and self.ressource_service_plan.provider_info:
+            return self.ressource_service_plan.provider_info.get("name", "N/A")

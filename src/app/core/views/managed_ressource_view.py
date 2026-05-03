@@ -7,7 +7,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from app import appbuilder, db
 from app.core.models.managed_ressource_models import ManagedRessource
 
-_LIST_COLUMNS = ["id", "host_name", "byor", "start_date", "end_date", "monitoring", "provider"]
+_LIST_COLUMNS = ["id", "host_name", "byor", "start_date", "end_date", "monitoring", "provider_name"]
 _BASE_ORDER = ("id", "desc")
 
 

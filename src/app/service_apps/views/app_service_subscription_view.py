@@ -17,6 +17,7 @@ class SubscriptionAppServiceView(ModelView):
         "id",
         "created_by",
         "service_name",
+        "ressource_service_plan",
         "byor",
         "start_date",
         "end_date",
