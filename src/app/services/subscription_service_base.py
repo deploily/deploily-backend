@@ -23,7 +23,9 @@ from app.services.subscription_api_service import (
     ApiSubscriptionRequest,
     UpgradeApiSubscriptionRequest,
 )
-from app.services.subscription_docker_service import DockerDeploymentSubscriptionRequest
+from app.services.subscription_web_application_service import (
+    WebApplicationDeploymentSubscriptionRequest,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -424,7 +426,7 @@ class SubscriptionServiceBase:
         if (
             type(request_data) == ApiSubscriptionRequest
             or type(request_data) == UpgradeApiSubscriptionRequest
-            or type(request_data) == DockerDeploymentSubscriptionRequest
+            or type(request_data) == WebApplicationDeploymentSubscriptionRequest
         ):
             version = None
         else:
