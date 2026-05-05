@@ -2,5 +2,4 @@ from . import deployment_services_controller
 from . import custom_parameter_controller
 from . import subscription_deployment_service_controller
 from . import web_application_deployment_subscription_controller
-from . import docker_subscribe_service_plan_controller
 from . import web_application_subscribe_service_plan_controller
