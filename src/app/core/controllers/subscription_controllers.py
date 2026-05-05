@@ -15,6 +15,7 @@ _logger = logging.getLogger(__name__)
 _subscribe_display_columns = [
     "id",
     "start_date",
+    "end_date",
     "total_amount",
     "price",
     "duration_month",
