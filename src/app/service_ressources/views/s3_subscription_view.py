@@ -15,7 +15,7 @@ class S3SubscriptionServiceView(ModelView):
         "id",
         "created_by",
         "byor",
-        "ressource_service_plan",
+        "managed_ressource",
         "start_date",
         "end_date",
         "is_expired",
