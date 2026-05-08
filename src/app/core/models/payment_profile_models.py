@@ -73,4 +73,4 @@ class PaymentProfile(Model, AuditMixin):
         return balance_rate if not None else 0.0
 
     def __repr__(self):
-        return f"{self.company_name if self.company_name else ''} - {self.name} - {self.last_name} - {self.profile_type}"
+        return f"{(self.company_name + " - ") if self.company_name else ''} {self.name} - {self.last_name} - {self.profile_type}"
