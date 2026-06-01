@@ -280,6 +280,10 @@ FAB_ROLES = {
         ["WebApplicationDeploymentServiceSubscriptionModelApi", "can_get"],
         ["WebApplicationDeploymentServiceSubscriptionModelApi", "can_post"],
         ["WebApplicationDeploymentSubscriptionApi", "can_subscribe_to_plan"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_put"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_get"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_post"],
+        ["MobileApplicationDeploymentSubscriptionApi", "can_subscribe_to_plan"],
         ["DashboardApi", "can_dashboard"],
         ["SupportTicketModelApi", "can_upload_image"],
     ]
