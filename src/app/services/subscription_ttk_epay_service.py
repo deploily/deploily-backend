@@ -25,6 +25,7 @@ class TtkEpaySubscriptionRequest:
     phone: Optional[str] = None
     provider_name: str = None
     byor: bool = None
+    is_trial: bool = False
 
 
 @dataclass
@@ -120,6 +121,7 @@ class SubscriptionTtkEpayService:
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
                 byor=data.get("byor"),
+                is_trial=data.get("is_trial", False),
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -236,6 +238,7 @@ class SubscriptionTtkEpayService:
         version_id: int,
         managed_ressource,
         byor: bool,
+        is_trial: bool,
         ttk_epay_api_secret_key: str,
         ttk_epay_client_site_url: str,
         ttk_epay_satim_currency: str,
@@ -261,6 +264,7 @@ class SubscriptionTtkEpayService:
             ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             byor=byor,
+            is_trial=is_trial,
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,
             status=status,

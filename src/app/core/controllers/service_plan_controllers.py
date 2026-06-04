@@ -33,6 +33,7 @@ _service_plan_value_display_columns = [
     "provider_info",
     "preparation_time",
     "unity",
+    "is_trial",
 ]
 
 
@@ -165,6 +166,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "service_id": plan.service.id,
                         "price": plan.price,
                         "service_plan_type": plan.service_plan_type,
+                        "is_trial": plan.is_trial,
                         "preparation_time": plan.preparation_time,
                         "subscription_category": plan.subscription_category,
                         "unity": plan.unity,

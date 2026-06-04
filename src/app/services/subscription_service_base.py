@@ -23,6 +23,9 @@ from app.services.subscription_api_service import (
     ApiSubscriptionRequest,
     UpgradeApiSubscriptionRequest,
 )
+from app.services.subscription_mobile_application_service import (
+    MobileApplicationDeploymentSubscriptionRequest,
+)
 from app.services.subscription_web_application_service import (
     WebApplicationDeploymentSubscriptionRequest,
 )
@@ -413,12 +416,16 @@ class SubscriptionServiceBase:
             or type(request_data) == UpgradeApiSubscriptionRequest
         ):
             managed_ressource = None
-        elif request_data.managed_ressource_id is None:
+            provider_name = None
+        elif request_data.managed_ressource_id is None or request_data.byor == None:
             managed_ressource = None
+            provider_name = None
+
         else:
             is_valid, error_msg, managed_ressource = self.validate_managed_ressource(
                 request_data.managed_ressource_id
             )
+            provider_name = request_data.provider_name
             if not is_valid:
                 return False, error_msg, None
 
@@ -427,6 +434,7 @@ class SubscriptionServiceBase:
             type(request_data) == ApiSubscriptionRequest
             or type(request_data) == UpgradeApiSubscriptionRequest
             or type(request_data) == WebApplicationDeploymentSubscriptionRequest
+            or type(request_data) == MobileApplicationDeploymentSubscriptionRequest
         ):
             version = None
         else:
@@ -434,7 +442,7 @@ class SubscriptionServiceBase:
             if not is_valid:
                 return False, error_msg, None
 
-        # Calculate pricing
+            # Calculate pricing
         total_amount = plan.price * request_data.duration
 
         if ressource_plan:
@@ -457,11 +465,12 @@ class SubscriptionServiceBase:
             "promo_code": promo_code,
             "profile": profile,
             "phone": request_data.phone,
-            "provider_name": request_data.provider_name,
+            "provider_name": provider_name,
             "status": subscription_status,
             "version_id": version.id if version else None,
             "managed_ressource": managed_ressource if managed_ressource else None,
             "byor": request_data.byor if hasattr(request_data, "byor") else False,
+            "is_trial": plan.is_trial if plan else False,
             "has_sufficient_balance": has_sufficient_balance,
         }
         return True, "success", subscription_json

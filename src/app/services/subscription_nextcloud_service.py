@@ -26,6 +26,7 @@ class NextCloudSubscriptionRequest:
     phone: Optional[str] = None
     provider_name: Optional[str] = None
     byor: bool = None
+    is_trial: bool = None
 
 
 @dataclass
@@ -121,6 +122,7 @@ class SubscriptionNextCloudService:
                 total_amount=float(data.get("total_amount", 0)),
                 phone=data.get("phone"),
                 byor=data.get("byor"),
+                is_trial=data.get("is_trial"),
                 provider_name=data.get("provider_name"),
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
@@ -229,6 +231,7 @@ class SubscriptionNextCloudService:
         ressource_plan,
         managed_ressource,
         byor: bool,
+        is_trial: bool,
         duration: int,
         total_amount: float,
         price: float,
@@ -264,6 +267,7 @@ class SubscriptionNextCloudService:
             ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             byor=byor,
+            is_trial=is_trial,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

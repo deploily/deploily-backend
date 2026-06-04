@@ -68,6 +68,9 @@ class OdooSubscriptionApi(BaseApi):
                                 byor:
                                     type: boolean
                                     description: Whether it's a Bring Your Own Ressource subscription
+                                is_trial:
+                                    type: boolean
+                                    description: Whether it's a trial subscription
                                 recommendation_app_service_id:
                                     type: integer
                                     description: ID of the selected recommendation app service
@@ -198,6 +201,7 @@ class OdooSubscriptionApi(BaseApi):
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 byor=request_data.byor if hasattr(request_data, "byor") else False,
+                is_trial=request_data.is_trial if hasattr(request_data, "is_trial") else False,
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -209,13 +213,37 @@ class OdooSubscriptionApi(BaseApi):
                 provider_name=subscription_json["provider_name"],
             )
 
-            success, error_msg, result = subscription_service_base.handle_payment_process(
-                user, subscription, request_data, has_sufficient_balance
-            )
-            if not success:
-                return self.response_400(message=error_msg)
+            if not subscription_json["plan"].is_trial:
 
-            return self.response(200, **result, message="Payment processed successfully")
+                success, error_msg, result = subscription_service_base.handle_payment_process(
+                    user, subscription, request_data, has_sufficient_balance
+                )
+                if not success:
+                    return self.response_400(message=error_msg)
+
+                return self.response(200, **result, message="Payment processed successfully")
+            else:
+                # For trial subscriptions, return success response without payment processing
+                db.session.commit()
+                return self.response(
+                    200,
+                    **{
+                        "subscription": {
+                            "id": subscription.id,
+                            "name": subscription.name,
+                            "start_date": subscription.start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                            "total_amount": subscription.total_amount,
+                            "price": subscription.price,
+                            "status": subscription.status,
+                            "duration_month": subscription.duration_month,
+                            "service_plan_id": subscription.service_plan_id,
+                            "promo_code_id": subscription.promo_code_id,
+                        },
+                        "order_id": None,
+                        "form_url": None,
+                    },
+                    message="Trial subscription created successfully",
+                )
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
             db.session.rollback()

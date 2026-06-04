@@ -69,6 +69,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                                 byor:
                                     type: boolean
                                     description: Whether it's a Bring Your Own Ressource subscription
+                                is_trial:
+                                    type: boolean
+                                    description: Whether it's a trial subscription
 
                                 recommendation_app_service_id:
                                     type: integer
@@ -122,6 +125,7 @@ class TtkEpaySubscriptionApi(BaseApi):
                                             byor:
                                                 type: boolean
                                                 description: Whether it's a Bring Your Own Ressource subscription
+
                                             recommendation_app_service_id:
                                                 type: integer
                                                 description: ID of the selected recommendation app service
@@ -205,6 +209,9 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 byor=request_data.byor if hasattr(request_data, "byor") else False,
+                is_trial=(
+                    subscription_json["is_trial"] if "is_trial" in subscription_json else False
+                ),
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
@@ -221,14 +228,37 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
                 ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
             )
+            if not subscription_json["plan"].is_trial:
 
-            success, error_msg, result = subscription_service_base.handle_payment_process(
-                user, subscription, request_data, has_sufficient_balance
-            )
-            if not success:
-                return self.response_400(message=error_msg)
+                success, error_msg, result = subscription_service_base.handle_payment_process(
+                    user, subscription, request_data, has_sufficient_balance
+                )
+                if not success:
+                    return self.response_400(message=error_msg)
 
-            return self.response(200, **result, message="Payment processed successfully")
+                return self.response(200, **result, message="Payment processed successfully")
+            else:
+                # For trial subscriptions, return success response without payment processing
+                db.session.commit()
+                return self.response(
+                    200,
+                    **{
+                        "subscription": {
+                            "id": subscription.id,
+                            "name": subscription.name,
+                            "start_date": subscription.start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                            "total_amount": subscription.total_amount,
+                            "price": subscription.price,
+                            "status": subscription.status,
+                            "duration_month": subscription.duration_month,
+                            "service_plan_id": subscription.service_plan_id,
+                            "promo_code_id": subscription.promo_code_id,
+                        },
+                        "order_id": None,
+                        "form_url": None,
+                    },
+                    message="Trial subscription created successfully",
+                )
 
         except Exception as e:
             _logger.error(f"Error in subscription: {e}", exc_info=True)
