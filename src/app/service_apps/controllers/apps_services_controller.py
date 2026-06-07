@@ -285,7 +285,9 @@ class PublicAppServiceApi(BaseApi):  # public version
                     ],
                     "preparation_time": plan.preparation_time,
                 }
-                for plan in sorted(service.service_plans, key=lambda p: p.price or 0)
+                for plan in sorted(
+                    [p for p in service.service_plans if p.is_published], key=lambda p: p.price or 0
+                )
             ],
             "medias": [
                 {
