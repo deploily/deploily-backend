@@ -3,3 +3,5 @@ from . import custom_parameter_controller
 from . import subscription_deployment_service_controller
 from . import web_application_deployment_subscription_controller
 from . import web_application_subscribe_service_plan_controller
+from . import mobile_application_deployment_subscription_controller
+from . import mobile_application_subscribe_service_plan_controller

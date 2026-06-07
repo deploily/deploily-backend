@@ -280,6 +280,10 @@ FAB_ROLES = {
         ["WebApplicationDeploymentServiceSubscriptionModelApi", "can_get"],
         ["WebApplicationDeploymentServiceSubscriptionModelApi", "can_post"],
         ["WebApplicationDeploymentSubscriptionApi", "can_subscribe_to_plan"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_put"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_get"],
+        ["MobileApplicationDeploymentServiceSubscriptionModelApi", "can_post"],
+        ["MobileApplicationDeploymentSubscriptionApi", "can_subscribe_to_plan"],
         ["DashboardApi", "can_dashboard"],
         ["SupportTicketModelApi", "can_upload_image"],
     ]
@@ -346,3 +350,4 @@ CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT", "6379")
 CACHE_REDIS_DB = os.getenv("CACHE_REDIS_DB", "0")
 CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://redis:6379/0")
 CACHE_DEFAULT_TIMEOUT = os.getenv("CACHE_DEFAULT_TIMEOUT", "500")
+DURATION_MONTHS = int(os.getenv("DURATION_MONTHS", 3))

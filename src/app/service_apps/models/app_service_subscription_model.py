@@ -33,6 +33,7 @@ class SubscriptionAppService(Subscription):
     internal_note = Column(Text, nullable=True)
     ressource_service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     ressource_service_plan = relationship("ServicePlan")
+    is_trial = Column(Boolean, default=False)
 
     def to_dict(self):
         return {

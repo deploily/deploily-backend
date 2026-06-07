@@ -1,19 +1,19 @@
 import logging
+from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Optional, Tuple, Type, TypeVar
 
 
 @dataclass
-class TtkEpaySubscriptionRequest:
+class MobileApplicationDeploymentSubscriptionRequest:
     """Data class for subscription request validation"""
 
     profile_id: int
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
-    version_selected_id: int
+    # version_selected_id: int
     managed_ressource_id: int
     total_amount: float
     duration: int
@@ -23,13 +23,12 @@ class TtkEpaySubscriptionRequest:
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
-    provider_name: str = None
     byor: bool = None
-    is_trial: bool = False
+    provider_name: str = None
 
 
 @dataclass
-class UpgradeTtkEpaySubscriptionRequest:
+class UpgradeMobileApplicationDeploymentSubscriptionRequest:
     """Data class for upgrade subscription request validation"""
 
     profile_id: int
@@ -37,7 +36,7 @@ class UpgradeTtkEpaySubscriptionRequest:
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
     managed_ressource_id: int
-    version_selected_id: int
+    # version_selected_id: int
     total_amount: float
     duration: int
     payment_method: str
@@ -49,7 +48,7 @@ class UpgradeTtkEpaySubscriptionRequest:
 
 
 @dataclass
-class RenewTtkEpaySubscriptionRequest:
+class RenewMobileApplicationDeploymentSubscriptionRequest:
     """Data class for renew subscription request validation"""
 
     profile_id: int
@@ -67,7 +66,7 @@ class RenewTtkEpaySubscriptionRequest:
 T = TypeVar("T")
 
 
-class SubscriptionTtkEpayService:
+class SubscriptionMobileApplicationDeploymentService:
 
     def __init__(self, db_session, logger):
         self.db = db_session
@@ -82,26 +81,26 @@ class SubscriptionTtkEpayService:
 
         # Define required fields for each request type
         required_fields_map = {
-            TtkEpaySubscriptionRequest: [
+            MobileApplicationDeploymentSubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
-                "version_selected_id",
+                # "version_selected_id",
             ],
-            RenewTtkEpaySubscriptionRequest: [
+            UpgradeMobileApplicationDeploymentSubscriptionRequest: [
                 "profile_id",
                 "old_subscription_id",
                 "duration",
                 "payment_method",
             ],
-            UpgradeTtkEpaySubscriptionRequest: [
+            RenewMobileApplicationDeploymentSubscriptionRequest: [
                 "profile_id",
                 "service_plan_selected_id",
                 "duration",
                 "payment_method",
                 # "ressource_service_plan_selected_id",
-                "version_selected_id",
+                # "version_selected_id",
                 "old_subscription_id",
             ],
         }
@@ -121,7 +120,6 @@ class SubscriptionTtkEpayService:
                 duration=int(data["duration"]),
                 phone=data.get("phone"),
                 byor=data.get("byor"),
-                is_trial=data.get("is_trial", False),
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -130,9 +128,10 @@ class SubscriptionTtkEpayService:
                 captcha_token=data.get("captcha_token"),
                 **(
                     {"old_subscription_id": int(data["old_subscription_id"])}
-                    if request_type == RenewTtkEpaySubscriptionRequest
+                    if request_type == RenewMobileApplicationDeploymentSubscriptionRequest
                     else {}
                 ),
+                # Todo check this
                 **(
                     {
                         "ressource_service_plan_selected_id": (
@@ -147,10 +146,10 @@ class SubscriptionTtkEpayService:
                             and data["managed_ressource_id"] is not None
                             else None
                         ),
-                        "version_selected_id": int(data["version_selected_id"]),
+                        # "version_selected_id": int(data["version_selected_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
                     }
-                    if request_type == TtkEpaySubscriptionRequest
+                    if request_type == MobileApplicationDeploymentSubscriptionRequest
                     else {}
                 ),
                 **(
@@ -167,11 +166,11 @@ class SubscriptionTtkEpayService:
                             and data["managed_ressource_id"] is not None
                             else None
                         ),
-                        "version_selected_id": int(data["version_selected_id"]),
+                        # "version_selected_id": int(data["version_selected_id"]),
                         "old_subscription_id": int(data["old_subscription_id"]),
                         "service_plan_selected_id": int(data["service_plan_selected_id"]),
                     }
-                    if request_type == UpgradeTtkEpaySubscriptionRequest
+                    if request_type == UpgradeMobileApplicationDeploymentSubscriptionRequest
                     else {}
                 ),
             )
@@ -180,9 +179,9 @@ class SubscriptionTtkEpayService:
             if (
                 request_type
                 in [
-                    TtkEpaySubscriptionRequest,
-                    UpgradeTtkEpaySubscriptionRequest,
-                    RenewTtkEpaySubscriptionRequest,
+                    MobileApplicationDeploymentSubscriptionRequest,
+                    UpgradeMobileApplicationDeploymentSubscriptionRequest,
+                    RenewMobileApplicationDeploymentSubscriptionRequest,
                 ]
                 and request_data.duration < 3
             ):
@@ -193,92 +192,80 @@ class SubscriptionTtkEpayService:
             return False, f"Invalid data format: {str(e)}", None
 
     # Convenience methods for specific validation
-
-    def validate_ttk_epay_renew_request(
+    def validate_mobile_application_deployment_renew_request(
         self, data: dict
-    ) -> Tuple[bool, str, Optional[RenewTtkEpaySubscriptionRequest]]:
+    ) -> Tuple[bool, str, Optional[RenewMobileApplicationDeploymentSubscriptionRequest]]:
         """Validate renew subscription request"""
-        return self.validate_request_data(data, RenewTtkEpaySubscriptionRequest)
+        return self.validate_request_data(data, RenewMobileApplicationDeploymentSubscriptionRequest)
 
-    def validate_ttk_epay_subscription_request(
+    def validate_mobile_application_deployment_subscription_request(
         self, data: dict
-    ) -> Tuple[bool, str, Optional[TtkEpaySubscriptionRequest]]:
+    ) -> Tuple[bool, str, Optional[MobileApplicationDeploymentSubscriptionRequest]]:
         """Validate upgrade subscription request"""
-        return self.validate_request_data(data, TtkEpaySubscriptionRequest)
+        return self.validate_request_data(data, MobileApplicationDeploymentSubscriptionRequest)
 
-    def validate_upgrade_ttk_epay_subscription_request(
+    def validate_upgrade_mobile_application_deployment_subscription_request(
         self, data: dict
-    ) -> Tuple[bool, str, Optional[UpgradeTtkEpaySubscriptionRequest]]:
+    ) -> Tuple[bool, str, Optional[UpgradeMobileApplicationDeploymentSubscriptionRequest]]:
         """Validate upgrade subscription request"""
-        return self.validate_request_data(data, UpgradeTtkEpaySubscriptionRequest)
+        return self.validate_request_data(
+            data, UpgradeMobileApplicationDeploymentSubscriptionRequest
+        )
 
-    def validate_old_ttk_epay_subscription(self, old_subscription_id: int):
-        from app.service_apps.models.ttk_epay_subscription_model import (
-            TtkEpaySubscriptionAppService,
+    def validate_old_mobile_application_deployment_subscription(self, old_subscription_id: int):
+        from app.service_deployment.models.mobile_application_deployment_subscription_model import (
+            MobileApplicationSubscriptionDeploymentService,
         )
 
         old_subscription = (
-            self.db.query(TtkEpaySubscriptionAppService).filter_by(id=old_subscription_id).first()
+            self.db.query(MobileApplicationSubscriptionDeploymentService)
+            .filter_by(id=old_subscription_id)
+            .first()
         )
         if not old_subscription:
             return False, "Old Subscription not found"
         return True, "", old_subscription
 
-    def create_ttk_epay_subscription(
+    def create_mobile_application_deployment_subscription(
         self,
         plan,
         ressource_plan,
+        managed_ressource,
         duration: int,
         total_amount: float,
         price: float,
         promo_code,
         profile_id: int,
         status: str,
-        provider_name: str,
-        version_id: int,
-        managed_ressource,
         byor: bool,
-        is_trial: bool,
-        ttk_epay_api_secret_key: str,
-        ttk_epay_client_site_url: str,
-        ttk_epay_satim_currency: str,
-        ttk_epay_mvc_satim_server_url: str,
-        ttk_epay_mvc_satim_fail_url: str,
-        ttk_epay_mvc_satim_confirm_url: str,
+        provider_name: str,
+        # version_id: int,
+        # managed_ressource: int,
         phone: Optional[str] = None,
         # ressource_service_plan,
         is_upgrade: bool = False,
         is_renew: bool = False,
     ) -> object:
-        """Create ttk epay subscription record"""
-        from app.service_apps.models.ttk_epay_subscription_model import (
-            TtkEpaySubscriptionAppService,
+        """Create mobile application subscription record"""
+        from app.service_deployment.models.mobile_application_deployment_subscription_model import (
+            MobileApplicationSubscriptionDeploymentService,
         )
 
-        subscription = TtkEpaySubscriptionAppService(
+        subscription = MobileApplicationSubscriptionDeploymentService(
             name=plan.plan.name,
             start_date=datetime.now(),
             total_amount=total_amount,
             price=price,
             service_plan_id=plan.id,
-            ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
-            managed_ressource_id=managed_ressource.id if managed_ressource else None,
-            byor=byor,
-            is_trial=is_trial,
             duration_month=duration,
             promo_code_id=promo_code.id if promo_code else None,
             status=status,
+            byor=byor,
             payment_status="paid" if status == "active" else "unpaid",
             profile_id=profile_id,
-            version_id=version_id,
-            # ressource_service_plan_id=ressource_service_plan,
-            # managed_ressource=managed_ressource.id,
-            ttk_epay_api_secret_key=ttk_epay_api_secret_key,
-            ttk_epay_client_site_url=ttk_epay_client_site_url,
-            ttk_epay_satim_currency=ttk_epay_satim_currency,
-            ttk_epay_mvc_satim_server_url=ttk_epay_mvc_satim_server_url,
-            ttk_epay_mvc_satim_fail_url=ttk_epay_mvc_satim_fail_url,
-            ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
+            # version_id=version_id,
+            ressource_service_plan_id=ressource_plan.id if ressource_plan else None,
+            managed_ressource_id=managed_ressource.id if managed_ressource else None,
             phone=phone,
             provider_name=provider_name,
         )

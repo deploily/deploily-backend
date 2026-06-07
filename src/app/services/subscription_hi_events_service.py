@@ -25,6 +25,7 @@ class HiEventsSubscriptionRequest:
     phone: Optional[str] = None
     provider_name: Optional[str] = None
     byor: bool = None
+    is_trial: bool = None
 
 
 @dataclass
@@ -117,6 +118,7 @@ class SubscriptionHiEventsService:
                 profile_id=int(data["profile_id"]),
                 phone=data.get("phone"),
                 byor=data.get("byor"),
+                is_trial=data.get("is_trial"),
                 provider_name=data.get("provider_name"),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
@@ -227,6 +229,7 @@ class SubscriptionHiEventsService:
         ressource_plan,
         managed_ressource,
         byor: bool,
+        is_trial: bool,
         duration: int,
         total_amount: float,
         price: float,
@@ -262,6 +265,7 @@ class SubscriptionHiEventsService:
             phone=phone,
             provider_name=provider_name,
             byor=byor,
+            is_trial=is_trial,
             # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:
