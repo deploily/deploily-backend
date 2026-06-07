@@ -240,6 +240,14 @@ class TtkEpaySubscriptionApi(BaseApi):
             else:
                 # For trial subscriptions, return success response without payment processing
                 db.session.commit()
+                subscription_service_base.send_notification_emails(
+                    user,
+                    subscription_json["plan"],
+                    subscription_json["total_amount"],
+                    subscription,
+                    request_data.payment_method,
+                )
+
                 return self.response(
                     200,
                     **{
