@@ -456,10 +456,12 @@ class SubscriptionServiceBase:
         # Determine subscription status based on balance
         has_sufficient_balance = profile.balance >= final_price
         subscription_status = "active" if has_sufficient_balance else "inactive"
+        default_duration = current_app.config.get("DURATION_MONTHS", 3)
         subscription_json = {
             "plan": plan,
             "ressource_plan": ressource_plan if ressource_plan else None,
             "duration": request_data.duration,
+            "duration": default_duration if plan.is_trial else request_data.duration,
             "total_amount": total_amount,
             "price": final_price,
             "promo_code": promo_code,
