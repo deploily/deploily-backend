@@ -211,62 +211,158 @@ class SubscriptionServiceBase:
         promo_code.subscription = subscription_id
         self.db.commit()
 
+    # def send_notification_emails(
+    #     self, user, plan, total_amount: float, subscription, payment_method
+    # ):
+    #     """Send notification emails to admin and user"""
+    #     # Admin notification
+    #     from app.core.celery_tasks.send_mail_task import send_mail
+    #     is_trial = bool(getattr(subscription, "is_trial", False))
+
+    #     admin_template = render_template(
+    #         "emails/deploily_subscription.html", user_name=user.username, plan=plan
+    #     )
+
+    #     bank = agency = address = bank_account_number = None
+
+    #     if payment_method == "bank_transfer":
+    #         bank = os.getenv("BANK", "")
+    #         agency = os.getenv("AGENCY", "")
+    #         address = os.getenv("ADDRESS", "")
+    #         bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
+
+    #     admin_email = Mail(
+    #         title=f"New Subscription Created by {user.username}",
+    #         body=admin_template,
+    #         email_to=current_app.config["NOTIFICATION_EMAIL"],
+    #         email_from=current_app.config["NOTIFICATION_EMAIL"],
+    #         mail_state="outGoing",
+    #     )
+
+    #     # User notification
+    #     user_template = render_template(
+    #         "emails/user_subscription.html",
+    #         user=user,
+    #         service_name=plan.service.name,
+    #         plan_name=plan.plan.name,
+    #         total_price=total_amount,
+    #         payment_method=payment_method,
+    #         bank=bank,
+    #         agency=agency,
+    #         address=address,
+    #         bank_account_number=bank_account_number,
+    #     )
+
+    #     user_email = Mail(
+    #         title="Nouvelle souscription à deploily.cloud",
+    #         body=user_template,
+    #         email_to=user.email,
+    #         email_from=current_app.config["NOTIFICATION_EMAIL"],
+    #         mail_state="outGoing",
+    #     )
+
+    #     # Add to database and send
+    #     self.db.add_all([admin_email, user_email])
+    #     self.db.commit()
+
+    #     send_mail.delay(admin_email.id)
+    #     send_mail.delay(user_email.id)
+
+    #     self.logger.info(f"Notification emails sent for subscription {subscription.id}")
+
     def send_notification_emails(
         self, user, plan, total_amount: float, subscription, payment_method
     ):
         """Send notification emails to admin and user"""
-        # Admin notification
         from app.core.celery_tasks.send_mail_task import send_mail
 
-        admin_template = render_template(
-            "emails/deploily_subscription.html", user_name=user.username, plan=plan
-        )
-        bank = agency = address = bank_account_number = None
+        is_trial = bool(getattr(subscription, "is_trial", False))
 
-        if payment_method == "bank_transfer":
-            bank = os.getenv("BANK", "")
-            agency = os.getenv("AGENCY", "")
-            address = os.getenv("ADDRESS", "")
-            bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
+        # ------------------
+        # ADMIN EMAIL
+        # ------------------
+        admin_template_name = (
+            "emails/deploily_subscription_trial.html"
+            if is_trial
+            else "emails/deploily_subscription.html"
+        )
+
+        admin_template = render_template(
+            admin_template_name,
+            user_name=user.username,
+            plan=plan,
+            subscription=subscription,
+        )
+
+        admin_title = (
+            f"New TRIAL Subscription Created by {user.username}"
+            if is_trial
+            else f"New Subscription Created by {user.username}"
+        )
 
         admin_email = Mail(
-            title=f"New Subscription Created by {user.username}",
+            title=admin_title,
             body=admin_template,
             email_to=current_app.config["NOTIFICATION_EMAIL"],
             email_from=current_app.config["NOTIFICATION_EMAIL"],
             mail_state="outGoing",
         )
 
-        # User notification
+        # ------------------
+        # USER EMAIL
+        # ------------------
+        bank = agency = address = bank_account_number = None
+
+        if payment_method == "bank_transfer" and not is_trial:
+            bank = os.getenv("BANK", "")
+            agency = os.getenv("AGENCY", "")
+            address = os.getenv("ADDRESS", "")
+            bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
+
+        user_template_name = (
+            "emails/user_subscription_trial.html" if is_trial else "emails/user_subscription.html"
+        )
+
         user_template = render_template(
-            "emails/user_subscription.html",
+            user_template_name,
             user=user,
             service_name=plan.service.name,
             plan_name=plan.plan.name,
             total_price=total_amount,
             payment_method=payment_method,
+            subscription=subscription,
             bank=bank,
             agency=agency,
             address=address,
             bank_account_number=bank_account_number,
         )
 
+        user_title = (
+            "Votre période d’essai sur deploily.cloud a commencé"
+            if is_trial
+            else "Nouvelle souscription à deploily.cloud"
+        )
+
         user_email = Mail(
-            title="Nouvelle souscription à deploily.cloud",
+            title=user_title,
             body=user_template,
             email_to=user.email,
             email_from=current_app.config["NOTIFICATION_EMAIL"],
             mail_state="outGoing",
         )
 
-        # Add to database and send
+        # ------------------
+        # SAVE & SEND
+        # ------------------
         self.db.add_all([admin_email, user_email])
         self.db.commit()
 
         send_mail.delay(admin_email.id)
         send_mail.delay(user_email.id)
 
-        self.logger.info(f"Notification emails sent for subscription {subscription.id}")
+        self.logger.info(
+            f"Notification emails sent for {'trial ' if is_trial else ''}subscription {subscription.id}"
+        )
 
     def update_old_subscription(
         self, old_subscription, is_renew: bool = False, is_upgrade: bool = False
