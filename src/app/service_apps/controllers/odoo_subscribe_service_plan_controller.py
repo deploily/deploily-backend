@@ -201,7 +201,9 @@ class OdooSubscriptionApi(BaseApi):
                 ressource_plan=subscription_json["ressource_plan"],
                 managed_ressource=subscription_json["managed_ressource"],
                 byor=request_data.byor if hasattr(request_data, "byor") else False,
-                is_trial=request_data.is_trial if hasattr(request_data, "is_trial") else False,
+                is_trial=(
+                    subscription_json["is_trial"] if "is_trial" in subscription_json else False
+                ),
                 duration=subscription_json["duration"],
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
