@@ -27,6 +27,8 @@ class NextCloudSubscriptionRequest:
     provider_name: Optional[str] = None
     byor: bool = None
     is_trial: bool = None
+    tva_amount: Optional[float] = None
+    tva_rate: Optional[float] = None
 
 
 @dataclass
@@ -123,6 +125,8 @@ class SubscriptionNextCloudService:
                 phone=data.get("phone"),
                 byor=data.get("byor"),
                 is_trial=data.get("is_trial"),
+                tva_amount=float(data.get("tva_amount", 0)) if "tva_amount" in data else None,
+                tva_rate=float(data.get("tva_rate", 0)) if "tva_rate" in data else None,
                 provider_name=data.get("provider_name"),
                 duration=int(data["duration"]),
                 payment_method=data["payment_method"],
@@ -232,6 +236,8 @@ class SubscriptionNextCloudService:
         managed_ressource,
         byor: bool,
         is_trial: bool,
+        tva_amount: Optional[float],
+        tva_rate: Optional[float],
         duration: int,
         total_amount: float,
         price: float,
@@ -268,6 +274,8 @@ class SubscriptionNextCloudService:
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             byor=byor,
             is_trial=is_trial,
+            tva_amount=tva_amount,
+            tva_rate=tva_rate,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

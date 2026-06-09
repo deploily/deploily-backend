@@ -540,9 +540,16 @@ class SubscriptionServiceBase:
 
             # Calculate pricing
         total_amount = plan.price * request_data.duration
+        tva_rate = 0.0
+        tva_amount = 0.0
 
         if ressource_plan:
-            total_amount += ressource_plan.price * request_data.duration
+            tva_rate = ressource_plan.tva_rate if ressource_plan.tva_rate else 0.0
+            total_price_ressource = round(ressource_plan.price * request_data.duration)
+            tva_amount = round((total_price_ressource * tva_rate) / 100, 2)
+            tva_amount = tva_amount if tva_amount else 0.0
+
+            total_amount += tva_amount + total_price_ressource
 
         promo_code, discount_amount = self.validate_promo_code(
             request_data.promo_code, total_amount
@@ -570,6 +577,8 @@ class SubscriptionServiceBase:
             "byor": request_data.byor if hasattr(request_data, "byor") else False,
             "is_trial": plan.is_trial if plan else False,
             "has_sufficient_balance": has_sufficient_balance,
+            "tva_rate": tva_rate,
+            "tva_amount": tva_amount,
         }
         return True, "success", subscription_json
 

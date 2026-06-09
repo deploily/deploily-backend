@@ -13,6 +13,7 @@ class ServicePlan(Model):
     id = Column(Integer, primary_key=True)
     price = Column(Float)
     preparation_time = Column(Integer, nullable=False)
+    tva_rate = Column(Float, default=0.0)
 
     service_id = Column(Integer, ForeignKey("service.id"))
     service = relationship("Service")

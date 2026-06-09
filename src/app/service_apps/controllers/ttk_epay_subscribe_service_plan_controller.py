@@ -227,6 +227,8 @@ class TtkEpaySubscriptionApi(BaseApi):
                 ttk_epay_mvc_satim_server_url=os.getenv("TTK_EPAY_MVC_SATIM_SERVER_URL", ""),
                 ttk_epay_mvc_satim_fail_url=os.getenv("TTK_EPAY_MVC_SATIM_FAIL_URL", ""),
                 ttk_epay_mvc_satim_confirm_url=os.getenv("TTK_EPAY_MVC_SATIM_CONFIRM_URL", ""),
+                tva_rate=subscription_json.get("tva_rate", 0.0),
+                tva_amount=subscription_json.get("tva_amount", 0.0),
             )
             if not subscription_json["plan"].is_trial:
 

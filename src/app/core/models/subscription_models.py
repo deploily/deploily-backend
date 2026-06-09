@@ -74,6 +74,8 @@ class Subscription(Model, AuditMixin):
     type = Column(String(50), default="subscription")
     byor = Column(Boolean, default=False)  # Bring Your Own Ressource
     provider_name = Column(String(100))
+    tva_rate = Column(Float, nullable=True, default=0.0)
+    tva_amount = Column(Float, nullable=True, default=0.0)
 
     __mapper_args__ = {"polymorphic_identity": "subscription", "polymorphic_on": type}
 
