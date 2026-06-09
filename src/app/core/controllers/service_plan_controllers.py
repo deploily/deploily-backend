@@ -172,6 +172,7 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "unity": plan.unity,
                         "options": [serialize_option(opt) for opt in plan.options],
                         "provider_info": plan.provider_info,
+                        "tva_rate": plan.tva_rate,
                     }
                 )
 

@@ -26,6 +26,8 @@ class HiEventsSubscriptionRequest:
     provider_name: Optional[str] = None
     byor: bool = None
     is_trial: bool = None
+    tva_amount: Optional[float] = None
+    tva_rate: Optional[float] = None
 
 
 @dataclass
@@ -119,6 +121,8 @@ class SubscriptionHiEventsService:
                 phone=data.get("phone"),
                 byor=data.get("byor"),
                 is_trial=data.get("is_trial"),
+                tva_amount=float(data.get("tva_amount", 0)) if "tva_amount" in data else None,
+                tva_rate=float(data.get("tva_rate", 0)) if "tva_rate" in data else None,
                 provider_name=data.get("provider_name"),
                 # service_plan_selected_id=int(data["service_plan_selected_id"]),
                 total_amount=float(data.get("total_amount", 0)),
@@ -230,6 +234,8 @@ class SubscriptionHiEventsService:
         managed_ressource,
         byor: bool,
         is_trial: bool,
+        tva_amount: Optional[float],
+        tva_rate: Optional[float],
         duration: int,
         total_amount: float,
         price: float,
@@ -266,6 +272,8 @@ class SubscriptionHiEventsService:
             provider_name=provider_name,
             byor=byor,
             is_trial=is_trial,
+            tva_amount=tva_amount,
+            tva_rate=tva_rate,
             # ressource_service_plan_id=ressource_service_plan,
         )
         # if is_upgrade:

@@ -27,6 +27,8 @@ class OdooSubscriptionRequest:
     provider_name: Optional[str] = None
     byor: bool = None
     is_trial: bool = None
+    tva_amount: Optional[float] = None
+    tva_rate: Optional[float] = None
 
 
 @dataclass
@@ -123,6 +125,10 @@ class SubscriptionOdooService:
                 phone=data.get("phone"),
                 byor=data.get("byor"),
                 is_trial=data.get("is_trial"),
+                tva_rate=float(data.get("tva_rate")) if data.get("tva_rate") is not None else None,
+                tva_amount=(
+                    float(data.get("tva_amount")) if data.get("tva_amount") is not None else None
+                ),
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -231,6 +237,8 @@ class SubscriptionOdooService:
         managed_ressource,
         byor: bool,
         is_trial: bool,
+        tva_rate: Optional[float],
+        tva_amount: Optional[float],
         duration: int,
         total_amount: float,
         price: float,

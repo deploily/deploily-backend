@@ -213,6 +213,8 @@ class HiEventsSubscriptionApi(BaseApi):
                 version_id=subscription_json["version_id"],
                 phone=subscription_json["phone"],
                 provider_name=subscription_json["provider_name"],
+                tva_rate=subscription_json.get("tva_rate", 0.0),
+                tva_amount=subscription_json.get("tva_amount", 0.0),
             )
 
             if not subscription_json["plan"].is_trial:

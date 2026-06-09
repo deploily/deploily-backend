@@ -26,6 +26,8 @@ class TtkEpaySubscriptionRequest:
     provider_name: str = None
     byor: bool = None
     is_trial: bool = False
+    tva_rate: Optional[float] = None
+    tva_amount: Optional[float] = None
 
 
 @dataclass
@@ -122,6 +124,8 @@ class SubscriptionTtkEpayService:
                 phone=data.get("phone"),
                 byor=data.get("byor"),
                 is_trial=data.get("is_trial", False),
+                tva_rate=float(data.get("tva_rate", 0)) if "tva_rate" in data else None,
+                tva_amount=float(data.get("tva_amount", 0)) if "tva_amount" in data else None,
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -239,6 +243,8 @@ class SubscriptionTtkEpayService:
         managed_ressource,
         byor: bool,
         is_trial: bool,
+        tva_rate: Optional[float],
+        tva_amount: Optional[float],
         ttk_epay_api_secret_key: str,
         ttk_epay_client_site_url: str,
         ttk_epay_satim_currency: str,
@@ -281,6 +287,8 @@ class SubscriptionTtkEpayService:
             ttk_epay_mvc_satim_confirm_url=ttk_epay_mvc_satim_confirm_url,
             phone=phone,
             provider_name=provider_name,
+            tva_rate=tva_rate,
+            tva_amount=tva_amount,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True

@@ -27,6 +27,8 @@ class SupabaseSubscriptionRequest:
     provider_name: Optional[str] = (None,)
     byor: bool = None
     is_trial: bool = None
+    tva_amount: Optional[float] = None
+    tva_rate: Optional[float] = None
 
 
 @dataclass
@@ -125,6 +127,10 @@ class SubscriptionSupabaseService:
                 phone=data.get("phone"),
                 byor=data.get("byor"),
                 is_trial=data.get("is_trial"),
+                tva_rate=float(data.get("tva_rate")) if data.get("tva_rate") is not None else None,
+                tva_amount=(
+                    float(data.get("tva_amount")) if data.get("tva_amount") is not None else None
+                ),
                 provider_name=data.get("provider_bame"),
                 payment_method=data["payment_method"],
                 promo_code=data.get("promo_code"),
@@ -232,6 +238,8 @@ class SubscriptionSupabaseService:
         managed_ressource,
         byor: bool,
         is_trial: bool,
+        tva_rate: Optional[float],
+        tva_amount: Optional[float],
         duration: int,
         total_amount: float,
         price: float,
@@ -268,6 +276,8 @@ class SubscriptionSupabaseService:
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             byor=byor,
             is_trial=is_trial,
+            tva_rate=tva_rate,
+            tva_amount=tva_amount,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
