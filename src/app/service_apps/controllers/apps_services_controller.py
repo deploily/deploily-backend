@@ -272,6 +272,7 @@ class PublicAppServiceApi(BaseApi):  # public version
                     "name": plan.plan.name,
                     "subscription_category": plan.subscription_category,
                     "is_custom": plan.is_custom,
+                    "is_trial": plan.is_trial,
                     "options": [
                         {
                             "id": option.id,
