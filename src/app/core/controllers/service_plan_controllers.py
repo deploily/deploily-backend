@@ -32,7 +32,6 @@ _service_plan_value_display_columns = [
     "service_plan_type",
     "provider_info",
     "preparation_time",
-    "unity",
     "is_trial",
 ]
 
@@ -169,7 +168,6 @@ class ServicePlanRessourceModelApi(BaseApi):
                         "is_trial": plan.is_trial,
                         "preparation_time": plan.preparation_time,
                         "subscription_category": plan.subscription_category,
-                        "unity": plan.unity,
                         "options": [serialize_option(opt) for opt in plan.options],
                         "provider_info": plan.provider_info,
                         "tva_rate": plan.tva_rate,
