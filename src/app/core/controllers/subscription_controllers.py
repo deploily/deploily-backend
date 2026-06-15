@@ -118,7 +118,6 @@ class SubscriptionModelApi(ModelRestApi):
                 "service_id": sub.managed_ressource_details.get("service_id"),
                 "service_plan_type": sub.managed_ressource_details.get("service_plan_type"),
                 "subscription_category": sub.managed_ressource_details.get("subscription_category"),
-                "unity": sub.managed_ressource_details.get("unity"),
             },
             "promo_code_id": sub.promo_code.id if sub.promo_code else None,
             "promo_code_name": sub.promo_code.code if sub.promo_code else None,

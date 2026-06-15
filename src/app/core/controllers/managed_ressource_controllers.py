@@ -127,7 +127,6 @@ class ManagedRessourceModelApi(ModelRestApi):
                         "price": service_plan.price,
                         "service_plan_type": service_plan.service_plan_type,
                         "preparation_time": service_plan.preparation_time,
-                        "unity": service_plan.unity,
                         "time_remaining": res.time_remaining,
                         "options": [
                             {

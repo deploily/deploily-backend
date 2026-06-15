@@ -113,6 +113,5 @@ class SubscriptionDeploymentService(Subscription):
                 "subscription_category": self.managed_ressource_details.get(
                     "subscription_category"
                 ),
-                "unity": self.managed_ressource_details.get("unity"),
             },
         }
