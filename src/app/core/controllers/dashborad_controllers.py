@@ -105,6 +105,20 @@ class DashboardApi(BaseApi):
             .filter(Advertisement.advertisement_type == "dashboard", Advertisement.featured == True)
             .first()
         )
+        advertisement_data = None
+        if advertisements:
+            advertisement_data = {
+                "id": advertisements.id,
+                "title": advertisements.title,
+                "sub_title": advertisements.sub_title,
+                "url": advertisements.url,
+                "url_label": advertisements.url_label,
+                "image_1920": advertisements.image_1920,
+                "image_128": advertisements.image_128,
+                "description": advertisements.description,
+                "color": advertisements.color,
+                "advertisement_type": advertisements.advertisement_type,
+            }
 
         return self.response(
             200,
@@ -131,7 +145,7 @@ class DashboardApi(BaseApi):
                 "deployment_subscriptions": deployment_subscriptions,
                 "support_tickets": support_tickets,
                 "my_favorites": my_favorites,
-                "advertisements": advertisements,
+                "advertisements": advertisement_data,
             },
         )
 
