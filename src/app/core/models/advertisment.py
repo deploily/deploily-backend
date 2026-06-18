@@ -10,7 +10,7 @@ class Advertisement(Model):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(255), nullable=False)
-    subtitle = Column(String(255))
+    sub_title = Column(String(255))
     url = Column(String(255))
     url_label = Column(String(255))
     featured = Column(Boolean, default=False)
@@ -18,4 +18,4 @@ class Advertisement(Model):
     image_128 = Column(ImageColumn)
     description = Column(Text)
     color = Column(String(255))
-    AdvertisementType = Column(Enum("dashboard", "service", name="advertisement_type"))
+    advertisement_type = Column(Enum("dashboard", "service", name="advertisement_type"))

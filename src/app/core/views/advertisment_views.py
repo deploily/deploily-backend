@@ -16,7 +16,7 @@ class AdvertisementModelView(ModelView):
         "image_128",
         "description",
         "color",
-        "AdvertisementType",
+        "advertisement_type",
     ]
     base_order = ("id", "desc")
 
