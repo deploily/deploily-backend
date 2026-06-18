@@ -102,7 +102,7 @@ class DashboardApi(BaseApi):
         )
         advertisements = (
             db.session.query(Advertisement)
-            .filter(Advertisement.AdvertisementType == "dashboard", Advertisement.featured == True)
+            .filter(Advertisement.advertisement_type == "dashboard", Advertisement.featured == True)
             .first()
         )
 
