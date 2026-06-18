@@ -37,6 +37,12 @@ class Service(Model):
     service_unity = Column(Text)
     price_category = Column(Enum("monthly", "yearly", name="price_category"))
     contact_us = relationship("ContactUs", back_populates="service")
+    parameters = relationship(
+        "ServiceParameter",
+        back_populates="service",
+        cascade="all, delete-orphan",
+        order_by="ServiceParameter.order",
+    )
 
     @property
     def is_in_favorite(self):

@@ -16,5 +16,7 @@ from .comment_models import Comment
 from .rating_models import Score
 from .media_models import Media
 from .managed_ressource_models import ManagedRessource
+from .service_parameter_models import ServiceParameter
+from .advertisment import Advertisement
 
 # from .user_models import MemberModel
