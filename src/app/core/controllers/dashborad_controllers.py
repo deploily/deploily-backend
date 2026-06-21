@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required
 from sqlalchemy import func
 
 from app import appbuilder, db
+from app.core.models.advertisment import Advertisement
 from app.core.models.my_favorites_models import MyFavorites
 from app.core.models.subscription_models import Subscription
 from app.core.models.support_ticket_models import SupportTicket
@@ -99,6 +100,25 @@ class DashboardApi(BaseApi):
         my_favorites = (
             db.session.query(MyFavorites).filter(MyFavorites.created_by.has(id=user.id)).count()
         )
+        advertisements = (
+            db.session.query(Advertisement)
+            .filter(Advertisement.advertisement_type == "dashboard", Advertisement.featured == True)
+            .first()
+        )
+        advertisement_data = None
+        if advertisements:
+            advertisement_data = {
+                "id": advertisements.id,
+                "title": advertisements.title,
+                "sub_title": advertisements.sub_title,
+                "url": advertisements.url,
+                "url_label": advertisements.url_label,
+                "image_1920": advertisements.image_1920,
+                "image_128": advertisements.image_128,
+                "description": advertisements.description,
+                "color": advertisements.color,
+                "advertisement_type": advertisements.advertisement_type,
+            }
 
         return self.response(
             200,
@@ -125,6 +145,7 @@ class DashboardApi(BaseApi):
                 "deployment_subscriptions": deployment_subscriptions,
                 "support_tickets": support_tickets,
                 "my_favorites": my_favorites,
+                "advertisements": advertisement_data,
             },
         )
 
