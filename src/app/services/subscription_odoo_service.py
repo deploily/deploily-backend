@@ -275,6 +275,8 @@ class SubscriptionOdooService:
             managed_ressource_id=managed_ressource.id if managed_ressource else None,
             byor=byor,
             is_trial=is_trial,
+            tva_rate=tva_rate,
+            tva_amount=tva_amount,
         )
         # if is_upgrade:
         #     subscription.is_upgrade = True
