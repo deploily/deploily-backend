@@ -69,9 +69,7 @@ def payment_after_update(mapper, connection, target):
         new_status = target.status
 
         if new_status == "completed":
-            print(
-                f"--------------------------Payment #{target.id} completed. Sending notification email to admin."
-            )
+
             try:
                 body = render_template("emails/payment_completed.html", item=target)
                 result = connection.execute(
@@ -89,9 +87,7 @@ def payment_after_update(mapper, connection, target):
                 email_id = result.scalar()
                 print(f"Email record created with ID: {email_id}. Enqueuing email sending task.")
                 send_mail.delay(email_id)
-                print(
-                    f"***********************************Email sending task enqueued for Mail ID: {email_id}"
-                )
+
             except Exception:
                 _logger.exception(
                     f"[EMAIL] Failed to send payment completed email for Payment #{target.id}"

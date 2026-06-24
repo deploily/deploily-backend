@@ -1,0 +1,152 @@
+{% extends "appbuilder/base.html" %}
+
+{% block head_css %}
+{{ super() }}
+<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+<link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+<style>
+  #token-banner {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background: #1b4f72;
+    color: white;
+    padding: 10px 16px;
+    font-family: monospace;
+    font-size: 12px;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  #token-banner input {
+    flex: 1;
+    background: #0d2d45;
+    color: #7fc8f8;
+    border: 1px solid #3a7fc1;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  #token-banner button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    white-space: nowrap;
+  }
+  .btn-copy    { background: #2e86c1; }
+  .btn-apply   { background: #1e8449; }
+  .btn-close   { background: #922b21; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="token-banner">
+  <span style="font-weight:bold; white-space:nowrap;">🔑 Token:</span>
+  <input id="token-value" readonly />
+  <button class="btn-copy" onclick="copyToken(this)">📋 Copy</button>
+  <button class="btn-apply" onclick="applyToken(this)">⚡ Apply to jwt</button>
+  <button class="btn-close" onclick="document.getElementById('token-banner').style.display='none'">✕</button>
+</div>
+
+<div id="swagger-ui"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+  // Intercept fetch to catch the Keycloak token response
+  const _originalFetch = window.fetch;
+  window.fetch = function(...args) {
+    return _originalFetch.apply(this, args).then(async (response) => {
+      const url = typeof args[0] === 'string' ? args[0] : (args[0]?.url || '');
+      if (url.includes('openid-connect/token')) {
+        try {
+          const clone = response.clone();
+          const data = await clone.json();
+          if (data.access_token) {
+            document.getElementById('token-value').value = data.access_token;
+            document.getElementById('token-banner').style.display = 'flex';
+          }
+        } catch(e) {}
+      }
+      return response;
+    });
+  };
+
+  function copyToken(btn) {
+    navigator.clipboard.writeText(document.getElementById('token-value').value);
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 1500);
+  }
+
+  function applyToken(btn) {
+    const token = document.getElementById('token-value').value;
+    if (!token || !window.ui) return;
+    // Apply to jwt (what FAB endpoints actually use)
+    window.ui.authActions.authorize({
+      jwt: {
+        name: 'jwt',
+        schema: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        value: token
+      }
+    });
+    btn.textContent = '✅ Applied!';
+    setTimeout(() => btn.textContent = '⚡ Apply to jwt', 2000);
+  }
+
+  // Initialize Swagger UI and expose it as window.ui
+  window.ui = SwaggerUIBundle({
+    url: '/api/v1/_openapi',
+    dom_id: '#swagger-ui',
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIBundle.SwaggerUIStandalonePreset
+    ],
+    layout: "BaseLayout",
+    deepLinking: true,
+    initOAuth: {
+      clientId: "{{ config['KEYKCLOAK_CLIENT_ID'] }}",
+      clientSecret: "{{ config['KEYKCLOAK_CLIENT_SECRET'] }}",
+      usePkceWithAuthorizationCodeGrant: false,
+      scopes: "openid email profile roles",
+    },
+    requestInterceptor: (request) => {
+      return request;
+    }
+    
+  });
+  // ↓ ADD THIS
+  const CLIENT_ID     = "{{ config['KEYKCLOAK_CLIENT_ID'] }}";
+  const CLIENT_SECRET = "{{ config['KEYKCLOAK_CLIENT_SECRET'] }}";
+
+  function fillCredentials() {
+    // Find all visible inputs in the auth dialog
+    const inputs = document.querySelectorAll('.auth-container input, .modal-ux input');
+    inputs.forEach(input => {
+      const label = input.closest('p, div')?.querySelector('label')?.textContent?.trim().toLowerCase();
+      console.log('Found input label:', label, 'value:', input.value);
+      if (label === 'client_id' && !input.value) {
+        input.value = CLIENT_ID;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (label === 'client_secret' && !input.value) {
+        input.value = CLIENT_SECRET;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  }
+
+  // Watch for the auth dialog to appear in the DOM
+  const observer = new MutationObserver(() => {
+    const dialog = document.querySelector('.dialog-ux, .auth-container, .modal-ux-content');
+    if (dialog) {
+      setTimeout(fillCredentials, 200);
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+</script>
+{% endblock %}

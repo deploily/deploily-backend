@@ -113,7 +113,7 @@ class ApiServiceSubscriptionModelApi(SubscriptionModelApi):
         # Compute consumer username
         user_name = user.username
         slug_user_name = re.sub(r"[^a-zA-Z0-9]", "", user_name)
-        consumer_username = f"{service.service_slug}_{slug_user_name}"
+        consumer_username = f"{base_service.service_slug}_{slug_user_name}"
 
         api_key = uuid.uuid4().hex[:32]
 

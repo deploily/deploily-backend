@@ -85,8 +85,6 @@ class ApiSixService:
 
         if labels:
             consumer_data["labels"] = labels
-        if group_id:
-            consumer_data["group_id"] = group_id
 
         try:
             response = self.client.new_consumer(**consumer_data)
