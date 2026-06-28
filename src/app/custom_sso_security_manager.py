@@ -4,13 +4,87 @@ import logging
 
 from flask import current_app, g, render_template
 from flask_appbuilder.const import LOGMSG_WAR_SEC_LOGIN_FAILED
+from flask_appbuilder.security.api import SecurityApi
 from flask_appbuilder.security.sqla.manager import SecurityManager
 
 # from app import db
 _logger = logging.getLogger(__name__)
 
 
+# class CustomSecurityApi(SecurityApi):
+#     """Extends the default SecurityApi to inject the Keycloak OAuth2 scheme."""
+
+#     def add_apispec_components(self, api_spec):
+#         super().add_apispec_components(api_spec)  # keeps the default jwt scheme
+#         token_url = (
+#             f"{current_app.config['KEYKCLOAK_URL']}"
+#             f"/realms/{current_app.config['KEYKCLOAK_REALM_NAME']}"
+#             f"/protocol/openid-connect/token"
+#         )
+#         api_spec.components.security_scheme(
+#             "oauth2_keycloak",
+#             {
+#                 "type": "oauth2",
+#                 "flows": {
+#                     "password": {
+#                         "tokenUrl": token_url,
+#                         "scopes": {
+#                             "openid":  "OpenID Connect",
+#                             "profile": "User profile",
+#                             "email":   "User email",
+#                             "roles":   "User roles",
+#                         },
+#                     }
+#                 },
+#             },
+#         )
+
+
+class CustomSecurityApi(SecurityApi):
+    def add_apispec_components(self, api_spec):
+        super().add_apispec_components(api_spec)
+
+        token_url = (
+            f"{current_app.config['KEYKCLOAK_URL']}"
+            f"/realms/{current_app.config['KEYKCLOAK_REALM_NAME']}"
+            f"/protocol/openid-connect/token"
+        )
+
+        api_spec.components.security_scheme(
+            "oauth2_keycloak",
+            {
+                "type": "oauth2",
+                "flows": {
+                    "password": {
+                        "tokenUrl": token_url,
+                        "scopes": {
+                            "openid": "OpenID Connect",
+                            "profile": "User profile",
+                            "email": "User email",
+                            "roles": "User roles",
+                        },
+                    }
+                },
+                # ← these x- extensions tell Swagger UI how to handle the token
+                "x-tokenName": "access_token",
+                "x-clientCredentialsLocation": "body",
+            },
+        )
+
+        # ← this is what actually attaches the token to API calls
+        api_spec.components.security_scheme(
+            "bearerAuth",
+            {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            },
+        )
+
+
 class CustomSsoSecurityManager(SecurityManager):
+    security_api = CustomSecurityApi
+
     def oauth_user_info(self, provider, response=None):
         me = self.appbuilder.sm.oauth_remotes[provider].get("openid-connect/userinfo")
         me.raise_for_status()

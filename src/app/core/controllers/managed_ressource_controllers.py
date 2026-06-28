@@ -19,6 +19,7 @@ _logger = logging.getLogger(__name__)
 
 display_columns = [
     "id",
+    "host_name",
     "ressource_service_plan",
     "start_date",
     "end_date",
