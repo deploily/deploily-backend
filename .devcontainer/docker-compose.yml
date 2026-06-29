@@ -70,7 +70,7 @@ services:
     image: bitnami/etcd:3.5.11
     environment:
       ETCD_ENABLE_V2: 'true'
-      ALLOW_NONE_AUTHENTICATION: 'yes'
+      ALLOW_NONE_AUTHENTICATION: 'no'
       ETCD_ADVERTISE_CLIENT_URLS: 'http://localhost:2379'
       ETCD_LISTEN_CLIENT_URLS: 'http://0.0.0.0:2379'
     network_mode: service:db
