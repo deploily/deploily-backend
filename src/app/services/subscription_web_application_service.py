@@ -18,49 +18,12 @@ class WebApplicationDeploymentSubscriptionRequest:
     total_amount: float
     duration: int
     payment_method: str
-    promo_code: Optional[str] = None
     captcha_token: Optional[str] = None
     client_confirm_url: Optional[str] = None
     client_fail_url: Optional[str] = None
     phone: Optional[str] = None
     byor: bool = None
     provider_name: str = None
-
-
-@dataclass
-class UpgradeWebApplicationDeploymentSubscriptionRequest:
-    """Data class for upgrade subscription request validation"""
-
-    profile_id: int
-    old_subscription_id: int
-    service_plan_selected_id: int
-    ressource_service_plan_selected_id: int
-    managed_ressource_id: int
-    # version_selected_id: int
-    total_amount: float
-    duration: int
-    payment_method: str
-    promo_code: Optional[str] = None
-    captcha_token: Optional[str] = None
-    client_confirm_url: Optional[str] = None
-    client_fail_url: Optional[str] = None
-    phone: Optional[str] = None
-
-
-@dataclass
-class RenewWebApplicationDeploymentSubscriptionRequest:
-    """Data class for renew subscription request validation"""
-
-    profile_id: int
-    old_subscription_id: int
-    total_amount: float
-    duration: int
-    payment_method: str
-    promo_code: Optional[str] = None
-    captcha_token: Optional[str] = None
-    client_confirm_url: Optional[str] = None
-    client_fail_url: Optional[str] = None
-    phone: Optional[str] = None
 
 
 T = TypeVar("T")
@@ -88,21 +51,6 @@ class SubscriptionWebApplicationDeploymentService:
                 "payment_method",
                 # "version_selected_id",
             ],
-            UpgradeWebApplicationDeploymentSubscriptionRequest: [
-                "profile_id",
-                "old_subscription_id",
-                "duration",
-                "payment_method",
-            ],
-            RenewWebApplicationDeploymentSubscriptionRequest: [
-                "profile_id",
-                "service_plan_selected_id",
-                "duration",
-                "payment_method",
-                # "ressource_service_plan_selected_id",
-                # "version_selected_id",
-                "old_subscription_id",
-            ],
         }
 
         required_fields = required_fields_map.get(request_type, [])
@@ -122,16 +70,9 @@ class SubscriptionWebApplicationDeploymentService:
                 byor=data.get("byor"),
                 provider_name=data.get("provider_name"),
                 payment_method=data["payment_method"],
-                promo_code=data.get("promo_code"),
                 client_confirm_url=data.get("client_confirm_url"),
                 client_fail_url=data.get("client_fail_url"),
                 captcha_token=data.get("captcha_token"),
-                **(
-                    {"old_subscription_id": int(data["old_subscription_id"])}
-                    if request_type == RenewWebApplicationDeploymentSubscriptionRequest
-                    else {}
-                ),
-                # Todo check this
                 **(
                     {
                         "ressource_service_plan_selected_id": (
@@ -152,27 +93,6 @@ class SubscriptionWebApplicationDeploymentService:
                     if request_type == WebApplicationDeploymentSubscriptionRequest
                     else {}
                 ),
-                **(
-                    {
-                        "ressource_service_plan_selected_id": (
-                            int(data["ressource_service_plan_selected_id"])
-                            if "ressource_service_plan_selected_id" in data
-                            and data["ressource_service_plan_selected_id"] is not None
-                            else None
-                        ),
-                        "managed_ressource_id": (
-                            int(data["managed_ressource_id"])
-                            if "managed_ressource_id" in data
-                            and data["managed_ressource_id"] is not None
-                            else None
-                        ),
-                        # "version_selected_id": int(data["version_selected_id"]),
-                        "old_subscription_id": int(data["old_subscription_id"]),
-                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
-                    }
-                    if request_type == UpgradeWebApplicationDeploymentSubscriptionRequest
-                    else {}
-                ),
             )
             # ✅ Custom validation: enforce duration > 3
 
@@ -180,8 +100,6 @@ class SubscriptionWebApplicationDeploymentService:
                 request_type
                 in [
                     WebApplicationDeploymentSubscriptionRequest,
-                    UpgradeWebApplicationDeploymentSubscriptionRequest,
-                    RenewWebApplicationDeploymentSubscriptionRequest,
                 ]
                 and request_data.duration < 3
             ):
@@ -191,24 +109,11 @@ class SubscriptionWebApplicationDeploymentService:
         except (ValueError, TypeError) as e:
             return False, f"Invalid data format: {str(e)}", None
 
-    # Convenience methods for specific validation
-    def validate_web_application_deployment_renew_request(
-        self, data: dict
-    ) -> Tuple[bool, str, Optional[RenewWebApplicationDeploymentSubscriptionRequest]]:
-        """Validate renew subscription request"""
-        return self.validate_request_data(data, RenewWebApplicationDeploymentSubscriptionRequest)
-
     def validate_web_application_deployment_subscription_request(
         self, data: dict
     ) -> Tuple[bool, str, Optional[WebApplicationDeploymentSubscriptionRequest]]:
         """Validate upgrade subscription request"""
         return self.validate_request_data(data, WebApplicationDeploymentSubscriptionRequest)
-
-    def validate_upgrade_web_application_deployment_subscription_request(
-        self, data: dict
-    ) -> Tuple[bool, str, Optional[UpgradeWebApplicationDeploymentSubscriptionRequest]]:
-        """Validate upgrade subscription request"""
-        return self.validate_request_data(data, UpgradeWebApplicationDeploymentSubscriptionRequest)
 
     def validate_old_web_application_deployment_subscription(self, old_subscription_id: int):
         from app.service_deployment.models.web_application_deployment_subscription_model import (
@@ -232,7 +137,6 @@ class SubscriptionWebApplicationDeploymentService:
         duration: int,
         total_amount: float,
         price: float,
-        promo_code,
         profile_id: int,
         status: str,
         byor: bool,
@@ -256,7 +160,6 @@ class SubscriptionWebApplicationDeploymentService:
             price=price,
             service_plan_id=plan.id,
             duration_month=duration,
-            promo_code_id=promo_code.id if promo_code else None,
             status=status,
             byor=byor,
             payment_status="paid" if status == "active" else "unpaid",
@@ -267,10 +170,6 @@ class SubscriptionWebApplicationDeploymentService:
             phone=phone,
             provider_name=provider_name,
         )
-        # if is_upgrade:
-        #     subscription.is_upgrade = True
-        # if is_renew:
-        #     subscription.is_renew = True
 
         self.db.add(subscription)
         self.db.flush()

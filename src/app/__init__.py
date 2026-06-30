@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from sqlalchemy import MetaData
 from app.custom_sso_security_manager import CustomSsoSecurityManager
 import os
-
+from app.custom_sso_security_manager import SecurityApi  # ← new
 
 template_folder = os.path.join(os.path.dirname(__file__), "templates")
 app = Flask(__name__, template_folder=template_folder)

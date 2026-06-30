@@ -45,20 +45,43 @@ public_key_url = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}"
 JWT_ALGORITHM = "RS256"
 
 
+# def fetch_keycloak_rs256_public_cert():
+#     with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
+#         public_key_url_response = json.load(response)
+#     public_key = public_key_url_response["public_key"]
+#     if public_key:
+#         pem_lines = [
+#             "-----BEGIN PUBLIC KEY-----",
+#             public_key,
+#             "-----END PUBLIC KEY-----",
+#         ]
+#         cert_pem = "\n".join(pem_lines)
+#     else:
+#         cert_pem = "No cert found"
+#     return cert_pem
+
+
 def fetch_keycloak_rs256_public_cert():
-    with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
-        public_key_url_response = json.load(response)
-    public_key = public_key_url_response["public_key"]
-    if public_key:
-        pem_lines = [
-            "-----BEGIN PUBLIC KEY-----",
-            public_key,
-            "-----END PUBLIC KEY-----",
-        ]
-        cert_pem = "\n".join(pem_lines)
-    else:
-        cert_pem = "No cert found"
-    return cert_pem
+    try:
+        with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
+            public_key_url_response = json.load(response)
+            public_key = public_key_url_response["public_key"]
+            if public_key:
+                pem_lines = [
+                    "-----BEGIN PUBLIC KEY-----",
+                    public_key,
+                    "-----END PUBLIC KEY-----",
+                ]
+                cert_pem = "\n".join(pem_lines)
+            else:
+                cert_pem = "No cert found"
+            return cert_pem
+    except urllib.error.URLError as e:
+        print(f"WARNING: Could not connect to Keycloak at {public_key_url}: {e}")
+        return None
+    except (KeyError, json.JSONDecodeError) as e:
+        print(f"WARNING: Unexpected Keycloak response: {e}")
+        return None
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
@@ -105,6 +128,47 @@ if BACKEND_ADMIN_URL:
 
 DEFAULT_CREDIT_AMOUNT = float(os.getenv("DEFAULT_CREDIT_AMOUNT", "10000"))
 
+
+# config.py — add these at the bottom
+
+KEYCLOAK_TOKEN_URL = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/token"
+KEYCLOAK_AUTH_URL = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}/protocol/openid-connect/auth"
+
+
+# OAuth2 config for Swagger UI "Authorize" button
+SWAGGER_UI_OAUTH2_CONFIG = {
+    "clientId": KEYKCLOAK_CLIENT_ID,
+    "clientSecret": KEYKCLOAK_CLIENT_SECRET,
+    "appName": "Deploily API",
+    "scopeSeparator": " ",
+    "scopes": "openid email profile roles",
+}
+
+# OpenAPI security scheme injected into the spec
+FAB_OPENAPI_SECURITY_DEFINITIONS = {
+    "oauth2_keycloak": {
+        "type": "oauth2",
+        "flows": {
+            "password": {
+                "tokenUrl": KEYCLOAK_TOKEN_URL,
+                "scopes": {
+                    "openid": "OpenID Connect",
+                    "profile": "User profile",
+                    "email": "User email",
+                    "roles": "User roles",
+                },
+            },
+        },
+    }
+}
+
+FAB_API_SWAGGER_TEMPLATE = "swagger/swagger.html"
+# Pre-fill client credentials so user doesn't have to type them
+FAB_SWAGGER_UI_OAUTH2_CONFIG = {
+    "clientId": KEYKCLOAK_CLIENT_ID,
+    "clientSecret": KEYKCLOAK_CLIENT_SECRET,
+    "usePkceWithAuthorizationCodeGrant": False,
+}
 
 # ------------------------------
 # GLOBALS FOR APP Builder

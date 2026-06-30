@@ -48,10 +48,6 @@ class MobileApplicationDeploymentSubscriptionApi(BaseApi):
                                     type: string
                                     description: Provider name
 
-                                promo_code:
-                                    type: string
-                                    nullable: true
-                                    description: Promo code (if applicable)
                                 duration:
                                     type: integer
                                     description: Duration of the subscription in months
@@ -109,9 +105,7 @@ class MobileApplicationDeploymentSubscriptionApi(BaseApi):
                                                 type: integer
                                             service_plan_id:
                                                 type: integer
-                                            promo_code_id:
-                                                type: integer
-                                                nullable: true
+
 
                                     order_id:
                                         type: string
@@ -196,7 +190,6 @@ class MobileApplicationDeploymentSubscriptionApi(BaseApi):
                 total_amount=subscription_json["total_amount"],
                 price=subscription_json["price"],
                 phone=subscription_json["phone"],
-                promo_code=subscription_json["promo_code"],
                 profile_id=subscription_json["profile"].id,
                 status=subscription_status,
                 byor=request_data.byor if hasattr(request_data, "byor") else False,

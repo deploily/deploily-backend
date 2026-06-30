@@ -13,16 +13,12 @@ from app.core.models import (
     ManagedRessource,
     Payment,
     PaymentProfile,
-    PromoCode,
     ServicePlan,
     Subscription,
 )
 from app.core.models.mail_models import Mail
 from app.services.payment_service import PaymentService
-from app.services.subscription_api_service import (
-    ApiSubscriptionRequest,
-    UpgradeApiSubscriptionRequest,
-)
+from app.services.subscription_api_service import ApiSubscriptionRequest
 from app.services.subscription_mobile_application_service import (
     MobileApplicationDeploymentSubscriptionRequest,
 )
@@ -99,21 +95,6 @@ class SubscriptionServiceBase:
             return self.response_400(message="Version not found")
 
         return True, "", version
-
-    def validate_promo_code(
-        self, promo_code_str: str, total_amount: float
-    ) -> Tuple[Optional[object], float]:
-        """Validate and apply promo code"""
-        if not promo_code_str:
-            return None, 0
-
-        promo_code = self.db.query(PromoCode).filter_by(code=promo_code_str, active=True).first()
-
-        if promo_code and promo_code.is_valid:
-            discount_amount = (total_amount * promo_code.rate) / 100
-            return promo_code, discount_amount
-
-        return None, 0
 
     def verify_captcha(self, captcha_token: str) -> Tuple[bool, str]:
         """Verify Google reCAPTCHA token"""
@@ -199,76 +180,6 @@ class SubscriptionServiceBase:
         except Exception as e:
             self.logger.error(f"Payment processing error: {e}", exc_info=True)
             return False, "Payment processing failed", {}
-
-    def update_promo_code_usage(self, promo_code, subscription_id: int):
-        """Update promo code usage after successful subscription"""
-        if not promo_code:
-            return
-
-        if promo_code.usage_type == "single_use":
-            promo_code.active = False
-
-        promo_code.subscription = subscription_id
-        self.db.commit()
-
-    # def send_notification_emails(
-    #     self, user, plan, total_amount: float, subscription, payment_method
-    # ):
-    #     """Send notification emails to admin and user"""
-    #     # Admin notification
-    #     from app.core.celery_tasks.send_mail_task import send_mail
-    #     is_trial = bool(getattr(subscription, "is_trial", False))
-
-    #     admin_template = render_template(
-    #         "emails/deploily_subscription.html", user_name=user.username, plan=plan
-    #     )
-
-    #     bank = agency = address = bank_account_number = None
-
-    #     if payment_method == "bank_transfer":
-    #         bank = os.getenv("BANK", "")
-    #         agency = os.getenv("AGENCY", "")
-    #         address = os.getenv("ADDRESS", "")
-    #         bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
-
-    #     admin_email = Mail(
-    #         title=f"New Subscription Created by {user.username}",
-    #         body=admin_template,
-    #         email_to=current_app.config["NOTIFICATION_EMAIL"],
-    #         email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #         mail_state="outGoing",
-    #     )
-
-    #     # User notification
-    #     user_template = render_template(
-    #         "emails/user_subscription.html",
-    #         user=user,
-    #         service_name=plan.service.name,
-    #         plan_name=plan.plan.name,
-    #         total_price=total_amount,
-    #         payment_method=payment_method,
-    #         bank=bank,
-    #         agency=agency,
-    #         address=address,
-    #         bank_account_number=bank_account_number,
-    #     )
-
-    #     user_email = Mail(
-    #         title="Nouvelle souscription à deploily.cloud",
-    #         body=user_template,
-    #         email_to=user.email,
-    #         email_from=current_app.config["NOTIFICATION_EMAIL"],
-    #         mail_state="outGoing",
-    #     )
-
-    #     # Add to database and send
-    #     self.db.add_all([admin_email, user_email])
-    #     self.db.commit()
-
-    #     send_mail.delay(admin_email.id)
-    #     send_mail.delay(user_email.id)
-
-    #     self.logger.info(f"Notification emails sent for subscription {subscription.id}")
 
     def send_notification_emails(
         self, user, plan, total_amount: float, subscription, payment_method
@@ -497,7 +408,6 @@ class SubscriptionServiceBase:
         ressource_plan = None
         if (
             type(request_data) != ApiSubscriptionRequest
-            and type(request_data) != UpgradeApiSubscriptionRequest
             and request_data.ressource_service_plan_selected_id is not None
         ):
             is_valid, error_msg, ressource_plan = self.validate_ressource_service_plan(
@@ -507,10 +417,7 @@ class SubscriptionServiceBase:
                 return False, error_msg, None
 
         #  Validate managed ressource
-        if (
-            type(request_data) == ApiSubscriptionRequest
-            or type(request_data) == UpgradeApiSubscriptionRequest
-        ):
+        if type(request_data) == ApiSubscriptionRequest:
             managed_ressource = None
             provider_name = None
         elif request_data.managed_ressource_id is None or request_data.byor == None:
@@ -528,7 +435,6 @@ class SubscriptionServiceBase:
         # Validate service plan
         if (
             type(request_data) == ApiSubscriptionRequest
-            or type(request_data) == UpgradeApiSubscriptionRequest
             or type(request_data) == WebApplicationDeploymentSubscriptionRequest
             or type(request_data) == MobileApplicationDeploymentSubscriptionRequest
         ):
@@ -551,10 +457,7 @@ class SubscriptionServiceBase:
 
             total_amount += tva_amount + total_price_ressource
 
-        promo_code, discount_amount = self.validate_promo_code(
-            request_data.promo_code, total_amount
-        )
-        final_price = total_amount - discount_amount
+        final_price = total_amount
 
         # Determine subscription status based on balance
         has_sufficient_balance = profile.balance >= final_price
@@ -567,7 +470,6 @@ class SubscriptionServiceBase:
             "duration": default_duration if plan.is_trial else request_data.duration,
             "total_amount": total_amount,
             "price": final_price,
-            "promo_code": promo_code,
             "profile": profile,
             "phone": request_data.phone,
             "provider_name": provider_name,
@@ -632,9 +534,6 @@ class SubscriptionServiceBase:
                 print(f"Order ID: {satim_order_id}, Form URL: {form_url}")
                 self.db.commit()
 
-            # Mise à jour promo code
-            self.update_promo_code_usage(subscription.promo_code, subscription.id)
-
             # Notifications
             self.send_notification_emails(
                 user,
@@ -660,7 +559,6 @@ class SubscriptionServiceBase:
                     "status": subscription.status,
                     "duration_month": subscription.duration_month,
                     "service_plan_id": subscription.service_plan_id,
-                    "promo_code_id": subscription.promo_code_id,
                 },
                 "order_id": satim_order_id,
                 "form_url": form_url,
