@@ -14,6 +14,7 @@ class MobileApplicationDeploymentSubscriptionRequest:
     service_plan_selected_id: int
     ressource_service_plan_selected_id: int
     # version_selected_id: int
+    payment_method: str
     managed_ressource_id: int
     total_amount: float
     duration: int
