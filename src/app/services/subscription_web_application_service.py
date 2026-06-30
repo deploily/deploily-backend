@@ -93,25 +93,6 @@ class SubscriptionWebApplicationDeploymentService:
                     if request_type == WebApplicationDeploymentSubscriptionRequest
                     else {}
                 ),
-                **(
-                    {
-                        "ressource_service_plan_selected_id": (
-                            int(data["ressource_service_plan_selected_id"])
-                            if "ressource_service_plan_selected_id" in data
-                            and data["ressource_service_plan_selected_id"] is not None
-                            else None
-                        ),
-                        "managed_ressource_id": (
-                            int(data["managed_ressource_id"])
-                            if "managed_ressource_id" in data
-                            and data["managed_ressource_id"] is not None
-                            else None
-                        ),
-                        # "version_selected_id": int(data["version_selected_id"]),
-                        "old_subscription_id": int(data["old_subscription_id"]),
-                        "service_plan_selected_id": int(data["service_plan_selected_id"]),
-                    }
-                ),
             )
             # ✅ Custom validation: enforce duration > 3
 
