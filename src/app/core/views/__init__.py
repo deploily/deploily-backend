@@ -19,6 +19,8 @@ from . import comment_views
 from . import advertisment_views
 from . import rating_views
 
+# Configuration (imported last in app/__init__.py so it lands rightmost in the top nav)
+
 # Subscriptions
 from . import managed_ressource_view
 from . import subscription_views

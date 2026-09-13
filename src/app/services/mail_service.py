@@ -4,20 +4,55 @@ import smtplib
 from email.mime.text import MIMEText
 
 from flask import current_app, render_template
+from mjml import mjml2html
 
 from app import db
 from app.core.models import Mail
+from app.core.models.email_template_model import EmailTemplate
 
 
-def render_email_template(template_name, **context):
-    return render_template(f"emails/{template_name}", **context)
+# Templates whose original design used a receipt/table layout (green header,
+# bordered detail table) instead of the standard branded card + footer.
+_RECEIPT_STYLE_KEYS = {"payment_completed"}
+
+# Internal/admin-facing notifications (email_to=NOTIFICATION_EMAIL or SUPPORT_EMAIL)
+# are sent as plain HTML — no skeleton, no branding.
+_PLAIN_KEYS = {
+    "create_user",
+    "contact_us",
+    "support_ticket",
+    "support_ticket_response_admin",
+    "admin_support_ticket_closed",
+    "admin_support_ticket_warning",
+    "deploily_affiliation",
+    "deploily_subscription",
+    "deploily_subscription_trial",
+    "restart_application",
+}
 
 
-def send_and_log_email(to, subject, body, from_email=None):
+def render_email(key, **context):
+    tmpl = db.session.query(EmailTemplate).filter_by(key=key).first()
+    if not tmpl:
+        raise ValueError(f"No EmailTemplate found for key={key!r}")
+
+    subject = current_app.jinja_env.from_string(tmpl.subject).render(**context)
+    content_html = current_app.jinja_env.from_string(tmpl.body).render(**context)
+
+    if key in _PLAIN_KEYS:
+        return subject, content_html
+
+    skeleton = "emails/_base_receipt.mjml" if key in _RECEIPT_STYLE_KEYS else "emails/_base.mjml"
+    mjml_source = render_template(skeleton, content=content_html, **context)
+    return subject, mjml2html(mjml_source)
+
+
+def send_and_log_email(to, subject, body, from_email=None, reply_to=None):
     mail = Mail(
         title=subject,
         email_from=from_email or current_app.config["MAIL_USERNAME"],
         email_to=to,
+        reply_to=reply_to,
         body=body,
         mail_state="outGoing",
     )
@@ -25,15 +60,21 @@ def send_and_log_email(to, subject, body, from_email=None):
     db.session.flush()
 
     try:
+        creds = current_app.config["MAIL_ACCOUNTS"].get(mail.email_from)
+        if not creds:
+            raise ValueError(f"No SMTP account configured for sender {mail.email_from!r}")
+
         msg = MIMEText(body, "html")
         msg["Subject"] = subject
         msg["From"] = mail.email_from
         msg["To"] = mail.email_to
+        if mail.reply_to:
+            msg["Reply-To"] = mail.reply_to
 
-        smtp_host = current_app.config["MAIL_HOST"]
-        smtp_port = int(current_app.config["MAIL_PORT"])
-        smtp_user = current_app.config["MAIL_USERNAME"]
-        smtp_pass = current_app.config["MAIL_PASSWORD"]
+        smtp_host = creds["host"]
+        smtp_port = int(creds["port"])
+        smtp_user = creds["user"]
+        smtp_pass = creds["pass"]
 
         server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
         server.set_debuglevel(1)

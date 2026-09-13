@@ -1,11 +1,10 @@
 from datetime import date, timedelta
 
-from flask import render_template
 from sqlalchemy import Date, cast
 
 from app import app, db, scheduler
 from app.core.models.managed_ressource_models import ManagedRessource
-from app.services.mail_service import send_and_log_email
+from app.services.mail_service import render_email, send_and_log_email
 
 sent_ressource_notifications = set()
 last_reset_date_ressource = None
@@ -55,16 +54,35 @@ def notify_managed_ressource_expiration():
                         f"[NOTIFY] Resource {res.host_name} ({res.ip}) expires in {days_remaining} days for user {user.username}"
                     )
 
-                    subject = f"Managed Resource Subscription Expiring in {days_remaining} Days"
-                    body = render_template(
-                        "emails/managed_ressource_expiring.html",
+                    subject, body = render_email(
+                        "managed_ressource_expiring",
                         user=user,
                         resource=res,
                         days=days_remaining,
                         expiration_date=res.end_date.strftime("%Y-%m-%d"),
                     )
+                    send_and_log_email(
+                        user.email,
+                        subject,
+                        body,
+                        from_email=app.config["NOTIFICATION_EMAIL"],
+                        reply_to=app.config["NOTIFICATION_EMAIL"],
+                    )
 
-                    send_and_log_email(user.email, subject, body)
+                    admin_subject, admin_body = render_email(
+                        "admin_resource_expiring_soon",
+                        user=user,
+                        res=res,
+                        days=days_remaining,
+                        expiration_date=res.end_date.strftime("%Y-%m-%d"),
+                    )
+                    send_and_log_email(
+                        app.config["NOTIFICATION_EMAIL"],
+                        admin_subject,
+                        admin_body,
+                        from_email=app.config["NOTIFICATION_EMAIL"],
+                    )
+
                     sent_ressource_notifications.add(key)
 
                 except Exception as e:
