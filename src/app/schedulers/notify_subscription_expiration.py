@@ -73,8 +73,8 @@ def notify_expiring_subscriptions():
                         user.email,
                         subject,
                         body,
-                        from_email=app.config["NOTIFICATION_EMAIL"],
-                        reply_to=app.config["NOTIFICATION_EMAIL"],
+                        from_email=app.config["NOTIFY_FROM_ADDRESS"],
+                        reply_to=app.config["NOTIFY_FROM_ADDRESS"],
                     )
 
                     sent_notifications.add(key)

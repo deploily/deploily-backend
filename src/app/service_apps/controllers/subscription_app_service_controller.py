@@ -109,7 +109,7 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
 
     def post_update(self, item):
         user = current_user
-        support_email = current_app.config.get("SUPPORT_EMAIL")
+        support_email = current_app.config.get("SUPPORT_FROM_ADDRESS")
 
         # Check if a restart is required but hasn't been flagged yet
         if not item.required_restart and item.application_status in ["deployed", "error"]:

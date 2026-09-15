@@ -205,8 +205,8 @@ class SubscriptionServiceBase:
         admin_email = Mail(
             title=admin_title,
             body=admin_template,
-            email_to=current_app.config["NOTIFICATION_EMAIL"],
-            email_from=current_app.config["NOTIFICATION_EMAIL"],
+            email_to=current_app.config["NOTIFY_FROM_ADDRESS"],
+            email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
             mail_state="outGoing",
         )
 
@@ -241,8 +241,8 @@ class SubscriptionServiceBase:
             title=user_title,
             body=user_template,
             email_to=user.email,
-            email_from=current_app.config["NOTIFICATION_EMAIL"],
-            reply_to=current_app.config["NOTIFICATION_EMAIL"],
+            email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
+            reply_to=current_app.config["NOTIFY_FROM_ADDRESS"],
             mail_state="outGoing",
         )
 

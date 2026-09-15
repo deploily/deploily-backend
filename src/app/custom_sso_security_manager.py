@@ -146,8 +146,8 @@ class CustomSsoSecurityManager(SecurityManager):
                 email = Mail(
                     title=subject,
                     body=user_email_body,
-                    email_to=current_app.config["NOTIFICATION_EMAIL"],
-                    email_from=current_app.config["NOTIFICATION_EMAIL"],
+                    email_to=current_app.config["NOTIFY_FROM_ADDRESS"],
+                    email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
                     mail_state="outGoing",
                 )
                 db.session.add(email)

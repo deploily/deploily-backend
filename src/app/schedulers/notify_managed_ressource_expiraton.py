@@ -65,8 +65,8 @@ def notify_managed_ressource_expiration():
                         user.email,
                         subject,
                         body,
-                        from_email=app.config["NOTIFICATION_EMAIL"],
-                        reply_to=app.config["NOTIFICATION_EMAIL"],
+                        from_email=app.config["NOTIFY_FROM_ADDRESS"],
+                        reply_to=app.config["NOTIFY_FROM_ADDRESS"],
                     )
 
                     admin_subject, admin_body = render_email(
@@ -77,10 +77,10 @@ def notify_managed_ressource_expiration():
                         expiration_date=res.end_date.strftime("%Y-%m-%d"),
                     )
                     send_and_log_email(
-                        app.config["NOTIFICATION_EMAIL"],
+                        app.config["NOTIFY_FROM_ADDRESS"],
                         admin_subject,
                         admin_body,
-                        from_email=app.config["NOTIFICATION_EMAIL"],
+                        from_email=app.config["NOTIFY_FROM_ADDRESS"],
                     )
 
                     sent_ressource_notifications.add(key)

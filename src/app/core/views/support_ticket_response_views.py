@@ -46,8 +46,8 @@ class SupportTicketResponseModelView(ModelView):
             admin_email = Mail(
                 title=admin_subject,
                 body=admin_body,
-                email_to=current_app.config["SUPPORT_EMAIL"],
-                email_from=current_app.config["SUPPORT_EMAIL"],
+                email_to=current_app.config["SUPPORT_FROM_ADDRESS"],
+                email_from=current_app.config["SUPPORT_FROM_ADDRESS"],
                 mail_state="outGoing",
             )
 
@@ -63,8 +63,8 @@ class SupportTicketResponseModelView(ModelView):
                     title=user_subject,
                     body=user_body,
                     email_to=user.email,
-                    email_from=current_app.config["SUPPORT_EMAIL"],
-                    reply_to=current_app.config["SUPPORT_EMAIL"],
+                    email_from=current_app.config["SUPPORT_FROM_ADDRESS"],
+                    reply_to=current_app.config["SUPPORT_FROM_ADDRESS"],
                     mail_state="outGoing",
                 )
 

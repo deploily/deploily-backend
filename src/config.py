@@ -442,6 +442,12 @@ for _addr, _user, _pass, _host, _port in (
     if _addr and _user and _pass and _host:
         MAIL_ACCOUNTS[_addr] = {"user": _user, "pass": _pass, "host": _host, "port": _port}
 
+# Address call sites should actually send/receive from -- prefers the
+# dedicated per-identity mailbox when configured, falls back to the shared
+# NOTIFICATION_EMAIL/SUPPORT_EMAIL account otherwise.
+NOTIFY_FROM_ADDRESS = MAIL_CONNECT_ADDRESS or NOTIFICATION_EMAIL
+SUPPORT_FROM_ADDRESS = MAIL_SUPPORT_ADDRESS or SUPPORT_EMAIL
+
 
 CAPTCHA_SECRET_KEY = os.getenv("CAPTCHA_SECRET_KEY")
 
