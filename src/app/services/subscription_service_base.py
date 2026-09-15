@@ -6,9 +6,10 @@ from typing import Optional, Tuple
 
 import requests
 from dateutil.relativedelta import relativedelta
-from flask import current_app, render_template
+from flask import current_app
 from slugify import slugify
 
+from app.services.mail_service import render_email
 from app.core.models import (
     ManagedRessource,
     Payment,
@@ -192,30 +193,20 @@ class SubscriptionServiceBase:
         # ------------------
         # ADMIN EMAIL
         # ------------------
-        admin_template_name = (
-            "emails/deploily_subscription_trial.html"
-            if is_trial
-            else "emails/deploily_subscription.html"
-        )
+        admin_template_key = "deploily_subscription_trial" if is_trial else "deploily_subscription"
 
-        admin_template = render_template(
-            admin_template_name,
+        admin_title, admin_template = render_email(
+            admin_template_key,
             user_name=user.username,
             plan=plan,
             subscription=subscription,
         )
 
-        admin_title = (
-            f"New TRIAL Subscription Created by {user.username}"
-            if is_trial
-            else f"New Subscription Created by {user.username}"
-        )
-
         admin_email = Mail(
             title=admin_title,
             body=admin_template,
-            email_to=current_app.config["NOTIFICATION_EMAIL"],
-            email_from=current_app.config["NOTIFICATION_EMAIL"],
+            email_to=current_app.config["NOTIFY_FROM_ADDRESS"],
+            email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
             mail_state="outGoing",
         )
 
@@ -230,12 +221,10 @@ class SubscriptionServiceBase:
             address = os.getenv("ADDRESS", "")
             bank_account_number = os.getenv("BANK_ACCOUNT_NUMBER", "")
 
-        user_template_name = (
-            "emails/user_subscription_trial.html" if is_trial else "emails/user_subscription.html"
-        )
+        user_template_key = "user_subscription_trial" if is_trial else "user_subscription"
 
-        user_template = render_template(
-            user_template_name,
+        user_title, user_template = render_email(
+            user_template_key,
             user=user,
             service_name=plan.service.name,
             plan_name=plan.plan.name,
@@ -248,17 +237,12 @@ class SubscriptionServiceBase:
             bank_account_number=bank_account_number,
         )
 
-        user_title = (
-            "Votre période d’essai sur deploily.cloud a commencé"
-            if is_trial
-            else "Nouvelle souscription à deploily.cloud"
-        )
-
         user_email = Mail(
             title=user_title,
             body=user_template,
             email_to=user.email,
-            email_from=current_app.config["NOTIFICATION_EMAIL"],
+            email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
+            reply_to=current_app.config["NOTIFY_FROM_ADDRESS"],
             mail_state="outGoing",
         )
 
