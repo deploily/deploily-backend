@@ -44,7 +44,7 @@ appbuilder = AppBuilder(
     app,
     db.session,
     security_manager_class=CustomSsoSecurityManager,
-    # indexview=AdminDashboardIndexView,
+    indexview=AdminDashboardIndexView,
 )
 
 
