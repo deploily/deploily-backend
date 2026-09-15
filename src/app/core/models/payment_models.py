@@ -79,8 +79,8 @@ def payment_after_update(mapper, connection, target):
                     .values(
                         title=subject,
                         body=body,
-                        email_to=current_app.config["NOTIFICATION_EMAIL"],
-                        email_from=current_app.config["NOTIFICATION_EMAIL"],
+                        email_to=current_app.config["NOTIFY_FROM_ADDRESS"],
+                        email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
                         mail_state="outGoing",
                     )
                 )

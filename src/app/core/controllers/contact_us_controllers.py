@@ -47,8 +47,8 @@ class ContactUSModelApi(ModelRestApi):
             email = Mail(
                 title=subject,
                 body=contact_us_template,
-                email_to=current_app.config["NOTIFICATION_EMAIL"],
-                email_from=current_app.config["NOTIFICATION_EMAIL"],
+                email_to=current_app.config["NOTIFY_FROM_ADDRESS"],
+                email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
                 mail_state="outGoing",
             )
 

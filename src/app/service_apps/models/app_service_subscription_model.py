@@ -130,7 +130,7 @@ def send_deployed_app_emails(session):
 
     # Use a new session for email creation
     new_session = SASession(bind=db.engine)
-    support_email = current_app.config.get("SUPPORT_EMAIL")
+    support_email = current_app.config.get("SUPPORT_FROM_ADDRESS")
 
     try:
         for target in targets:

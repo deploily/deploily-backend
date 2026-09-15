@@ -64,8 +64,8 @@ class AffiliationView(ModelView):
                     to=provider.mail_partnership,
                     subject=provider_subject,
                     body=provider_email_body,
-                    from_email=current_app.config["NOTIFICATION_EMAIL"],
-                    reply_to=current_app.config["NOTIFICATION_EMAIL"],
+                    from_email=current_app.config["NOTIFY_FROM_ADDRESS"],
+                    reply_to=current_app.config["NOTIFY_FROM_ADDRESS"],
                 )
 
             affiliation.affiliation_state = "confirmed"

@@ -159,8 +159,8 @@ class AffiliationModelApi(ModelRestApi):
             to=user.email,
             subject=user_subject,
             body=user_email_body,
-            from_email=current_app.config["NOTIFICATION_EMAIL"],
-            reply_to=current_app.config["NOTIFICATION_EMAIL"],
+            from_email=current_app.config["NOTIFY_FROM_ADDRESS"],
+            reply_to=current_app.config["NOTIFY_FROM_ADDRESS"],
         )
 
         # Email to internal team
@@ -171,10 +171,10 @@ class AffiliationModelApi(ModelRestApi):
             total_price=total_price,
         )
         send_and_log_email(
-            to=current_app.config["NOTIFICATION_EMAIL"],
+            to=current_app.config["NOTIFY_FROM_ADDRESS"],
             subject=deploily_subject,
             body=deploily_email_body,
-            from_email=current_app.config["NOTIFICATION_EMAIL"],
+            from_email=current_app.config["NOTIFY_FROM_ADDRESS"],
         )
 
         return self.response(201, message="Affiliation créée et emails envoyés.")

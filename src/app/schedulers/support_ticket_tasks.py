@@ -73,7 +73,7 @@ def auto_close_support_tickets() -> dict:
             db.session.query(SupportTicket).filter(SupportTicket.status == "open").all()
         )
         system_user = _get_system_user()
-        support_mail = app.config.get("SUPPORT_EMAIL")
+        support_mail = app.config.get("SUPPORT_FROM_ADDRESS")
 
         for ticket in open_tickets:
             last_response = _last_sent_response(ticket)
