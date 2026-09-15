@@ -37,14 +37,14 @@ db = SQLA(app, metadata=metadata)
 
 migrate = Migrate(app, db, render_as_batch=True)
 
-from app.dashboard_view import AdminDashboardIndexView
+# from app.dashboard_view import AdminDashboardIndexView
 
 # appbuilder = AppBuilder(app, db.session)
 appbuilder = AppBuilder(
     app,
     db.session,
     security_manager_class=CustomSsoSecurityManager,
-    indexview=AdminDashboardIndexView,
+    # indexview=AdminDashboardIndexView,
 )
 
 
