@@ -8,6 +8,7 @@ from sqlalchemy import MetaData
 from app.custom_sso_security_manager import CustomSsoSecurityManager
 import os
 from app.custom_sso_security_manager import SecurityApi  # ← new
+from app.dashboard_view import AdminDashboardIndexView
 
 template_folder = os.path.join(os.path.dirname(__file__), "templates")
 app = Flask(__name__, template_folder=template_folder)
@@ -37,14 +38,13 @@ db = SQLA(app, metadata=metadata)
 
 migrate = Migrate(app, db, render_as_batch=True)
 
-# from app.dashboard_view import AdminDashboardIndexView
 
 # appbuilder = AppBuilder(app, db.session)
 appbuilder = AppBuilder(
     app,
     db.session,
     security_manager_class=CustomSsoSecurityManager,
-    # indexview=AdminDashboardIndexView,
+    indexview=AdminDashboardIndexView,
 )
 
 
