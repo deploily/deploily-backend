@@ -42,7 +42,15 @@ def send_mail(mail_id):
 
             _logger.debug(f"[CRON] Connecting to {smtp_host}:{smtp_port} with user {smtp_user}")
 
-            server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
+            if smtp_port == 465:
+                server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port, timeout=15)
+            else:
+                server = smtplib.SMTP(host=smtp_host, port=smtp_port, timeout=15)
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+
+            # server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
             server.set_debuglevel(1)
             server.login(smtp_user, smtp_pass)
             server.sendmail(msg["From"], [msg["To"]], msg.as_string())
