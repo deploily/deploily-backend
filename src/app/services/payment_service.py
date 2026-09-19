@@ -10,9 +10,9 @@ _logger = logging.getLogger(__name__)
 
 class PaymentService:
     def __init__(self):
-        self.URL = os.getenv("PAYMENT_URL", "https://pay.demo.deploily.cloud/api/v1/epayment")
+        self.URL = os.getenv("PAYMENT_URL", "https://pay.demo.deploily.app/api/v1/epayment")
         self.STATUS_URL = os.getenv(
-            "PAYMENT_STATUS_URL", "https://pay.demo.deploily.cloud/api/v1/epayment"
+            "PAYMENT_STATUS_URL", "https://pay.demo.deploily.app/api/v1/epayment"
         )
         self.PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
         self.SEND_RECEIPT_MAIL_URL = os.getenv("SEND_RECEIPT_MAIL_URL", "")

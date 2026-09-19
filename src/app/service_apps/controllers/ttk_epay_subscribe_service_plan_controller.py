@@ -191,7 +191,7 @@ class TtkEpaySubscriptionApi(BaseApi):
             api_secret_key = uuid.uuid4().hex[:32]
             user = get_user()
             user_name = user.username
-            client_site_url = f"https://{user_name}-ttkepay.apps.depoloily.cloud"
+            client_site_url = f"https://{user_name}-ttkepay.deploily.app"
 
             has_sufficient_balance = (
                 subscription_json["profile"].balance >= subscription_json["price"]
