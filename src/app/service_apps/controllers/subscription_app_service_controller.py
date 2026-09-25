@@ -106,6 +106,8 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
         # # Convert to dict for JSON response
         # result = [item.to_dict() for item in valid_items]
 
+        result = [item.to_dict() for item in all_items]
+
         return self.response(200, result=result)
 
     def post_update(self, item):
