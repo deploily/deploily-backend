@@ -9,10 +9,10 @@ from app import appbuilder, db
 from app.core.celery_tasks.send_mail_task import send_mail
 from app.core.controllers.subscription_controllers import SubscriptionModelApi
 from app.core.models.mail_models import Mail
-from app.services.mail_service import render_email
 from app.service_apps.models.app_service_subscription_model import (
     SubscriptionAppService,
 )
+from app.services.mail_service import render_email
 from app.utils.utils import get_user
 
 api_columns = [
@@ -99,11 +99,12 @@ class AppServiceSubscriptionModelApi(SubscriptionModelApi):
             self.datamodel.session.query(self.datamodel.obj).filter_by(created_by=user).all()
         )
 
-        # Filter out expired items (computed property)
-        valid_items = [item for item in all_items if not item.is_expired]
+        # ! Expired items should be dislayed to user and marked as expired in the frontend
+        # # Filter out expired items (computed property)
+        # valid_items = [item for item in all_items if not item.is_expired]
 
-        # Convert to dict for JSON response
-        result = [item.to_dict() for item in valid_items]
+        # # Convert to dict for JSON response
+        # result = [item.to_dict() for item in valid_items]
 
         return self.response(200, result=result)
 

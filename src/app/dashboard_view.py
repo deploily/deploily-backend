@@ -67,8 +67,11 @@ def _kpis(db, Subscription, SupportTicket, Affiliation, User):
     }
 
 
-def _group_counts(db, func, column):
-    rows = db.session.query(column, func.count()).group_by(column).all()
+def _group_counts(db, func, column, exclude_column=None, exclude_value=None):
+    query = db.session.query(column, func.count())
+    if exclude_column is not None:
+        query = query.filter(exclude_column != exclude_value)
+    rows = query.group_by(column).all()
     return {str(label) if label is not None else "unknown": count for label, count in rows}
 
 
@@ -385,7 +388,13 @@ def build_dashboard_context():
             ),
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
-            "payment_status": _group_counts(db, func, Payment.status),
+            "payment_status": _group_counts(
+                db,
+                func,
+                Payment.status,
+                exclude_column=Payment.payment_method,
+                exclude_value="cloud_credit",
+            ),
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {
