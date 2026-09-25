@@ -22,7 +22,7 @@ def send_mail(mail_id):
             if not mail:
                 _logger.warning(f"[SEND MAIL TASK] THE EMAIL DON'T EXIST")
                 return
-            _logger.info("[CRON] Sending pending emails - START")
+            _logger.info("[CELERY] Sending pending emails - START")
 
             creds = current_app.config["MAIL_ACCOUNTS"].get(mail.email_from)
             if not creds:
@@ -40,7 +40,7 @@ def send_mail(mail_id):
             smtp_user = creds["user"]
             smtp_pass = creds["pass"]
 
-            _logger.debug(f"[CRON] Connecting to {smtp_host}:{smtp_port} with user {smtp_user}")
+            _logger.debug(f"[CELERY] Connecting to {smtp_host}:{smtp_port} with user {smtp_user}")
 
             if smtp_port == 465:
                 server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port, timeout=15)
@@ -51,6 +51,7 @@ def send_mail(mail_id):
                 server.ehlo()
 
             # server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
+            # TODO set to False in production and to 1 on staging
             server.set_debuglevel(1)
             server.login(smtp_user, smtp_pass)
             server.sendmail(msg["From"], [msg["To"]], msg.as_string())
@@ -58,9 +59,10 @@ def send_mail(mail_id):
 
             mail.mail_state = "sent"
             db.session.commit()
-            _logger.info(f"[CRON] ✅ Email sent to {mail.email_to}")
+            _logger.info(f"[CELERY] ✅ Email sent to {mail.email_to}")
 
         except Exception as e:
-            _logger.error(f"[CRON] ❌ Error sending to {mail.email_to}: {e}")
+            _logger.error(f"[CELERY] ❌ Error sending to {mail.email_to}: {e}")
             mail.mail_state = "error"
+            # TODO save error message to the database for further analysis
             db.session.commit()
