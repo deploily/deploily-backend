@@ -89,6 +89,10 @@ class CustomSsoSecurityManager(SecurityManager):
         me = self.appbuilder.sm.oauth_remotes[provider].get("openid-connect/userinfo")
         me.raise_for_status()
         data = me.json()
+        _logger.info("###############################################")
+        _logger.info("KEYCLOAK USERINFO DATA:")
+        _logger.info(data)
+        _logger.info("###############################################")
         return {
             "username": data.get("preferred_username", ""),
             "first_name": data.get("given_name", ""),
@@ -108,10 +112,9 @@ class CustomSsoSecurityManager(SecurityManager):
 
         username = jwt_data["preferred_username"]
         email = jwt_data["email"]
-        phone = jwt_data["phone"]
         print(f"###############################################JWT header: {_jwt_header}")
         print(f"JWT data: {jwt_data}")
-        print(f"Username: {username}, Email: {email}, Phone: {phone}")
+        print(f"Username: {username}, Email: {email}")
         # user = self.find_user(username=username)
         user = self.find_user(email=email)
         if user and user.is_active:
@@ -127,7 +130,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
-                    phone=phone,
+                    phone="",
                     is_default_profile=True,
                 )
                 db.session.add(payment_profile)
