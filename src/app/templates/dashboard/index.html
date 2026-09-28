@@ -61,6 +61,7 @@
     .badge-days.badge-ok { background: var(--neutral-muted); }
 
     .window-buttons { display: flex; gap: 6px; margin-bottom: 10px; }
+    .window-buttons.centered { justify-content: center; flex-wrap: wrap; margin-top: 8px; }
     .window-btn {
         border: 1px solid var(--neutral-border); background: #fff; color: var(--neutral-muted);
         border-radius: 14px; font-size: 12px; padding: 4px 12px; cursor: pointer;
@@ -127,6 +128,15 @@
         color: var(--brand-blue); font-weight: 600;
     }
     .dashboard-tabs .tab-content { padding: 20px 0; }
+ .growth-select-row { margin: 8px 0 4px; }
+.growth-select {
+    width: 100%;
+    border: 1px solid var(--neutral-border); background: #fff; color: var(--neutral-text);
+    border-radius: 14px; font-size: 12px; padding: 4px 12px; cursor: pointer;
+}
+.growth-select:hover, .growth-select:focus {
+    border-color: var(--brand-blue); color: var(--brand-blue); outline: none;
+}
 </style>
 
 <div class="dashboard-header">
@@ -230,6 +240,16 @@
                 </div>
                 <div class="db-card chart-card chart-cell-br">
                     <div class="db-card-title chart-card-title"><a href="/admin/payment/list/">{{ _('Cumulative Growth') }}</a></div>
+                    <div class="row growth-select-row">
+    <div class="col-xs-4 col-xs-offset-4">
+        <select id="growth_year_select" class="growth-select" aria-label="{{ _('Select period') }}">
+            <option value="rolling" selected>{{ _('Last 12 months') }}</option>
+            {% for year in (charts.growth_by_year|default({})).keys()|list|reverse %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
                     <div id="chart_cumulative_growth" class="chart-canvas"></div>
                 </div>
             </div>
@@ -560,9 +580,17 @@
         ticket_age: {{ charts.ticket_age_histogram.items()|list|tojson }},
         signups: {{ charts.signups_per_month.items()|list|tojson }},
         cumulative_growth: {{ (charts.cumulative_growth|default([]))|tojson }},
-        
+        growth_by_year: {{ (charts.growth_by_year|default({}))|tojson }},
         churn: {{ charts.churn_per_month.items()|list|tojson }}
     };
+
+    // Which option is selected on the growth chart: 'rolling' or a year like '2025'.
+    var growthSelection = 'rolling';
+
+    function currentGrowthData() {
+        if (growthSelection === 'rolling') return DASHBOARD_DATA.cumulative_growth;
+        return DASHBOARD_DATA.growth_by_year[growthSelection] || [];
+    }
 
     // Modern loader -- the legacy google.load('visualization', '1', ...) API
     // serves an older, buggier corechart build where the annotation renderer
@@ -620,51 +648,50 @@
         });
     }
 
-   function drawCumulativeGrowth(elId, data) {
-    // data: array of { label: '08-25', value: 142200 }, in chronological order
-    if (!data || data.length < 2) {
-        document.getElementById(elId).innerHTML =
-            '<p style="text-align:center;color:var(--neutral-muted);padding-top:40px;">{{ _("Not enough data yet") }}</p>';
-        return;
+    function drawCumulativeGrowth(elId, data) {
+        // data: array of { label: '08-25', value: 142200 }, in chronological order
+        if (!data || data.length < 1) {
+            document.getElementById(elId).innerHTML =
+                '<p style="text-align:center;color:var(--neutral-muted);padding-top:40px;">{{ _("Not enough data yet") }}</p>';
+            return;
+        }
+
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn('string', 'Period');
+        dataTable.addColumn('number', 'Value');
+        dataTable.addColumn({type: 'string', role: 'annotation'});
+
+        data.forEach(function (row) {
+            dataTable.addRow([row.label, row.value, formatValue(row.value)]);
+        });
+
+        var maxValue = Math.max.apply(null, data.map(function (row) { return row.value; }));
+        var axisMax = maxValue > 0 ? maxValue * 1.15 : 10;
+
+        var chart = new google.visualization.LineChart(document.getElementById(elId));
+       chart.draw(dataTable, {
+    colors: [PALETTE.blue],      // was PALETTE.green
+    pointSize: 9,
+    lineWidth: 2,
+    legend: { position: 'none' },
+    annotations: {
+        alwaysOutside: true,
+        textStyle: { fontSize: 11, color: PALETTE.blueDark }   // optional: blue labels too
+    },
+    hAxis: { slantedText: true, slantedTextAngle: 45 },
+    vAxis: {
+        format: '#,###',
+        viewWindow: { min: 0, max: axisMax },
+        minValue: 0,
+        maxValue: axisMax
+    },
+    chartArea: { width: '85%', height: '70%' }
+});
     }
 
-    var dataTable = new google.visualization.DataTable();
-    dataTable.addColumn('string', 'Period');
-    dataTable.addColumn('number', 'Value');
-    dataTable.addColumn({type: 'string', role: 'annotation'});
-
-    data.forEach(function (row) {
-        dataTable.addRow([row.label, row.value, formatValue(row.value)]);
-    });
-
-    var maxValue = Math.max.apply(null, data.map(function (row) { return row.value; }));
-    var axisMax = maxValue > 0 ? maxValue * 1.15 : 10;
-
-    var chart = new google.visualization.LineChart(document.getElementById(elId));
-    chart.draw(dataTable, {
-        colors: [PALETTE.green],
-        pointSize: 9,
-        lineWidth: 2,
-        legend: { position: 'none' },
-        annotations: {
-            alwaysOutside: true,
-            textStyle: { fontSize: 11, color: PALETTE.charcoal }
-        },
-        hAxis: { slantedText: true, slantedTextAngle: 45 },
-        vAxis: {
-            format: '#,###',
-            viewWindow: { min: 0, max: axisMax },
-            minValue: 0,
-            maxValue: axisMax
-        },
-        chartArea: { width: '85%', height: '70%' }
-    });
-}
-
-function formatValue(n) {
-    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-    
+    function formatValue(n) {
+        return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
     function drawChurn(elId, rows) {
         var dataTable = new google.visualization.DataTable();
@@ -684,7 +711,7 @@ function formatValue(n) {
         drawSubCategoryStatus('chart_sub_category_status', DASHBOARD_DATA.sub_category_status, DASHBOARD_DATA.sub_category_order);
         drawTicketAge('chart_ticket_age', DASHBOARD_DATA.ticket_age);
         drawSignups('chart_signups', DASHBOARD_DATA.signups);
-        drawCumulativeGrowth('chart_cumulative_growth', DASHBOARD_DATA.cumulative_growth);
+        drawCumulativeGrowth('chart_cumulative_growth', currentGrowthData());
     }
 
     function drawChurnChart() {
@@ -725,6 +752,16 @@ function formatValue(n) {
             }
         });
     });
+
+
+    
+var growthSelect = document.getElementById('growth_year_select');
+if (growthSelect) {
+    growthSelect.addEventListener('change', function () {
+        growthSelection = growthSelect.value;
+        drawCumulativeGrowth('chart_cumulative_growth', currentGrowthData());
+    });
+}
 
     function drawKpiSparklines() {
         document.querySelectorAll('.kpi-sparkline').forEach(function (svg) {

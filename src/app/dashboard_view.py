@@ -7,7 +7,7 @@ from flask_appbuilder import IndexView, expose
 from flask_login import current_user
 
 _MONTHS_BACK = 6
-_CUMULATIVE_GROWTH_MONTHS_BACK = 13
+_CUMULATIVE_GROWTH_MONTHS_BACK = 12
 
 
 def _is_admin():
@@ -179,8 +179,26 @@ def _expiring_subscriptions(db, func, Subscription, days=7):
     ]
 
 
+_CUMULATIVE_GROWTH_MONTHS_BACK = 12  # change the constant from 13 to 12
+
+
+def _last_n_months(n):
+    """[(year, month), ...] oldest -> newest, ending at the current month."""
+    now = datetime.now()
+    periods = []
+    for i in range(n - 1, -1, -1):
+        year, month = now.year, now.month - i
+        while month <= 0:
+            month += 12
+            year -= 1
+        periods.append((year, month))
+    return periods
+
+
 def _cumulative_growth(db, Payment, months_back=_CUMULATIVE_GROWTH_MONTHS_BACK):
-    since = datetime.now() - timedelta(days=30 * months_back)
+    periods = _last_n_months(months_back)
+    since = datetime(periods[0][0], periods[0][1], 1)
+
     rows = (
         db.session.query(Payment.start_date, Payment.amount)
         .filter(
@@ -192,20 +210,49 @@ def _cumulative_growth(db, Payment, months_back=_CUMULATIVE_GROWTH_MONTHS_BACK):
         .all()
     )
 
-    buckets = OrderedDict()
-    cursor = since.replace(day=1)
-    for _ in range(months_back + 1):
-        buckets[cursor.strftime("%m-%y")] = 0.0
-        cursor = (cursor + timedelta(days=32)).replace(day=1)
-
+    totals = OrderedDict((p, 0.0) for p in periods)
     for start_date, amount in rows:
-        if not start_date or amount is None:
-            continue
-        key = start_date.strftime("%m-%y")
-        if key in buckets:
-            buckets[key] += float(amount)
+        key = (start_date.year, start_date.month)
+        if amount is not None and key in totals:
+            totals[key] += float(amount)
 
-    return [{"label": label, "value": round(v, 2)} for label, v in buckets.items()]
+    return [
+        {"label": "%02d-%02d" % (m, y % 100), "value": round(v, 2)} for (y, m), v in totals.items()
+    ]
+
+
+def _growth_by_year(db, Payment):
+    rows = (
+        db.session.query(Payment.start_date, Payment.amount)
+        .filter(
+            Payment.status == "completed",
+            Payment.payment_method != "cloud_credit",
+            Payment.start_date.isnot(None),
+        )
+        .all()
+    )
+
+    now = datetime.now()
+    totals = {}
+    for start_date, amount in rows:
+        if amount is None:
+            continue
+        totals.setdefault(start_date.year, [0.0] * 12)[start_date.month - 1] += float(amount)
+
+    # Every year from the earliest payment (or last year, at minimum)
+    # to the latest payment (or the current year, at minimum)
+    first_year = min(list(totals.keys()) + [now.year - 1])
+    last_year = max(list(totals.keys()) + [now.year])
+
+    result = OrderedDict()
+    for year in range(first_year, last_year + 1):
+        months = totals.get(year, [0.0] * 12)
+        last_month = now.month if year == now.year else 12
+        result[str(year)] = [
+            {"label": "%02d-%02d" % (m, year % 100), "value": round(months[m - 1], 2)}
+            for m in range(1, last_month + 1)
+        ]
+    return result
 
 
 def _churn_per_month(db, Subscription):
@@ -419,7 +466,7 @@ def build_dashboard_context():
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
             "cumulative_growth": _cumulative_growth(db, Payment),
-
+            "growth_by_year": _growth_by_year(db, Payment),  # <-- new
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {
