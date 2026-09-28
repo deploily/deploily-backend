@@ -7,6 +7,7 @@ from flask_appbuilder import IndexView, expose
 from flask_login import current_user
 
 _MONTHS_BACK = 6
+_CUMULATIVE_GROWTH_MONTHS_BACK = 13
 
 
 def _is_admin():
@@ -176,6 +177,35 @@ def _expiring_subscriptions(db, func, Subscription, days=7):
     return [
         (s, max(0, (s.start_date + timedelta(days=30 * s.duration_month) - now).days)) for s in subs
     ]
+
+
+def _cumulative_growth(db, Payment, months_back=_CUMULATIVE_GROWTH_MONTHS_BACK):
+    since = datetime.now() - timedelta(days=30 * months_back)
+    rows = (
+        db.session.query(Payment.start_date, Payment.amount)
+        .filter(
+            Payment.status == "completed",
+            Payment.payment_method != "cloud_credit",
+            Payment.start_date.isnot(None),
+            Payment.start_date >= since,
+        )
+        .all()
+    )
+
+    buckets = OrderedDict()
+    cursor = since.replace(day=1)
+    for _ in range(months_back + 1):
+        buckets[cursor.strftime("%m-%y")] = 0.0
+        cursor = (cursor + timedelta(days=32)).replace(day=1)
+
+    for start_date, amount in rows:
+        if not start_date or amount is None:
+            continue
+        key = start_date.strftime("%m-%y")
+        if key in buckets:
+            buckets[key] += float(amount)
+
+    return [{"label": label, "value": round(v, 2)} for label, v in buckets.items()]
 
 
 def _churn_per_month(db, Subscription):
@@ -388,13 +418,8 @@ def build_dashboard_context():
             ),
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
-            "payment_status": _group_counts(
-                db,
-                func,
-                Payment.status,
-                exclude_column=Payment.payment_method,
-                exclude_value="cloud_credit",
-            ),
+            "cumulative_growth": _cumulative_growth(db, Payment),
+
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {
