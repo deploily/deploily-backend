@@ -108,6 +108,10 @@ class CustomSsoSecurityManager(SecurityManager):
 
         username = jwt_data["preferred_username"]
         email = jwt_data["email"]
+        phone = jwt_data["phone"]
+        print(f"###############################################JWT header: {_jwt_header}")
+        print(f"JWT data: {jwt_data}")
+        print(f"Username: {username}, Email: {email}, Phone: {phone}")
         # user = self.find_user(username=username)
         user = self.find_user(email=email)
         if user and user.is_active:
