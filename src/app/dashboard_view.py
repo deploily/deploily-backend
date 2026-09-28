@@ -7,6 +7,7 @@ from flask_appbuilder import IndexView, expose
 from flask_login import current_user
 
 _MONTHS_BACK = 6
+_CUMULATIVE_GROWTH_MONTHS_BACK = 13
 
 
 def _is_admin():
@@ -31,9 +32,7 @@ def _kpi_with_trend(db, Model, total_filter, positive_is_good):
 
     total = db.session.query(Model).filter(total_filter).count()
     this_month = (
-        db.session.query(Model)
-        .filter(total_filter, Model.created_on >= this_month_start)
-        .count()
+        db.session.query(Model).filter(total_filter, Model.created_on >= this_month_start).count()
     )
     last_month = (
         db.session.query(Model)
@@ -173,9 +172,37 @@ def _expiring_subscriptions(db, func, Subscription, days=7):
         .all()
     )
     return [
-        (s, max(0, (s.start_date + timedelta(days=30 * s.duration_month) - now).days))
-        for s in subs
+        (s, max(0, (s.start_date + timedelta(days=30 * s.duration_month) - now).days)) for s in subs
     ]
+
+
+def _cumulative_growth(db, Payment, months_back=_CUMULATIVE_GROWTH_MONTHS_BACK):
+    since = datetime.now() - timedelta(days=30 * months_back)
+    rows = (
+        db.session.query(Payment.start_date, Payment.amount)
+        .filter(
+            Payment.status == "completed",
+            Payment.payment_method != "cloud_credit",
+            Payment.start_date.isnot(None),
+            Payment.start_date >= since,
+        )
+        .all()
+    )
+
+    buckets = OrderedDict()
+    cursor = since.replace(day=1)
+    for _ in range(months_back + 1):
+        buckets[cursor.strftime("%m-%y")] = 0.0
+        cursor = (cursor + timedelta(days=32)).replace(day=1)
+
+    for start_date, amount in rows:
+        if not start_date or amount is None:
+            continue
+        key = start_date.strftime("%m-%y")
+        if key in buckets:
+            buckets[key] += float(amount)
+
+    return [{"label": label, "value": round(v, 2)} for label, v in buckets.items()]
 
 
 def _churn_per_month(db, Subscription):
@@ -244,9 +271,7 @@ def _pending_affiliations(db, Affiliation):
         .limit(20)
         .all()
     )
-    return [
-        (a, (now - a.created_on).days if a.created_on else 0) for a in rows
-    ]
+    return [(a, (now - a.created_on).days if a.created_on else 0) for a in rows]
 
 
 def _new_leads(db, ContactUs):
@@ -293,9 +318,7 @@ def _errored_deployments(db, SubscriptionAppService, SubscriptionDeploymentServi
         .filter(SubscriptionDeploymentService.deployment_status == "error")
         .all()
     )
-    combined = [("App", s) for s in app_errors] + [
-        ("Deployment", s) for s in deployment_errors
-    ]
+    combined = [("App", s) for s in app_errors] + [("Deployment", s) for s in deployment_errors]
     combined.sort(key=lambda pair: pair[1].created_on or datetime.min, reverse=True)
     return combined[:20]
 
@@ -325,8 +348,7 @@ def _stuck_deployments(db, SubscriptionAppService, SubscriptionDeploymentService
     combined.sort(key=lambda pair: pair[1].created_on or datetime.min)
     now = datetime.now()
     return [
-        (kind, s, (now - s.created_on).days if s.created_on else 0)
-        for kind, s in combined[:20]
+        (kind, s, (now - s.created_on).days if s.created_on else 0) for kind, s in combined[:20]
     ]
 
 
@@ -367,20 +389,22 @@ def build_dashboard_context():
     # Imported lazily: this module is imported before models/db finish wiring
     # up during app init (AdminDashboardIndexView must exist before
     # AppBuilder() is constructed), so these can't be top-level imports.
+    from flask_appbuilder.security.sqla.models import User
     from sqlalchemy import func
 
     from app import db
-    from app.core.models.subscription_models import Subscription
-    from app.core.models.support_ticket_models import SupportTicket
     from app.core.models.contact_us_models import ContactUs
     from app.core.models.mail_models import Mail
     from app.core.models.payment_models import Payment
-    from app.service_ressources.models.affiliation_model import Affiliation
-    from app.service_apps.models.app_service_subscription_model import SubscriptionAppService
+    from app.core.models.subscription_models import Subscription
+    from app.core.models.support_ticket_models import SupportTicket
+    from app.service_apps.models.app_service_subscription_model import (
+        SubscriptionAppService,
+    )
     from app.service_deployment.models.deployment_service_subscription_model import (
         SubscriptionDeploymentService,
     )
-    from flask_appbuilder.security.sqla.models import User
+    from app.service_ressources.models.affiliation_model import Affiliation
 
     return {
         "kpis": _kpis(db, Subscription, SupportTicket, Affiliation, User),
@@ -391,7 +415,7 @@ def build_dashboard_context():
             ),
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
-            "payment_status": _group_counts(db, func, Payment.status),
+            "cumulative_growth": _cumulative_growth(db, Payment),
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {

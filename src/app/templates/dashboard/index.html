@@ -229,8 +229,8 @@
                     <div id="chart_signups" class="chart-canvas"></div>
                 </div>
                 <div class="db-card chart-card chart-cell-br">
-                    <div class="db-card-title chart-card-title"><a href="/admin/payment/list/">{{ _('Payment Status') }}</a></div>
-                    <div id="chart_payment_status" class="chart-canvas"></div>
+                    <div class="db-card-title chart-card-title"><a href="/admin/payment/list/">{{ _('Cumulative Growth') }}</a></div>
+                    <div id="chart_cumulative_growth" class="chart-canvas"></div>
                 </div>
             </div>
         </div>
@@ -545,12 +545,13 @@
 <script nonce="{{ baselib.get_nonce() }}" src="{{ url_for('appbuilder.static', filename='js/google_charts.js') }}"></script>
 <script nonce="{{ baselib.get_nonce() }}">
     // Brand palette (blue/orange) -- same colors as the KPI cards above,
-    // plus a neutral charcoal for a 3rd data series where one is unavoidable
-    // (e.g. "failed" payments) rather than introducing an unrelated hue.
+    // plus a neutral charcoal for a 3rd data series where one is unavoidable,
+    // and green for the cumulative growth line.
     var PALETTE = {
         blue: '#0d6efd', blueDark: '#0a58ca',
         orange: '#f26522', orangeDark: '#c94f13',
-        charcoal: '#495057'
+        charcoal: '#495057',
+        green: '#6a9e4a'
     };
 
     var DASHBOARD_DATA = {
@@ -558,12 +559,19 @@
         sub_category_order: {{ charts.subscriptions_by_category_status.keys()|list|tojson }},
         ticket_age: {{ charts.ticket_age_histogram.items()|list|tojson }},
         signups: {{ charts.signups_per_month.items()|list|tojson }},
-        payment_status: {{ charts.payment_status|tojson }},
+        cumulative_growth: {{ (charts.cumulative_growth|default([]))|tojson }},
+        
         churn: {{ charts.churn_per_month.items()|list|tojson }}
     };
 
-    google.load('visualization', '1', {'packages': ['corechart']});
-    google.setOnLoadCallback(drawDashboardCharts);
+    // Modern loader -- the legacy google.load('visualization', '1', ...) API
+    // serves an older, buggier corechart build where the annotation renderer
+    // (used by drawCumulativeGrowth's alwaysOutside annotations) can throw
+    // "a is null" / "can't access property color, a is null" on some
+    // datasets. google.charts.load pulls the current build, which doesn't
+    // have this bug. Callback signature is identical, nothing else changes.
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawDashboardCharts);
 
     function drawSubCategoryStatus(elId, data, order) {
         var dataTable = new google.visualization.DataTable();
@@ -612,30 +620,51 @@
         });
     }
 
-    function drawPaymentStatus(elId, data) {
-        var order = ['completed', 'pending', 'failed'];
-        var colors = [PALETTE.blue, PALETTE.orange, PALETTE.charcoal];
-        var dataTable = new google.visualization.DataTable();
-        dataTable.addColumn('string', 'Status');
-        dataTable.addColumn('number', 'Count');
-        order.forEach(function (status) {
-            if (data[status]) {
-                var label = status.charAt(0).toUpperCase() + status.slice(1);
-                dataTable.addRow([label, data[status]]);
-            }
-        });
-        var usedColors = order.filter(function (s) { return data[s]; }).map(function (s) {
-            return colors[order.indexOf(s)];
-        });
-        var chart = new google.visualization.PieChart(document.getElementById(elId));
-        chart.draw(dataTable, {
-            pieHole: 0.45,
-            pieSliceText: 'none',
-            colors: usedColors,
-            legend: {position: 'bottom'},
-            chartArea: {width: '90%', height: '75%'}
-        });
+   function drawCumulativeGrowth(elId, data) {
+    // data: array of { label: '08-25', value: 142200 }, in chronological order
+    if (!data || data.length < 2) {
+        document.getElementById(elId).innerHTML =
+            '<p style="text-align:center;color:var(--neutral-muted);padding-top:40px;">{{ _("Not enough data yet") }}</p>';
+        return;
     }
+
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('string', 'Period');
+    dataTable.addColumn('number', 'Value');
+    dataTable.addColumn({type: 'string', role: 'annotation'});
+
+    data.forEach(function (row) {
+        dataTable.addRow([row.label, row.value, formatValue(row.value)]);
+    });
+
+    var maxValue = Math.max.apply(null, data.map(function (row) { return row.value; }));
+    var axisMax = maxValue > 0 ? maxValue * 1.15 : 10;
+
+    var chart = new google.visualization.LineChart(document.getElementById(elId));
+    chart.draw(dataTable, {
+        colors: [PALETTE.green],
+        pointSize: 9,
+        lineWidth: 2,
+        legend: { position: 'none' },
+        annotations: {
+            alwaysOutside: true,
+            textStyle: { fontSize: 11, color: PALETTE.charcoal }
+        },
+        hAxis: { slantedText: true, slantedTextAngle: 45 },
+        vAxis: {
+            format: '#,###',
+            viewWindow: { min: 0, max: axisMax },
+            minValue: 0,
+            maxValue: axisMax
+        },
+        chartArea: { width: '85%', height: '70%' }
+    });
+}
+
+function formatValue(n) {
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+    
 
     function drawChurn(elId, rows) {
         var dataTable = new google.visualization.DataTable();
@@ -655,7 +684,7 @@
         drawSubCategoryStatus('chart_sub_category_status', DASHBOARD_DATA.sub_category_status, DASHBOARD_DATA.sub_category_order);
         drawTicketAge('chart_ticket_age', DASHBOARD_DATA.ticket_age);
         drawSignups('chart_signups', DASHBOARD_DATA.signups);
-        drawPaymentStatus('chart_payment_status', DASHBOARD_DATA.payment_status);
+        drawCumulativeGrowth('chart_cumulative_growth', DASHBOARD_DATA.cumulative_growth);
     }
 
     function drawChurnChart() {
