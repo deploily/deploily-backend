@@ -98,7 +98,7 @@ class CustomSsoSecurityManager(SecurityManager):
             "first_name": data.get("given_name", ""),
             "last_name": data.get("family_name", ""),
             "email": data.get("email", ""),
-            "phone": data.get("phone", ""),
+            "phone": data.get("phone_number", ""),
             "role_keys": data.get("role_keys", []),
         }
 
@@ -130,7 +130,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
-                    phone="",
+                    phone=jwt_data.get("phone_number"),
                     is_default_profile=True,
                 )
                 db.session.add(payment_profile)
