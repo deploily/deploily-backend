@@ -20,6 +20,7 @@ class QuillWidget(TextArea):
         textarea_html = super().__call__(field, **kwargs)
 
         editor_id = f"quill-editor-{field.id}"
+        # TODO avoid relying on external resources, or at least pin to a specific version of Quill or save CSS/JS locally.
         widget_html = Markup(
             f'<div id="{editor_id}" style="height:300px;background:#fff;"></div>'
             '<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">'
@@ -49,12 +50,8 @@ class EmailTemplateModelView(ModelView):
     edit_columns = ["subject", "body"]
     base_order = ("key", "asc")
 
-    edit_form_extra_fields = {
-        "body": TextAreaField("body", widget=QuillWidget())
-    }
-    add_form_extra_fields = {
-        "body": TextAreaField("body", widget=QuillWidget())
-    }
+    edit_form_extra_fields = {"body": TextAreaField("body", widget=QuillWidget())}
+    add_form_extra_fields = {"body": TextAreaField("body", widget=QuillWidget())}
 
 
 db.create_all()

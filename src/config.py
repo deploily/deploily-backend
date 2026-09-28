@@ -17,12 +17,6 @@ KEYKCLOAK_LOGOUT_REDIRECT_URL = (
 )
 
 
-# REALM_NAME = os.getenv("REALM_NAME", "myrealm")
-# CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-
-# CLIENT_ID = os.getenv("CLIENT_ID", "deploily")
-# LOGOUT_REDIRECT_URL = f"{KEYKCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/logout"
-
 OAUTH_PROVIDERS = [
     {
         "name": "keycloak",
@@ -43,22 +37,6 @@ OAUTH_PROVIDERS = [
 public_key_url = f"{KEYKCLOAK_URL}/realms/{KEYKCLOAK_REALM_NAME}"
 
 JWT_ALGORITHM = "RS256"
-
-
-# def fetch_keycloak_rs256_public_cert():
-#     with urllib.request.urlopen(public_key_url) as response:  # noqa: S310
-#         public_key_url_response = json.load(response)
-#     public_key = public_key_url_response["public_key"]
-#     if public_key:
-#         pem_lines = [
-#             "-----BEGIN PUBLIC KEY-----",
-#             public_key,
-#             "-----END PUBLIC KEY-----",
-#         ]
-#         cert_pem = "\n".join(pem_lines)
-#     else:
-#         cert_pem = "No cert found"
-#     return cert_pem
 
 
 def fetch_keycloak_rs256_public_cert():
@@ -84,7 +62,6 @@ def fetch_keycloak_rs256_public_cert():
         return None
 
 
-JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
 FAB_ADD_SECURITY_API = False
 
 # Your App secret key
@@ -92,6 +69,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 
 JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+# TODO handle case where JWT_PUBLIC_KEY is None (e.g., Keycloak server is down or unreachable).
+# You might want to raise an exception or log an error in that case.
+# Restart until the Keycloak server is reachable and the public key can be fetched successfully.
+
 JWT_ALGORITHM = "RS256"
 AUTH_TYPE = AUTH_OAUTH
 LOGOUT_REDIRECT_URL = (
@@ -112,11 +93,6 @@ CSRF_ENABLED = False
 FAB_API_SWAGGER_UI = True
 FAB_OPENAPI_SERVERS = [
     {"url": "http://localhost:5000/"},
-    {"url": "http://localhost:5001/"},
-    {"url": "http://192.168.1.22:5000"},
-    {"url": "http://192.168.1.21:5000"},
-    {"url": "http://192.168.1.15:5000"},
-    {"url": "http://192.168.1.16:5000"},
 ]
 BACKEND_ADMIN_URL = os.getenv("BACKEND_ADMIN_URL", False)
 PDF_RECEIPT_URL = os.getenv("PDF_RECEIPT_URL", "")
@@ -211,9 +187,7 @@ FAB_ROLES = {
         ["ConsumerApi", "can_post"],
         ["ContactUSModelApi", "can_get"],
         ["ContactUSModelApi", "can_info"],
-        # ["ContactUSModelApi", "can_put"],
         ["ContactUSModelApi", "can_post"],
-        # ["ContactUSModelApi", "can_delete"],
         ["CommentModelApi", "can_get"],
         ["CommentModelApi", "can_post"],
         ["CommentModelApi", "can_info"],
@@ -225,10 +199,8 @@ FAB_ROLES = {
         ["MyFavoritesModelApi", "can_post"],
         ["MyFavoritesModelApi", "can_delete"],
         ["PaymentModelApi", "can_get"],
-        # ["PaymentModelApi", "can_put"],
         ["PaymentModelApi", "can_post"],
         ["PaymentModelApi", "can_upload_receipt"],
-        # ["PaymentModelApi", "can_delete"],
         ["StatusApi", "can_get"],
         ["RatingApi", "can_create_or_update_rating"],
         ["PaymentProfileModelApi", "can_get"],
@@ -237,52 +209,24 @@ FAB_ROLES = {
         ["PaymentProfileModelApi", "can_delete"],
         ["PromoCodeApi", "can_post"],
         ["ServiceModelApi", "can_get"],
-        # ["ServiceModelApi", "can_put"],
-        # ["ServiceModelApi", "can_post"],
-        # ["ServiceModelApi", "can_delete"],
         ["ApiServiceModelApi", "can_get"],
-        # ["ApiServiceModelApi", "can_put"],
-        # ["ApiServiceModelApi", "can_post"],
-        # ["ApiServiceModelApi", "can_delete"],
         ["AppServiceModelApi", "can_get"],
-        # ["AppServiceModelApi", "can_put"],
-        # ["AppServiceModelApi", "can_post"],
-        # ["AppServiceModelApi", "can_delete"],
         ["CicdServiceModelApi", "can_get"],
-        # ["CicdServiceModelApi", "can_put"],
-        # ["CicdServiceModelApi", "can_post"],
-        # ["CicdServiceModelApi", "can_delete"],
         ["RessourcesServiceModelApi", "can_get"],
-        # ["RessourcesServiceModelApi", "can_put"],
-        # ["RessourcesServiceModelApi", "can_post"],
-        # ["RessourcesServiceModelApi", "can_delete"],
         ["ProvidersRessourceServiceModelApi", "can_get"],
-        # ["ProvidersRessourceServiceModelApi", "can_put"],
-        # ["ProvidersRessourceServiceModelApi", "can_post"],
-        # ["ProvidersRessourceServiceModelApi", "can_delete"],
         ["AffiliationModelApi", "can_get"],
         ["AffiliationModelApi", "can_put"],
         ["AffiliationModelApi", "can_post"],
         ["AffiliationModelApi", "can_delete"],
         ["AffiliationModelApi", "can_create_affiliation"],
         ["ServicePlanModelApi", "can_get"],
-        # ["ServicePlanModelApi", "can_put"],
-        # ["ServicePlanModelApi", "can_post"],
-        # ["ServicePlanModelApi", "can_delete"],
         ["ServiceTagModelApi", "can_get"],
-        # ["ServiceTagModelApi", "can_put"],
-        # ["ServiceTagModelApi", "can_post"],
-        # ["ServiceTagModelApi", "can_delete"],
         ["SubscriptionModelApi", "can_get"],
         ["SubscriptionModelApi", "can_put"],
         ["SubscriptionModelApi", "can_post"],
-        # ["ServiceTagModelApi", "can_delete"],
         ["SubscriptionModelApi", "can_delete"],
         ["SubscriptionModelApi", "can_create_my_service_consumer"],
         ["ServiceRessouceCategoryModelApi", "can_get"],
-        # ["ServiceRessouceCategoryModelApi", "can_put"],
-        # ["ServiceRessouceCategoryModelApi", "can_post"],
-        # ["ServiceRessouceCategoryModelApi", "can_delete"],
         ["SubscriptionApi", "can_post"],
         ["SubscriptionApi", "can_subscribe_to_plan"],
         ["AccountFundingApi", "can_fund_balance"],
@@ -332,8 +276,6 @@ FAB_ROLES = {
         ["NextCloudAppServiceSubscriptionModelApi", "can_get"],
         ["HiEventsAppServiceSubscriptionModelApi", "can_get"],
         ["DeploymentServiceModelApi", "can_get"],
-        # ["DeploymentServiceModelApi", "can_post"],
-        # ["DeploymentServiceModelApi", "can_put"],
         ["CustomParameterModelApi", "can_get"],
         ["CustomParameterModelApi", "can_post"],
         ["CustomParameterModelApi", "can_put"],
@@ -386,7 +328,7 @@ LANGUAGES = {
     "ru": {"flag": "ru", "name": "Russian"},
 }
 
-APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://admin-api.deploily.cloud/apisix/admin")
+APISIX_ADMIN_URL = os.getenv("APISIX_ADMIN_URL", "http://apisix:9180/apisix/admin")
 APISIX_API_KEY = os.getenv("APISIX_API_KEY", "edd1c9f034335f136f87ad84b625c8f1")
 MAIL_HOST = os.getenv("MAIL_HOST")
 MAIL_PORT = int(os.getenv("MAIL_PORT", 465))
@@ -436,11 +378,28 @@ if MAIL_USERNAME and MAIL_PASSWORD:
         }
 
 for _addr, _user, _pass, _host, _port in (
-    (MAIL_CONNECT_ADDRESS, MAIL_CONNECT_USER, MAIL_CONNECT_PASS, MAIL_CONNECT_HOST, MAIL_CONNECT_PORT),
-    (MAIL_SUPPORT_ADDRESS, MAIL_SUPPORT_USER, MAIL_SUPPORT_PASS, MAIL_SUPPORT_HOST, MAIL_SUPPORT_PORT),
+    (
+        MAIL_CONNECT_ADDRESS,
+        MAIL_CONNECT_USER,
+        MAIL_CONNECT_PASS,
+        MAIL_CONNECT_HOST,
+        MAIL_CONNECT_PORT,
+    ),
+    (
+        MAIL_SUPPORT_ADDRESS,
+        MAIL_SUPPORT_USER,
+        MAIL_SUPPORT_PASS,
+        MAIL_SUPPORT_HOST,
+        MAIL_SUPPORT_PORT,
+    ),
 ):
     if _addr and _user and _pass and _host:
-        MAIL_ACCOUNTS[_addr] = {"user": _user, "pass": _pass, "host": _host, "port": _port}
+        MAIL_ACCOUNTS[_addr] = {
+            "user": _user,
+            "pass": _pass,
+            "host": _host,
+            "port": _port,
+        }
 
 # Address call sites should actually send/receive from -- prefers the
 # dedicated per-identity mailbox when configured, falls back to the shared

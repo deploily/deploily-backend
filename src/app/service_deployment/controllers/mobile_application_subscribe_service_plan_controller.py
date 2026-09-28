@@ -1,5 +1,4 @@
 import logging
-import uuid
 
 from flask import request
 from flask_appbuilder.api import BaseApi, expose, protect, rison
@@ -171,10 +170,7 @@ class MobileApplicationDeploymentSubscriptionApi(BaseApi):
             if not is_valid:
                 return self.response_400(message=error_msg)
 
-            api_secret_key = uuid.uuid4().hex[:32]
             user = get_user()
-            user_name = user.username
-            client_site_url = f"https://{user_name}-ttkepay.apps.depoloily.cloud"
 
             has_sufficient_balance = (
                 subscription_json["profile"].balance >= subscription_json["price"]

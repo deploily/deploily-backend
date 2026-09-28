@@ -19,7 +19,10 @@ class ContactUs(Model):
     partner = relationship("User", backref="contact_us")
     internal_note = Column(Text, nullable=True)
 
-    contact_us_status = Column(Enum("new", "lead", "junk", name="contact_us_status"), default="new")
+    # TODO Add "closed" status
+    contact_us_status = Column(
+        Enum("new", "lead", "junk", "closed", name="contact_us_status"), default="new"
+    )
     created_on = Column(DateTime, default=lambda: datetime.now(), nullable=True)
     service_plan_id = Column(Integer, ForeignKey("service_plan.id"))
     service_plan = relationship(

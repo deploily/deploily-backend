@@ -68,8 +68,11 @@ def _kpis(db, Subscription, SupportTicket, Affiliation, User):
     }
 
 
-def _group_counts(db, func, column):
-    rows = db.session.query(column, func.count()).group_by(column).all()
+def _group_counts(db, func, column, exclude_column=None, exclude_value=None):
+    query = db.session.query(column, func.count())
+    if exclude_column is not None:
+        query = query.filter(exclude_column != exclude_value)
+    rows = query.group_by(column).all()
     return {str(label) if label is not None else "unknown": count for label, count in rows}
 
 
@@ -352,18 +355,18 @@ def _stuck_deployments(db, SubscriptionAppService, SubscriptionDeploymentService
     ]
 
 
-def _never_responded_tickets(db, SupportTicket):
-    from app.schedulers.support_ticket_tasks import _last_sent_response
+# def _never_responded_tickets(db, SupportTicket):
+#     from app.schedulers.support_ticket_tasks import _last_sent_response
 
-    now = datetime.now()
-    open_tickets = (
-        db.session.query(SupportTicket)
-        .filter(SupportTicket.status == "open")
-        .order_by(SupportTicket.created_on.desc())
-        .all()
-    )
-    never = [t for t in open_tickets if _last_sent_response(t) is None][:20]
-    return [(t, (now - t.created_on).days if t.created_on else 0) for t in never]
+#     now = datetime.now()
+#     open_tickets = (
+#         db.session.query(SupportTicket)
+#         .filter(SupportTicket.status == "open")
+#         .order_by(SupportTicket.created_on.desc())
+#         .all()
+#     )
+#     never = [t for t in open_tickets if _last_sent_response(t) is None][:20]
+#     return [(t, (now - t.created_on).days if t.created_on else 0) for t in never]
 
 
 def _first_response_hours(ticket):
@@ -416,6 +419,7 @@ def build_dashboard_context():
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
             "cumulative_growth": _cumulative_growth(db, Payment),
+
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {
@@ -427,7 +431,7 @@ def build_dashboard_context():
             "unverified_accounts": _unverified_accounts(db, User),
             "pending_affiliations": _pending_affiliations(db, Affiliation),
             "new_leads": _new_leads(db, ContactUs),
-            "never_responded": _never_responded_tickets(db, SupportTicket),
+            # "never_responded": _never_responded_tickets(db, SupportTicket),
             "failed_emails": _failed_emails(db, Mail),
             "stuck_emails": _stuck_emails(db, Mail),
             "errored_deployments": _errored_deployments(
