@@ -127,7 +127,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
-                    phone=jwt_data.get("phone", ""),
+                    phone=phone,
                     is_default_profile=True,
                 )
                 db.session.add(payment_profile)
