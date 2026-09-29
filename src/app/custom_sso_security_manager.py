@@ -150,6 +150,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     "create_user",
                     user=user,
                     username=user.username,
+                    phone=jwt_data.get("phone_number"),
                 )
 
                 email = Mail(
