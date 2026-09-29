@@ -1,9 +1,13 @@
 import json
+import logging
 import os
+import time
 import urllib.request
 from datetime import timedelta
 
 from flask_appbuilder.security.manager import AUTH_OAUTH
+
+_logger = logging.getLogger(__name__)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -68,8 +72,46 @@ FAB_ADD_SECURITY_API = False
 SECRET_KEY = os.getenv("SECRET_KEY", "abcdefghijklmnopqrtu")
 
 
-JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
-# TODO handle case where JWT_PUBLIC_KEY is None (e.g., Keycloak server is down or unreachable).
+KEYCLOAK_RETRY_DELAY = 5
+KEYCLOAK_MAX_RETRIES = 60
+
+
+def get_keycloak_public_key_with_retry():
+    for attempt in range(1, KEYCLOAK_MAX_RETRIES + 1):
+        try:
+            public_key = fetch_keycloak_rs256_public_cert()
+
+            if public_key:
+                _logger.info("Keycloak is ready. JWT public key fetched successfully.")
+                return public_key
+
+            _logger.warning(
+                "Keycloak public key is not available yet "
+                "(attempt %s/%s). Retrying in %s seconds...",
+                attempt,
+                KEYCLOAK_MAX_RETRIES,
+                KEYCLOAK_RETRY_DELAY,
+            )
+
+        except Exception as e:
+            _logger.warning(
+                "Keycloak is not ready yet " "(attempt %s/%s): %s. Retrying in %s seconds...",
+                attempt,
+                KEYCLOAK_MAX_RETRIES,
+                e,
+                KEYCLOAK_RETRY_DELAY,
+            )
+
+        time.sleep(KEYCLOAK_RETRY_DELAY)
+
+    raise RuntimeError(
+        "Keycloak did not become available after " f"{KEYCLOAK_MAX_RETRIES} attempts."
+    )
+
+
+JWT_PUBLIC_KEY = get_keycloak_public_key_with_retry()
+# JWT_PUBLIC_KEY = fetch_keycloak_rs256_public_cert()
+# # TODO handle case where JWT_PUBLIC_KEY is None (e.g., Keycloak server is down or unreachable).
 # You might want to raise an exception or log an error in that case.
 # Restart until the Keycloak server is reachable and the public key can be fetched successfully.
 

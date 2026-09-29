@@ -64,5 +64,7 @@ def send_mail(mail_id):
         except Exception as e:
             _logger.error(f"[CELERY] ❌ Error sending to {mail.email_to}: {e}")
             mail.mail_state = "error"
-            # TODO save error message to the database for further analysis
+            mail.error_message = str(
+                e
+            )  # Save the error message to the database for further analysis
             db.session.commit()

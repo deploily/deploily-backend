@@ -11,6 +11,7 @@ class Mail(Model):
     title = Column(String(255), nullable=False)
     body = Column(Text)
     mail_state = Column(Enum("outGoing", "sent", "error", "canceled", name="mail_state"))
+    error_message = Column(Text, nullable=True)
     email_from = Column(String(255), default="")
     email_to = Column(String(255), default="")
     reply_to = Column(String(255), nullable=True)

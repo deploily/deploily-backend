@@ -89,11 +89,16 @@ class CustomSsoSecurityManager(SecurityManager):
         me = self.appbuilder.sm.oauth_remotes[provider].get("openid-connect/userinfo")
         me.raise_for_status()
         data = me.json()
+        _logger.info("###############################################")
+        _logger.info("KEYCLOAK USERINFO DATA:")
+        _logger.info(data)
+        _logger.info("###############################################")
         return {
             "username": data.get("preferred_username", ""),
             "first_name": data.get("given_name", ""),
             "last_name": data.get("family_name", ""),
             "email": data.get("email", ""),
+            "phone": data.get("phone_number", ""),
             "role_keys": data.get("role_keys", []),
         }
 
@@ -107,6 +112,9 @@ class CustomSsoSecurityManager(SecurityManager):
 
         username = jwt_data["preferred_username"]
         email = jwt_data["email"]
+        print(f"###############################################JWT header: {_jwt_header}")
+        print(f"JWT data: {jwt_data}")
+        print(f"Username: {username}, Email: {email}")
         # user = self.find_user(username=username)
         user = self.find_user(email=email)
         if user and user.is_active:
@@ -122,6 +130,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     profile_type="default",
                     created_by=user,
                     changed_by=user,
+                    phone=jwt_data.get("phone_number"),
                     is_default_profile=True,
                 )
                 db.session.add(payment_profile)
@@ -141,6 +150,7 @@ class CustomSsoSecurityManager(SecurityManager):
                     "create_user",
                     user=user,
                     username=user.username,
+                    phone=jwt_data.get("phone_number"),
                 )
 
                 email = Mail(
@@ -153,6 +163,27 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.add(email)
                 db.session.commit()
                 send_mail.delay(email.id)
+
+                # 2) Welcome email to the user (new)
+                welcome_email = None
+                if user.email:
+                    welcome_subject, welcome_body = render_email(
+                        "welcome_user",
+                        user=user,
+                        username=user.username,
+                    )
+                    welcome_email = Mail(
+                        title=welcome_subject,
+                        body=welcome_body,
+                        email_to=user.email,
+                        email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
+                        mail_state="outGoing",
+                    )
+                    db.session.add(welcome_email)
+                if welcome_email:
+                    send_mail.delay(welcome_email.id)
+
+                db.session.commit()
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user

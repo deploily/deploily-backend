@@ -12,6 +12,7 @@ _EMAILS_DIR = os.path.join(os.path.dirname(__file__), "..", "app", "templates", 
 # to Jinja strings using the same variable names each call site already passes.
 _SUBJECTS = {
     "create_user": "New User Created {{ username }}",
+    "welcome_user": "Welcome to Deploily Cloud, {{username }}",
     "payment_completed": "✅ New Payment Completed — {{ item.amount }}",
     "contact_us": "New Contact US Created by {{ item.name }}",
     "support_ticket": "New Support Ticket Created By {{ user.first_name }} {{ user.last_name }}",
