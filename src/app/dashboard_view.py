@@ -179,9 +179,6 @@ def _expiring_subscriptions(db, func, Subscription, days=7):
     ]
 
 
-_CUMULATIVE_GROWTH_MONTHS_BACK = 12  # change the constant from 13 to 12
-
-
 def _last_n_months(n):
     """[(year, month), ...] oldest -> newest, ending at the current month."""
     now = datetime.now()
@@ -196,32 +193,50 @@ def _last_n_months(n):
 
 
 def _cumulative_growth(db, Payment, months_back=_CUMULATIVE_GROWTH_MONTHS_BACK):
+    # Running total of completed, non-credit payments. The window only limits
+    # which months are shown: the line starts from everything collected before
+    # the window, so the last point is always the all-time total.
+    from sqlalchemy import func
+
     periods = _last_n_months(months_back)
     since = datetime(periods[0][0], periods[0][1], 1)
 
+    base_filter = (
+        Payment.status == "completed",
+        Payment.payment_method != "cloud_credit",
+        Payment.start_date.isnot(None),
+    )
+
+    running = float(
+        db.session.query(func.coalesce(func.sum(Payment.amount), 0))
+        .filter(*base_filter, Payment.start_date < since)
+        .scalar()
+        or 0
+    )
+
     rows = (
         db.session.query(Payment.start_date, Payment.amount)
-        .filter(
-            Payment.status == "completed",
-            Payment.payment_method != "cloud_credit",
-            Payment.start_date.isnot(None),
-            Payment.start_date >= since,
-        )
+        .filter(*base_filter, Payment.start_date >= since)
         .all()
     )
 
-    totals = OrderedDict((p, 0.0) for p in periods)
+    monthly = OrderedDict((p, 0.0) for p in periods)
     for start_date, amount in rows:
         key = (start_date.year, start_date.month)
-        if amount is not None and key in totals:
-            totals[key] += float(amount)
+        if amount is not None and key in monthly:
+            monthly[key] += float(amount)
 
-    return [
-        {"label": "%02d-%02d" % (m, y % 100), "value": round(v, 2)} for (y, m), v in totals.items()
-    ]
+    result = []
+    for (y, m), v in monthly.items():
+        running += v
+        result.append({"label": "%02d-%02d" % (m, y % 100), "value": round(running, 2)})
+    return result
 
 
 def _growth_by_year(db, Payment):
+    # Same running total as _cumulative_growth, carried across years: picking
+    # a year shows that year's months, but January starts from the total
+    # collected in all earlier years.
     rows = (
         db.session.query(Payment.start_date, Payment.amount)
         .filter(
@@ -244,14 +259,16 @@ def _growth_by_year(db, Payment):
     first_year = min(list(totals.keys()) + [now.year - 1])
     last_year = max(list(totals.keys()) + [now.year])
 
+    running = 0.0
     result = OrderedDict()
     for year in range(first_year, last_year + 1):
         months = totals.get(year, [0.0] * 12)
         last_month = now.month if year == now.year else 12
-        result[str(year)] = [
-            {"label": "%02d-%02d" % (m, year % 100), "value": round(months[m - 1], 2)}
-            for m in range(1, last_month + 1)
-        ]
+        points = []
+        for m in range(1, last_month + 1):
+            running += months[m - 1]
+            points.append({"label": "%02d-%02d" % (m, year % 100), "value": round(running, 2)})
+        result[str(year)] = points
     return result
 
 
@@ -466,7 +483,7 @@ def build_dashboard_context():
             "ticket_age_histogram": _ticket_age_histogram(db, SupportTicket),
             "signups_per_month": _monthly_counts(db, User),
             "cumulative_growth": _cumulative_growth(db, Payment),
-            "growth_by_year": _growth_by_year(db, Payment),  # <-- new
+            "growth_by_year": _growth_by_year(db, Payment),
             "churn_per_month": _churn_per_month(db, Subscription),
         },
         "tables": {
