@@ -178,10 +178,10 @@ class CustomSsoSecurityManager(SecurityManager):
                         mail_state="outGoing",
                     )
                     db.session.add(welcome_email)
+                db.session.commit()
                 if welcome_email:
                     send_mail.delay(welcome_email.id)
 
-                db.session.commit()
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
