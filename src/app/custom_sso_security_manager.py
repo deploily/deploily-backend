@@ -163,6 +163,27 @@ class CustomSsoSecurityManager(SecurityManager):
                 db.session.add(email)
                 db.session.commit()
                 send_mail.delay(email.id)
+
+                # 2) Welcome email to the user (new)
+                welcome_email = None
+                if user.email:
+                    welcome_subject, welcome_body = render_email(
+                        "welcome_user",
+                        user=user,
+                        username=user.username,
+                    )
+                    welcome_email = Mail(
+                        title=welcome_subject,
+                        body=welcome_body,
+                        email_to=user.email,
+                        email_from=current_app.config["NOTIFY_FROM_ADDRESS"],
+                        mail_state="outGoing",
+                    )
+                    db.session.add(welcome_email)
+                if welcome_email:
+                    send_mail.delay(welcome_email.id)
+
+                db.session.commit()
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
