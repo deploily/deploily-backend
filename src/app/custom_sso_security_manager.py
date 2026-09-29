@@ -112,9 +112,7 @@ class CustomSsoSecurityManager(SecurityManager):
 
         username = jwt_data["preferred_username"]
         email = jwt_data["email"]
-        print(f"###############################################JWT header: {_jwt_header}")
-        print(f"JWT data: {jwt_data}")
-        print(f"Username: {username}, Email: {email}")
+
         # user = self.find_user(username=username)
         user = self.find_user(email=email)
         if user and user.is_active:
@@ -180,10 +178,10 @@ class CustomSsoSecurityManager(SecurityManager):
                         mail_state="outGoing",
                     )
                     db.session.add(welcome_email)
+                db.session.commit()
                 if welcome_email:
                     send_mail.delay(welcome_email.id)
 
-                db.session.commit()
                 _logger.info(f"Payment profile created for existing user: {payment_profile}")
             g.user = user
             return user
