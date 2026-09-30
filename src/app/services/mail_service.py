@@ -10,7 +10,6 @@ from app import db
 from app.core.models import Mail
 from app.core.models.email_template_model import EmailTemplate
 
-
 # Templates whose original design used a receipt/table layout (green header,
 # bordered detail table) instead of the standard branded card + footer.
 _RECEIPT_STYLE_KEYS = {"payment_completed"}
@@ -76,7 +75,15 @@ def send_and_log_email(to, subject, body, from_email=None, reply_to=None):
         smtp_user = creds["user"]
         smtp_pass = creds["pass"]
 
-        server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port, timeout=15)
+        else:
+            server = smtplib.SMTP(host=smtp_host, port=smtp_port, timeout=15)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+
+        # server = smtplib.SMTP_SSL(host=smtp_host, port=smtp_port)
         server.set_debuglevel(1)
         server.login(smtp_user, smtp_pass)
         server.sendmail(msg["From"], [msg["To"]], msg.as_string())
@@ -87,6 +94,7 @@ def send_and_log_email(to, subject, body, from_email=None, reply_to=None):
     except Exception as e:
         current_app.logger.error(f"Erreur envoi email à {to}: {e}")
         mail.mail_state = "error"
+        mail.error_message = str(e)  # Save the error message to the database for further analysis
 
         db.session.commit()
     return mail
